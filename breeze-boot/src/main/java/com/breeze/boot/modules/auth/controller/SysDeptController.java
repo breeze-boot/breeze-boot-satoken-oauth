@@ -17,6 +17,7 @@
 package com.breeze.boot.modules.auth.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.oauth2.annotation.SaCheckAccessToken;
 import cn.hutool.core.lang.tree.Tree;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.breeze.boot.core.utils.Result;
@@ -66,6 +67,7 @@ public class SysDeptController {
     @Operation(summary = "列表")
     @GetMapping
     @SaCheckPermission("auth:dept:list")
+    @SaCheckAccessToken
     public Result<List<?>> list(DeptQuery deptQuery) {
         return Result.ok(this.sysDeptService.listDept(deptQuery));
     }
