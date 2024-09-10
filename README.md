@@ -1,10 +1,11 @@
-# Breeze-Boot-satoken
+# Breeze-Boot-satoken-oauth
+
 ### 平台简介
 
-##### Breeze-boot 是基于RBAC的权限管理系统，包括用户管理、角色管理、菜单管理、权限管理，使用bpmnJS绘制Flowable流程图等功能，适合Java开发者入门学习或者直接用此项目。
+##### Breeze-boot-satoken-oauth 是基于RBAC的权限管理系统，包括用户管理、角色管理、菜单管理、权限管理，使用bpmnJS绘制Flowable流程图等功能，适合Java开发者入门学习或者直接用此项目。
 
 - 前端采用Vue、Element UI PLUS、VITE、TypeScript、bpmn-process-designer（bpmjs）。
-- 后端采用Spring Boot3 JDK17、sa-token、Flowable（审批流程）、Redis、Jwt、Druid。 
+- 后端采用Spring Boot3 JDK17、sa-token（oauth模式）Flowable（审批流程）、Redis、Jwt、Druid。 
 - 支持按钮级别的权限控制
 - 支持加载动态权限菜单
 - 前端代码，请移步
@@ -15,6 +16,7 @@
 - [验证码： https://gitee.com/anji-plus/captcha](https://gitee.com/anji-plus/captcha)
 - [流程设计器： https://gitee.com/MiyueSC/bpmn-process-designer](https://gitee.com/MiyueSC/bpmn-process-designer)
 - [流程设计器：VUE3版本 https://gitee.com/xlys998/bpmn-vue3](https://gitee.com/xlys998/bpmn-vue3)
+- [cron表达式编辑器：VUE3版本 https://github.com/wuchuanpeng/no-vue3-cron](https://github.com/wuchuanpeng/no-vue3-cron)
 
 # 请遵循 Apache 2.0 协议
 
