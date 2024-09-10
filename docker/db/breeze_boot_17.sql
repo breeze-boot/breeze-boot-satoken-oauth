@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS breeze_boot;
-CREATE DATABASE breeze_boot DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+DROP DATABASE IF EXISTS breeze_boot_17;
+CREATE DATABASE breeze_boot_17 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-USE breeze_boot;
+USE breeze_boot_17;
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;

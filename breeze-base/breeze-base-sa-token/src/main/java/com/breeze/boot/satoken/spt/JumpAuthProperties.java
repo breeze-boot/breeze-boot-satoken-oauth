@@ -29,6 +29,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "breeze.security")
+@ConfigurationProperties(prefix = "sa-token")
 public class JumpAuthProperties extends BaseProperties {
 }

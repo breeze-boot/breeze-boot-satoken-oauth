@@ -192,7 +192,7 @@ public class SysRoleController {
      */
     @Operation(summary = "编辑菜单权限")
     @PutMapping("/modifyPermission")
-    @SaCheckPermission("auth:menu:permission:modify','ROLE_ADMIN")
+    @SaCheckPermission(value = "auth:menu:permission:modify", orRole = "ROLE_ADMIN")
     @BreezeSysLog(description = "编辑菜单权限", type = LogType.EDIT)
     public Result<Boolean> modifyMenuPermission(@Valid @RequestBody MenuPermissionForm menuPermissionForm) {
         return this.sysRoleMenuService.modifyMenuPermission(menuPermissionForm);

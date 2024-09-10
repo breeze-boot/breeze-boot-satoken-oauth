@@ -2,6 +2,7 @@ FROM centos:centos7
 
 MAINTAINER gaoweixuan
 
+#TODO
 ADD ./jdk/jdk-8u202-linux-x64.tar.gz /usr/local/java
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime

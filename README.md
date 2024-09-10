@@ -40,7 +40,6 @@
   │ ├─ breeze-base--doc  \
   │ ├─ breeze-...
   ├─ breeze-monitor                                  监控服务（SpringBoot项目）】 \
-  ├─ flowable-ui-app-server                         【Flowable-UI官方项目 可启动】
 
 ### 前端界面相关
 
