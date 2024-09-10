@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS breeze_flowable;
-CREATE DATABASE breeze_flowable DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+DROP DATABASE IF EXISTS breeze_flowable_17;
+CREATE DATABASE breeze_flowable_17 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-USE breeze_flowable;
+USE breeze_flowable_17;
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;

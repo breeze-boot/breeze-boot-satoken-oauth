@@ -36,7 +36,7 @@ spring:
           type: com.alibaba.druid.pool.DruidDataSource
         # flowable 从库 硬编码，若使用flowable单独的数据库，指定数据源名称为flowable
         flowable:
-          url: jdbc:mysql://${BREEZE_MYSQL_HOST:breeze-mysql:3306}/breeze_flowable?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
+          url: jdbc:mysql://${BREEZE_MYSQL_HOST:breeze-mysql:3306}/breeze_flowable_17?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
           driver-class-name: com.mysql.cj.jdbc.Driver
           username: root
           password: ${BREEZE_MYSQL_PWD:root}
