@@ -70,7 +70,7 @@ public class SaOAuth2DataLoaderImpl implements SaOAuth2DataLoader {
     @Override
     public String getOpenid(String clientId, Object loginId) {
         BaseSysRegisteredClient registeredClient = this.clientServiceSupplier.get().getByClientId(clientId);
-        if (Objects.nonNull(registeredClient)){
+        if (Objects.nonNull(registeredClient)) {
             // 从数据库查询
             return SaSecureUtil.md5(SaOAuth2Manager.getServerConfig().getOpenidDigestPrefix() + "_" + registeredClient.getClientId() + "_" + loginId);
         }
