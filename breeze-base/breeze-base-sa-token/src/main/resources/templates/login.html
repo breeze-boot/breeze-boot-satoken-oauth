@@ -82,6 +82,10 @@
         })
     }
 
+    $(() => {
+        getTenant()
+    })
+
     /**
      * 加密
      *
@@ -123,18 +127,17 @@
                 }
             },
             error: function (e) {
-                layer.alert(e.responseJSON.error);
+                layer.alert(e.responseJSON.message);
             }
         });
     }
 
     layui.use(function () {
-        getTenant()
-        var form = layui.form;
-        var layer = layui.layer;
+        const form = layui.form;
+        const layer = layui.layer;
         // 提交事件
         form.on('submit(demo-login)', function (data) {
-            var field = data.field; // 获取表单字段值
+            const field = data.field; // 获取表单字段值
             // 此处可执行 Ajax 等操作
             doLogin(field)
             // 阻止默认 form 跳转

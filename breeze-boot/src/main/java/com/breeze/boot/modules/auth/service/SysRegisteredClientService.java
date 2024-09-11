@@ -35,7 +35,7 @@ import com.breeze.boot.satoken.oauth2.IClientService;
 public interface SysRegisteredClientService extends IService<SysRegisteredClient>, IClientService {
 
     /**
-     * 发现由客户端Id
+     * 通过客户端ID获取客户端信息
      *
      * @param clientId 客户端Id
      * @return {@link SysRegisteredClient}
@@ -44,7 +44,7 @@ public interface SysRegisteredClientService extends IService<SysRegisteredClient
     SysRegisteredClient getByClientId(String clientId);
 
     /**
-     * 发现通过id
+     * 通过ID获取客户端信息
      *
      * @param id id
      * @return {@link SysRegisteredClient}

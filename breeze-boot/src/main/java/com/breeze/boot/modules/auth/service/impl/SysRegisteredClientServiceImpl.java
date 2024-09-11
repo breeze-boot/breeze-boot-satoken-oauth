@@ -166,7 +166,7 @@ public class SysRegisteredClientServiceImpl extends ServiceImpl<SysRegisteredCli
     }
 
     /**
-     * 获取客户端由客户端id
+     * 通过客户端ID获取客户端信息
      *
      * @param clientId 客户端id
      * @return {@link SysRegisteredClient}
@@ -177,7 +177,7 @@ public class SysRegisteredClientServiceImpl extends ServiceImpl<SysRegisteredCli
     }
 
     /**
-     * 获取客户端通过id
+     * 通过ID获取客户端信息
      *
      * @param id id
      * @return {@link SysRegisteredClient}

@@ -36,7 +36,7 @@ public interface IClientService {
 
     /**
      * 通过ID获取客户端信息
-     *IClientService
+     *
      * @param id id
      * @return {@link BaseSysRegisteredClient}
      */

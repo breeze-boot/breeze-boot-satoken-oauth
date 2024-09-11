@@ -16,6 +16,7 @@
 
 package com.breeze.boot.satoken.oauth2.client;
 
+import cn.dev33.satoken.oauth2.SaOAuth2Manager;
 import cn.dev33.satoken.oauth2.data.loader.SaOAuth2DataLoader;
 import cn.dev33.satoken.oauth2.data.model.loader.SaClientModel;
 import cn.dev33.satoken.secure.SaSecureUtil;
@@ -24,6 +25,7 @@ import com.breeze.boot.satoken.model.BaseSysRegisteredClient;
 import com.breeze.boot.satoken.oauth2.IClientService;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -67,7 +69,12 @@ public class SaOAuth2DataLoaderImpl implements SaOAuth2DataLoader {
      */
     @Override
     public String getOpenid(String clientId, Object loginId) {
-        // 此处使用框架默认算法生成 openid，真实环境建议改为从数据库查询
+        BaseSysRegisteredClient registeredClient = this.clientServiceSupplier.get().getByClientId(clientId);
+        if (Objects.nonNull(registeredClient)){
+            // 从数据库查询
+            return SaSecureUtil.md5(SaOAuth2Manager.getServerConfig().getOpenidDigestPrefix() + "_" + registeredClient.getClientId() + "_" + loginId);
+        }
+        // 此处使用框架默认算法生成 openid
         return SaOAuth2DataLoader.super.getOpenid(clientId, loginId);
     }
 

@@ -1,5 +1,5 @@
 breeze:
-  aesSecret: 1234567890123456
+  aes-secret: 1234567890123456
 
 # sa-token配置
 sa-token:
