@@ -95,11 +95,11 @@ services:
     networks:
       - breeze-net
 
-  breeze-boot:
+  breeze-boot-satoken-oauth:
     build:
       context: ./breeze-boot
     restart: always
-    container_name: breeze-boot
+    container_name: breeze-boot-satoken-oauth
     ports:
       - "9000:9000"
     volumes:

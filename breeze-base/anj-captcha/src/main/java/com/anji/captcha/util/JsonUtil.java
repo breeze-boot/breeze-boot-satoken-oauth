@@ -41,7 +41,7 @@ public class JsonUtil {
 					+ clazz.getSimpleName());
 		}*/
         try {
-            PointVO ret = clazz.newInstance();
+            PointVO ret = clazz.getDeclaredConstructor().newInstance();
             return ret.parse(text);
         } catch (Exception ex) {
             logger.error("json解析异常", ex);

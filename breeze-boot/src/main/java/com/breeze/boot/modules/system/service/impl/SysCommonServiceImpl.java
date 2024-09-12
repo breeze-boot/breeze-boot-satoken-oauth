@@ -100,11 +100,6 @@ public class SysCommonServiceImpl implements SysCommonService {
     private final SysRowPermissionService sysRowPermissionService;
 
     /**
-     * 列数据权服务
-     */
-    private final SysMenuColumnService sysMenuColumnService;
-
-    /**
      * 文件服务
      */
     private final SysFileService sysFileService;

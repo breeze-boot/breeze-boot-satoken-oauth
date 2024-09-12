@@ -20,6 +20,11 @@ public enum ResultCode {
     FAIL("result_fail", "请求失败"),
 
     /**
+     * 账号未找到，请先注册
+     */
+    NOT_REGISTER_USER("result_not_register_user", "账号未找到，请先注册"),
+
+    /**
      * 不允许操作
      */
     NO_ACTION_IS_ALLOWED("result_no_action_is_allowed", "固定权限无需修改，请修改自定义权限"),
@@ -28,6 +33,11 @@ public enum ResultCode {
      * 已经使用
      */
     IS_USED("result_is_used", "已经使用不允许操作"),
+
+    /**
+     * 客户端不存在
+     */
+    CLIENT_IS_NOT_EXISTS("result_client_is_not_exists", "客户端不存在"),
 
     /**
      * 验证码错误
