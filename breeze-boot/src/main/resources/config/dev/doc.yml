@@ -4,8 +4,8 @@ springdoc:
   title: "RBAC权限管理平台 API 文档"
   description: "RBAC权限管理平台 API 文档"
   server-url: "http://127.0.0.1:9000"
-  external-documentation-description: "https://github.com/Memory1998/breeze-cloud.git"
-  external-documentation-description-url: "https://github.com/Memory1998/breeze-cloud.git"
+  external-documentation-description: "https://github.com/breeze-boot/breeze-boot-satoken-oauth.git"
+  external-documentation-description-url: "https://github.com/breeze-boot/breeze-boot-satoken-oauth.git"
   swagger-ui:
     oauth:
       clientId: breeze
