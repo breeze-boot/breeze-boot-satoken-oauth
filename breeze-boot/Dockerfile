@@ -1,16 +1,16 @@
 # 基础镜像
-FROM breeze-jdk:17
+FROM openjdk:17
 
 # 作者信息
-MAINTAINER gaoweixuan (breeze-cloud@foxmail.com)
+LABEL maintainer="breeze-cloud@foxmail.com"
 
 # 挂载目录
 VOLUME ./breeze
 
 # 创建目录
-RUN mkdir -p /usr/local/boot/breeze
-RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-RUN echo 'Asia/Shanghai' >/etc/timezone
+RUN mkdir -p /usr/local/boot/breeze && \
+    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo 'Asia/Shanghai' >/etc/timezone
 
 # 指定路径
 WORKDIR /usr/local/boot/breeze

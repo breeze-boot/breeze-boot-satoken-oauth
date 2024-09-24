@@ -21,7 +21,6 @@ spring:
       - classpath:config/${spring.profiles.active}/log.yml
       - classpath:config/${spring.profiles.active}/mail.yml
       - classpath:config/${spring.profiles.active}/oauth2.yml
-      - classpath:config/${spring.profiles.active}/sap.yml
       - classpath:config/${spring.profiles.active}/tenant.yml
       - classpath:config/${spring.profiles.active}/wx.yml
       - classpath:config/${spring.profiles.active}/xss.yml

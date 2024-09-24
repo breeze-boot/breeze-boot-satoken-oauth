@@ -1,7 +1,7 @@
 spring:
   data:
     redis:
-      database: 6
+      database: 0
       host: ${BREEZE_REDIS_HOST:breeze-redis}
       port: ${BREEZE_REDIS_PORT:6379}
       password: ${BREEZE_REDIS_PASSWORD:breeze}
