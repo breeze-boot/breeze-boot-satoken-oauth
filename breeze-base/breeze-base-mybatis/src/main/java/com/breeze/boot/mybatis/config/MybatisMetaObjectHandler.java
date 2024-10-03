@@ -44,6 +44,7 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
 
     @Override
     public void updateFill(MetaObject metaObject) {
+        this.strictUpdateFill(metaObject, "deleteBy", this::getUserCode, String.class);
         this.strictUpdateFill(metaObject, "updateBy", this::getUserCode, String.class);
         this.strictUpdateFill(metaObject, "updateName", this::getUsername, String.class);
         this.strictUpdateFill(metaObject, "updateTime", LocalDateTime::now, LocalDateTime.class);

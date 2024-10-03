@@ -63,6 +63,7 @@ public class BaseModel<T> extends Model<BaseModel<T>> {
     @JsonIgnore
     @ExcelIgnore
     @Schema(description = "删除人编码", hidden = true)
+    @TableField(fill = FieldFill.UPDATE)
     private String deleteBy;
 
     /**
