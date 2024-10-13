@@ -4,9 +4,6 @@ FROM openjdk:17
 # 作者信息
 LABEL maintainer="breeze-cloud@foxmail.com"
 
-# 挂载目录
-VOLUME ./breeze
-
 # 创建目录
 RUN mkdir -p /usr/local/boot/breeze && \
     ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
