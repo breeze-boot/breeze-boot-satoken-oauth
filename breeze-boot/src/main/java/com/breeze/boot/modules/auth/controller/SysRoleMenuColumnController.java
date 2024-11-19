@@ -79,6 +79,7 @@ public class SysRoleMenuColumnController {
     @Operation(summary = "获取角色菜单列权限列表回显", description = "选中的菜单列表回显")
     @GetMapping("/listRolesMenuColumnPermission")
     public Result<List<RoleMenuColumnVO>> listRolesMenuColumnPermission(@Parameter(description = "角色id") @RequestParam Long roleId) {
+        // @formatter:off
         return Result.ok(this.sysRoleMenuColumnService
                 .list(Wrappers.<SysRoleMenuColumn>lambdaQuery().eq(SysRoleMenuColumn::getRoleId, roleId))
                 .stream().map(sysRoleMenuColumn ->
@@ -86,5 +87,6 @@ public class SysRoleMenuColumnController {
                                 .menu(sysRoleMenuColumn.getMenu()).roleId(sysRoleMenuColumn.getRoleId())
                                 .build())
                 .collect(Collectors.toList()));
+        // @formatter:on
     }
 }

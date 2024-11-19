@@ -29,7 +29,7 @@ import com.breeze.boot.core.base.UserPrincipal;
 import com.breeze.boot.core.enums.DataPermissionType;
 import com.breeze.boot.core.enums.DataRole;
 import com.breeze.boot.core.enums.ResultCode;
-import com.breeze.boot.core.exception.BreezeBizException;
+import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.mybatis.annotation.BreezeDataPermission;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -142,14 +142,10 @@ public class BreezeDataPermissionInterceptor extends BaseMultiTableInnerIntercep
 
         StringBuilder originalSqlBuilder = new StringBuilder();
         originalSqlBuilder.append(String.format("SELECT %s FROM (%s) temp WHERE 1 = 1 ", column, originalSql));
-        if (cache == null) {
-            throw new BreezeBizException(ResultCode.SYSTEM_EXCEPTION);
-        }
+        AssertUtil.isTrue(cache != null, ResultCode.SYSTEM_EXCEPTION);
         for (String rowPermissionCode : rowPermissionCodeSet) {
             CustomizePermission sysCustomizePermission = cache.get(rowPermissionCode, CustomizePermission.class);
-            if (sysCustomizePermission == null) {
-                throw new BreezeBizException(ResultCode.SYSTEM_EXCEPTION);
-            }
+            AssertUtil.isTrue(sysCustomizePermission != null, ResultCode.SYSTEM_EXCEPTION);
             DataRole dataRole = getDataRoleByType(sysCustomizePermission.getCustomizesType());
             if (dataRole != null) {
                 String permissions = sysCustomizePermission.getPermissions();

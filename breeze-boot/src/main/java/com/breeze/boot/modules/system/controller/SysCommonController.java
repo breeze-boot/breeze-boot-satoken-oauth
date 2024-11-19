@@ -68,6 +68,17 @@ public class SysCommonController {
     }
 
     /**
+     * 客户端下拉框
+     *
+     * @return {@link Result }<{@link List }<{@link Map }<{@link String }, {@link String }>>>
+     */
+    @Operation(summary = "客户端下拉框", description = "下拉框接口")
+    @GetMapping("/selectRegisteredClient")
+    public Result<List<Map<String, String>>> selectRegisteredClient() {
+        return this.sysCommonService.selectRegisteredClient();
+    }
+
+    /**
      * 平台下拉框
      *
      * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>

@@ -53,6 +53,9 @@ public enum LogType {
      * 电子邮件登录
      */
     EMAIL_LOGIN(5, "电子邮件登录"),
+    LOGOUT(6, "登出"),
+    FOCUS_KICK(7, "踢出"),
+    FOCUS_LOGOUT(8, "强制登出"),
 
     ;
 

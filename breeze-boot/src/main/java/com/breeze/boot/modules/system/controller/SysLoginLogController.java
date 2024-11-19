@@ -23,7 +23,6 @@ import com.breeze.boot.log.annotation.BreezeSysLog;
 import com.breeze.boot.log.enums.LogType;
 import com.breeze.boot.modules.system.model.query.LogQuery;
 import com.breeze.boot.modules.system.model.vo.LogVO;
-import com.breeze.boot.modules.system.model.vo.StatisticLoginUser;
 import com.breeze.boot.modules.system.service.SysLogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,20 +34,20 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 
-import static com.breeze.boot.log.enums.LogEnum.LogType.SYSTEM;
+import static com.breeze.boot.log.enums.LogEnum.LogType.LOGIN;
 
 /**
- * 系统日志控制器
+ * 系统登录日志控制器
  *
  * @author gaoweixuan
- * @since 2022-09-02
+ * @since 2024-11-11
  */
 @RestController
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer")
-@RequestMapping("/sys/v1/sysLog")
-@Tag(name = "系统日志管理模块", description = "SysLogController")
-public class SysLogController {
+@RequestMapping("/sys/v1/loginLog")
+@Tag(name = "系统登录日志管理模块", description = "SysLoginLogController")
+public class SysLoginLogController {
 
     /**
      * 系统日志服务
@@ -62,9 +61,9 @@ public class SysLogController {
      * @return {@link Result}<{@link Page}<{@link LogVO}>>
      */
     @GetMapping
-    @SaCheckPermission("sys:sysLog:list")
+    @SaCheckPermission("sys:loginLog:list")
     public Result<Page<LogVO>> list(LogQuery logQuery) {
-        return Result.ok(this.sysLogService.listPage(logQuery, SYSTEM.getCode()));
+        return Result.ok(this.sysLogService.listPage(logQuery, LOGIN.getCode()));
     }
 
     /**
@@ -75,7 +74,7 @@ public class SysLogController {
      */
     @Operation(summary = "详情")
     @GetMapping("/info/{logId}")
-    @SaCheckPermission("auth:sysLog:info")
+    @SaCheckPermission("auth:loginLog:info")
     public Result<LogVO> info(@Parameter(description = "日志ID") @PathVariable("logId") Long logId) {
         return Result.ok(this.sysLogService.getInfoById(logId));
     }
@@ -85,7 +84,7 @@ public class SysLogController {
      */
     @Operation(summary = "清空")
     @DeleteMapping("/truncate")
-    @SaCheckPermission("sys:sysLog:truncate")
+    @SaCheckPermission("sys:loginLog:truncate")
     @BreezeSysLog(description = "日志信息清空", type = LogType.DELETE)
     public void truncate() {
         this.sysLogService.truncate();
@@ -99,21 +98,11 @@ public class SysLogController {
      */
     @Operation(summary = "删除")
     @DeleteMapping
-    @SaCheckPermission("sys:sysLog:delete")
+    @SaCheckPermission("sys:loginLog:delete")
     @BreezeSysLog(description = "日志信息删除", type = LogType.DELETE)
     public Result<Boolean> delete(@Parameter(description = "日志ID")
                                   @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
         return Result.ok(this.sysLogService.removeByIds(Arrays.asList(ids)));
     }
 
-    /**
-     * 首页统计本年用户登录数量
-     *
-     * @return {@link Result }<{@link StatisticLoginUser }>
-     */
-    @Operation(summary = "首页统计本年用户登录数量")
-    @GetMapping("/home/statisticLoginUserPie")
-    public Result<StatisticLoginUser> statisticLoginUserPie() {
-        return Result.ok(this.sysLogService.statisticLoginUserPie());
-    }
 }

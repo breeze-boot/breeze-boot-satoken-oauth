@@ -20,8 +20,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.breeze.boot.core.enums.ResultCode;
-import com.breeze.boot.core.exception.BreezeBizException;
+import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.auth.mapper.SysRoleMapper;
 import com.breeze.boot.modules.auth.model.bo.RoleBO;
@@ -33,7 +32,9 @@ import com.breeze.boot.modules.auth.model.form.RoleForm;
 import com.breeze.boot.modules.auth.model.mappers.SysRoleMapStruct;
 import com.breeze.boot.modules.auth.model.query.RoleQuery;
 import com.breeze.boot.modules.auth.model.vo.RoleVO;
-import com.breeze.boot.modules.auth.service.*;
+import com.breeze.boot.modules.auth.service.SysRoleMenuService;
+import com.breeze.boot.modules.auth.service.SysRoleRowPermissionService;
+import com.breeze.boot.modules.auth.service.SysRoleService;
 import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.breeze.boot.core.enums.ResultCode.ROLE_NOT_FOUND;
 
 /**
  * 系统角色服务impl
@@ -148,9 +151,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     @Transactional(rollbackFor = Exception.class)
     public Result<Boolean> deleteByIds(List<Long> ids) {
         List<SysRole> roleEntityList = this.listByIds(ids);
-        if (CollUtil.isEmpty(roleEntityList)) {
-            throw new BreezeBizException(ResultCode.NOT_FOUND);
-        }
+        AssertUtil.isTrue(CollUtil.isNotEmpty(roleEntityList), ROLE_NOT_FOUND);
         boolean remove = this.removeByIds(ids);
         if (remove) {
             List<Long> collect = roleEntityList.stream().map(SysRole::getId).collect(Collectors.toList());

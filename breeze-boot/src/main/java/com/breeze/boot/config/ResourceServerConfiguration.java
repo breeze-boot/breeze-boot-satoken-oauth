@@ -66,17 +66,17 @@ public class ResourceServerConfiguration {
 
     @Bean
     public SaOAuth2DataLoaderImpl saOAuth2DataLoader() {
-        return new SaOAuth2DataLoaderImpl(() -> sysRegisteredClientService, () -> aesSecretProperties);
+        return new SaOAuth2DataLoaderImpl(sysRegisteredClientService, aesSecretProperties);
     }
 
     @Bean
     public StpInterfaceImpl stpInterfaceImpl() {
-        return new StpInterfaceImpl(() -> userService);
+        return new StpInterfaceImpl(userService);
     }
 
     @Bean
     public SaTokenOauthConfigure saTokenOauthConfigure() {
-        return new SaTokenOauthConfigure(() -> userService, this::check, () -> aesSecretProperties);
+        return new SaTokenOauthConfigure(userService, aesSecretProperties, this::check);
     }
 
     /**
@@ -86,7 +86,7 @@ public class ResourceServerConfiguration {
      */
     @Bean
     public BreezeOidcScopeHandler oidcScopeHandler() {
-        return new BreezeOidcScopeHandler(() -> userService);
+        return new BreezeOidcScopeHandler(this.userService);
     }
 
     /**
@@ -97,6 +97,14 @@ public class ResourceServerConfiguration {
     @Bean
     public PhoneCodeGrantTypeHandler phoneCodeGrantTypeHandler() {
         return new PhoneCodeGrantTypeHandler(() -> userService);
+    }
+
+    @Bean
+    public OpenAPI customOpenAPI(@Value("${springdoc.version}") String appVersion) {
+        return new OpenAPI()
+                .components(new Components())
+                .info(new Info().title("").version(appVersion)
+                        .license(new License().name("Apache 2.0").url("http://springdoc.org")));
     }
 
     /**
@@ -130,13 +138,6 @@ public class ResourceServerConfiguration {
         return response.isSuccess();
     }
 
-    @Bean
-    public OpenAPI customOpenAPI(@Value("${springdoc.version}") String appVersion) {
-        return new OpenAPI()
-                .components(new Components())
-                .info(new Info().title("").version(appVersion)
-                        .license(new License().name("Apache 2.0").url("http://springdoc.org")));
-    }
 }
 
 

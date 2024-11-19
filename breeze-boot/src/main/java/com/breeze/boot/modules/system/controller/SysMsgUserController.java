@@ -25,9 +25,10 @@ import com.breeze.boot.modules.system.model.query.UserMsgQuery;
 import com.breeze.boot.modules.system.model.vo.MsgUserVO;
 import com.breeze.boot.modules.system.service.SysMsgUserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -97,7 +98,7 @@ public class SysMsgUserController {
      */
     @Operation(summary = "已读")
     @PutMapping("/read/{msgId}")
-    public Result<Boolean> read(@PathVariable Long msgId) {
+    public Result<Boolean> read(@Parameter(description = "消息ID") @PathVariable Long msgId) {
         return this.sysMsgUserService.read(msgId);
     }
 
@@ -111,7 +112,8 @@ public class SysMsgUserController {
     @DeleteMapping
     @SaCheckPermission("sys:msgUser:delete")
     @BreezeSysLog(description = "消息信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@NotNull(message = "参数不能为空") @RequestBody Long[] ids) {
+    public Result<Boolean> delete(@Parameter(description = "消息记录IDS")
+                                  @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
         return this.sysMsgUserService.removeUserMsgByIds(Arrays.asList(ids));
     }
 

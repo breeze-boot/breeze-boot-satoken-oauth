@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.breeze.boot.core.enums.ContentType;
 import com.breeze.boot.core.enums.ResultCode;
 import com.breeze.boot.core.exception.BreezeBizException;
+import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.local.operation.LocalStorageTemplate;
 import com.breeze.boot.modules.system.mapper.SysFileMapper;
@@ -51,6 +52,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.breeze.boot.core.constants.StorageConstants.SYSTEM_BUCKET_NAME;
+import static com.breeze.boot.core.enums.ResultCode.FILE_NOT_FOUND;
 
 /**
  * 系统文件服务impl
@@ -247,9 +249,7 @@ public class SysFileServiceImpl extends ServiceImpl<SysFileMapper, SysFile> impl
     @Override
     public void download(Long fileId, HttpServletResponse response) {
         SysFile sysFile = this.getById(fileId);
-        if (Objects.isNull(sysFile)) {
-            throw new BreezeBizException(ResultCode.FILE_NOT_FOUND);
-        }
+        AssertUtil.isNotNull(sysFile, FILE_NOT_FOUND);
         this.ossTemplate.downloadObject(SYSTEM_BUCKET_NAME, sysFile.getPath(), sysFile.getName(), response);
     }
 
@@ -263,9 +263,7 @@ public class SysFileServiceImpl extends ServiceImpl<SysFileMapper, SysFile> impl
     @Transactional(rollbackFor = Exception.class)
     public Result<Boolean> removeFileByIds(List<Long> fileIds) {
         List<SysFile> sysFileList = this.listByIds(fileIds);
-        if (CollUtil.isEmpty(sysFileList)) {
-            return Result.fail(Boolean.FALSE, "文件不存在");
-        }
+        AssertUtil.isTrue(CollUtil.isNotEmpty(sysFileList), FILE_NOT_FOUND);
         for (SysFile sysFile : sysFileList) {
             this.ossTemplate.removeObject(SYSTEM_BUCKET_NAME, sysFile.getPath());
             this.removeById(sysFile.getId());

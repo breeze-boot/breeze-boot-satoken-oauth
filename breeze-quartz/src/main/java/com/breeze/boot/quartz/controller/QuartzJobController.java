@@ -22,11 +22,14 @@ import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.log.annotation.BreezeSysLog;
 import com.breeze.boot.log.enums.LogType;
 import com.breeze.boot.quartz.domain.SysQuartzJob;
-import com.breeze.boot.quartz.domain.params.JobOpenParam;
+import com.breeze.boot.quartz.domain.form.JobOpenForm;
+import com.breeze.boot.quartz.domain.form.SysQuartzJobForm;
 import com.breeze.boot.quartz.domain.query.JobQuery;
 import com.breeze.boot.quartz.service.SysQuartzJobService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -92,29 +95,31 @@ public class QuartzJobController {
     /**
      * 修改
      *
-     * @param sysQuartzJob quartz任务
-     * @return {@link Result}<{@link Boolean}>
+     * @param id            ID
+     * @param quartzJobForm quartz任务
+     * @return {@link Result }<{@link Boolean }>
      */
     @Operation(summary = "修改")
-    @PutMapping
+    @PutMapping("/{id}")
     @SaCheckPermission("sys:job:modify")
     @BreezeSysLog(description = "修改任务", type = LogType.EDIT)
-    public Result<Boolean> modify(@Valid @RequestBody SysQuartzJob sysQuartzJob) {
-        return this.sysQuartzJobService.updateJobById(sysQuartzJob);
+    public Result<Boolean> modify(@Parameter(description = "任务ID") @NotNull(message = "任务ID不能为空") @PathVariable Long id,
+                                  @Valid @RequestBody SysQuartzJobForm quartzJobForm) {
+        return this.sysQuartzJobService.modifyJob(id, quartzJobForm);
     }
 
     /**
      * 开启或关闭
      *
-     * @param jobOpenParam 任务的开启关闭参数
+     * @param jobOpenForm 任务的开启关闭参数
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "开启或关闭")
     @PutMapping("/open")
     @SaCheckPermission("sys:job:modify")
     @BreezeSysLog(description = "开启或关闭任务", type = LogType.EDIT)
-    public Result<Boolean> open(@Valid @RequestBody JobOpenParam jobOpenParam) {
-        return this.sysQuartzJobService.open(jobOpenParam);
+    public Result<Boolean> open(@Valid @RequestBody JobOpenForm jobOpenForm) {
+        return this.sysQuartzJobService.open(jobOpenForm);
     }
 
     /**
@@ -127,7 +132,8 @@ public class QuartzJobController {
     @DeleteMapping
     @SaCheckPermission("sys:job:delete")
     @BreezeSysLog(description = "删除任务", type = LogType.DELETE)
-    public Result<Boolean> delete(@NotNull(message = "参数不能为空") @RequestBody Long[] jobIds) {
+    public Result<Boolean> delete(@Parameter(description = "任务IDS")
+                                  @NotEmpty(message = "参数不能为空") @RequestBody Long[] jobIds) {
         return this.sysQuartzJobService.deleteJob(Arrays.asList(jobIds));
     }
 

@@ -33,6 +33,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -88,7 +89,7 @@ public class SysTenantController {
     /**
      * 创建
      *
-     * @param tenant 平台表单
+     * @param tenant 租户表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "保存")
@@ -104,16 +105,18 @@ public class SysTenantController {
      *
      * @param tenantCode 租户编码
      * @param tenantId   租户ID
-     * @return {@link Result}<{@link SysTenant}>
+     * @return {@link Result }<{@link Boolean }>
      */
     @Operation(summary = "校验租户编码是否重复")
     @GetMapping("/checkTenantCode")
     @SaCheckPermission("auth:tenant:list")
     public Result<Boolean> checkTenantCode(@Parameter(description = "租户编码") @NotBlank(message = "租户编码不能为空") @RequestParam("tenantCode") String tenantCode,
                                            @Parameter(description = "租户ID") @RequestParam(value = "tenantId", required = false) Long tenantId) {
+        // @formatter:off
         return Result.ok(Objects.isNull(this.sysTenantService.getOne(Wrappers.<SysTenant>lambdaQuery()
                 .ne(Objects.nonNull(tenantId), SysTenant::getId, tenantId)
                 .eq(SysTenant::getTenantCode, tenantCode))));
+        // @formatter:on
     }
 
     /**
@@ -142,7 +145,8 @@ public class SysTenantController {
     @DeleteMapping
     @SaCheckPermission("auth:tenant:delete")
     @BreezeSysLog(description = "租户信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@Parameter(description = "租户IDS") @NotNull(message = "参数不能为空") @RequestBody List<Long> ids) {
+    public Result<Boolean> delete(@Parameter(description = "租户IDS")
+                                  @NotEmpty(message = "参数不能为空") @RequestBody List<Long> ids) {
         return this.sysTenantService.removeTenantByIds(ids);
     }
 

@@ -34,6 +34,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -97,16 +98,18 @@ public class SysRowPermissionController {
      *
      * @param permissionCode 权限编码
      * @param permissionId   权限ID
-     * @return {@link Result}<{@link SysTenant}>
+     * @return {@link Result }<{@link Boolean }>
      */
     @Operation(summary = "校验权限编码是否重复")
     @GetMapping("/checkRowPermissionCode")
     @SaCheckPermission("auth:rowPermission:list")
     public Result<Boolean> checkRowPermission(@Parameter(description = "权限编码") @NotBlank(message = "权限编码不能为空") @RequestParam("permissionCode") String permissionCode,
                                               @Parameter(description = "权限ID") @RequestParam(value = "permissionId", required = false) Long permissionId) {
+        // @formatter:off
         return Result.ok(Objects.isNull(this.sysRowPermissionService.getOne(Wrappers.<SysRowPermission>lambdaQuery()
                 .ne(Objects.nonNull(permissionId), SysRowPermission::getId, permissionId)
                 .eq(SysRowPermission::getPermissionCode, permissionCode))));
+        // @formatter:on
     }
 
     /**
@@ -149,7 +152,8 @@ public class SysRowPermissionController {
     @DeleteMapping
     @SaCheckPermission("auth:rowPermission:delete")
     @BreezeSysLog(description = "数据权限信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@Parameter(description = "权限IDS") @NotNull(message = "参数不能为空") @RequestBody Long[] ids) {
+    public Result<Boolean> delete(@Parameter(description = "权限IDS")
+                                  @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
         return this.sysRowPermissionService.removeRowPermissionByIds(Arrays.asList(ids));
     }
 

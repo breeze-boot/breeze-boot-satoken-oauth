@@ -23,8 +23,6 @@ import com.breeze.boot.satoken.oauth2.IUserDetailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.function.Supplier;
-
 /**
  * 扩展 OIDC 权限处理器，返回更多字段
  *
@@ -35,7 +33,7 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class BreezeOidcScopeHandler extends OidcScopeHandler {
 
-    private final Supplier<IUserDetailService> userDetailServiceSupplier;
+    private final IUserDetailService userDetailService;
 
     /**
      * 工作额外数据
@@ -46,7 +44,7 @@ public class BreezeOidcScopeHandler extends OidcScopeHandler {
     @Override
     public IdTokenModel workExtraData(IdTokenModel idToken) {
         Object userId = idToken.sub;
-        UserPrincipal userPrincipal = this.userDetailServiceSupplier.get().loadUserByUserId(String.valueOf(userId));
+        UserPrincipal userPrincipal = this.userDetailService.loadUserByUserId(String.valueOf(userId));
         log.info("----- 为 idToken 追加扩展字段 ----- ");
 
         idToken.extraData.put("uid", userId);

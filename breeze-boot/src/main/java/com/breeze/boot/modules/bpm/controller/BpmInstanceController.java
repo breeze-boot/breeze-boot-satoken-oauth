@@ -79,12 +79,11 @@ public class BpmInstanceController {
         return this.bpmInstanceService.startProcess(startForm);
     }
 
-
     /**
      * 挂起
      *
      * @param procInstId 流程实例ID
-     * @return {@link Result }<{@link String }>
+     * @return {@link Result }<{@link Boolean }>
      */
     @Operation(summary = "挂起")
     @PutMapping("/suspendedInstance")
@@ -96,6 +95,9 @@ public class BpmInstanceController {
 
     /**
      * 作废
+     *
+     * @param bpmApprovalForm bpm审批表单
+     * @return {@link Result }<{@link ? }>
      */
     @PostMapping(value = "/voidProcess")
     @ResponseBody
@@ -106,6 +108,9 @@ public class BpmInstanceController {
 
     /**
      * 删除
+     *
+     * @param processInstanceIdList 流程实例id列表
+     * @return {@link Result }<{@link ? }>
      */
     @DeleteMapping
     @ResponseBody

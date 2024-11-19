@@ -47,6 +47,10 @@ public class OpenApiConfig {
 
     private final OpenApiProperties openApiProperties;
 
+    private static License getLicense() {
+        return new License().name("Apache 2.0").url("");
+    }
+
     @Bean
     public GroupedOpenApi sysApi() {
         return GroupedOpenApi.builder()
@@ -66,10 +70,6 @@ public class OpenApiConfig {
                 .version(openApiProperties.getVersion())
                 .license(getLicense());
         // @formatter:on
-    }
-
-    private static License getLicense() {
-        return new License().name("Apache 2.0").url("");
     }
 
     private Server getServer() {

@@ -32,7 +32,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -122,7 +122,8 @@ public class SysRegisteredClientController {
     @DeleteMapping
     @SaCheckPermission("auth:client:delete")
     @BreezeSysLog(description = "客户端信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@Parameter(description = "客户端IDS") @NotNull(message = "参数不能为空") @RequestBody Long[] ids) {
+    public Result<Boolean> delete(@Parameter(description = "客户端IDS")
+                                  @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
         return Result.ok(this.registeredClientService.removeBatchByIds(Arrays.asList(ids)));
     }
 

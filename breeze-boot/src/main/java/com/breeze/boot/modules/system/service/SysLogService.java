@@ -22,6 +22,7 @@ import com.breeze.boot.log.bo.SysLogBO;
 import com.breeze.boot.modules.system.model.entity.SysLog;
 import com.breeze.boot.modules.system.model.query.LogQuery;
 import com.breeze.boot.modules.system.model.vo.LogVO;
+import com.breeze.boot.modules.system.model.vo.StatisticLoginUser;
 
 /**
  * 系统日志服务
@@ -35,9 +36,10 @@ public interface SysLogService extends IService<SysLog> {
      * 日志列表
      *
      * @param logQuery 日志查询
+     * @param logType  日志类型
      * @return {@link Page}<{@link LogVO}>
      */
-    Page<LogVO> listPage(LogQuery logQuery);
+    Page<LogVO> listPage(LogQuery logQuery, Integer logType);
 
     /**
      * 按id获取信息
@@ -59,6 +61,12 @@ public interface SysLogService extends IService<SysLog> {
      */
     void truncate();
 
+    /**
+     * 首页统计本年用户登录数量
+     *
+     * @return {@link StatisticLoginUser }
+     */
+    StatisticLoginUser statisticLoginUserPie();
 
 }
 

@@ -37,6 +37,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -99,16 +100,18 @@ public class SysRoleController {
      *
      * @param roleCode 角色编码
      * @param roleId   角色ID
-     * @return {@link Result}<{@link SysPost}>
+     * @return {@link Result }<{@link Boolean }>
      */
     @Operation(summary = "校验角色编码是否重复")
     @GetMapping("/checkRoleCode")
     @SaCheckPermission("auth:role:list")
     public Result<Boolean> checkRoleCode(@Parameter(description = "角色编码") @NotBlank(message = "角色编码不能为空") @RequestParam("roleCode") String roleCode,
                                          @Parameter(description = "角色ID") @RequestParam(value = "roleId", required = false) Long roleId) {
+        // @formatter:off
         return Result.ok(Objects.isNull(this.sysRoleService.getOne(Wrappers.<SysRole>lambdaQuery()
                 .ne(Objects.nonNull(roleId), SysRole::getId, roleId)
                 .eq(SysRole::getRoleCode, roleCode))));
+        // @formatter:on
     }
 
     /**
@@ -151,7 +154,8 @@ public class SysRoleController {
     @DeleteMapping
     @SaCheckPermission("auth:role:delete")
     @BreezeSysLog(description = "角色信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@Parameter(description = "角色IDS") @NotNull(message = "参数不能为空") @RequestBody Long[] ids) {
+    public Result<Boolean> delete(@Parameter(description = "角色IDS")
+                                  @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
         return sysRoleService.deleteByIds(Arrays.asList(ids));
     }
 

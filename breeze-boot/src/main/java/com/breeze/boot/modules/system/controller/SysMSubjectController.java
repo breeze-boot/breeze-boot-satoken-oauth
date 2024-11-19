@@ -34,7 +34,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -175,7 +175,7 @@ public class SysMSubjectController {
     @DeleteMapping
     @SaCheckPermission("sys:mSubject:delete")
     @BreezeSysLog(description = "邮箱主题信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@Parameter(description = "邮箱主题IDS") @NotNull(message = "参数不能为空") @RequestBody Long[] ids) {
+    public Result<Boolean> delete(@Parameter(description = "邮箱主题IDS") @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
         return Result.ok(this.sysMSubjectService.removeByIds(Arrays.asList(ids)));
     }
 

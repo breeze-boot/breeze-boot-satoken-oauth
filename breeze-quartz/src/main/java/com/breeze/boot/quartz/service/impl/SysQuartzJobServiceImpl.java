@@ -18,9 +18,14 @@ package com.breeze.boot.quartz.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.breeze.boot.core.enums.ResultCode;
+import com.breeze.boot.core.exception.BreezeBizException;
+import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.quartz.domain.SysQuartzJob;
-import com.breeze.boot.quartz.domain.params.JobOpenParam;
+import com.breeze.boot.quartz.domain.form.JobOpenForm;
+import com.breeze.boot.quartz.domain.form.SysQuartzJobForm;
+import com.breeze.boot.quartz.domain.mappers.SysQuartzJobMapStruct;
 import com.breeze.boot.quartz.domain.query.JobQuery;
 import com.breeze.boot.quartz.manager.QuartzManager;
 import com.breeze.boot.quartz.mapper.SysQuartzJobMapper;
@@ -33,6 +38,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.breeze.boot.core.constants.QuartzConstants.JOB_NAME;
+import static com.breeze.boot.core.enums.ResultCode.JOB_NOT_FOUND;
 
 /**
  * Quartz任务调度Impl
@@ -47,6 +53,8 @@ public class SysQuartzJobServiceImpl extends ServiceImpl<SysQuartzJobMapper, Sys
      * quartz 管理器
      */
     private final QuartzManager quartzManager;
+
+    private final SysQuartzJobMapStruct sysQuartzJobMapStruct;
 
     /**
      * 负载任务
@@ -80,23 +88,24 @@ public class SysQuartzJobServiceImpl extends ServiceImpl<SysQuartzJobMapper, Sys
     public Result<Boolean> saveJob(SysQuartzJob sysQuartzJob) {
         sysQuartzJob.insert();
         this.quartzManager.addOrUpdateJob(sysQuartzJob);
-        return Result.ok(Boolean.TRUE);
+        return Result.ok(Boolean.TRUE, "保存成功");
     }
 
     /**
      * 更新任务通过id
      *
-     * @param sysQuartzJob quartz任务
+     * @param id            ID
+     * @param quartzJobForm quartz任务
      * @return {@link Result}<{@link Boolean}>
      */
     @Override
-    public Result<Boolean> updateJobById(SysQuartzJob sysQuartzJob) {
-        if (this.checkExists(sysQuartzJob)) {
-            return Result.fail(Boolean.FALSE, "修改失败");
-        }
+    public Result<Boolean> modifyJob(Long id, SysQuartzJobForm quartzJobForm) {
+        SysQuartzJob sysQuartzJob = sysQuartzJobMapStruct.form2Entity(quartzJobForm);
+        sysQuartzJob.setId(id);
+        AssertUtil.isNotNull(this.getById(id), JOB_NOT_FOUND);
         sysQuartzJob.updateById();
         this.quartzManager.addOrUpdateJob(sysQuartzJob);
-        return Result.ok(Boolean.TRUE);
+        return Result.ok(Boolean.TRUE, "修改成功");
     }
 
     /**
@@ -108,13 +117,12 @@ public class SysQuartzJobServiceImpl extends ServiceImpl<SysQuartzJobMapper, Sys
     @Override
     public Result<Boolean> pauseJob(Long jobId) {
         SysQuartzJob quartzJob = this.getById(jobId);
-        if (Objects.isNull(quartzJob)) {
-            return Result.fail(Boolean.FALSE, "任务不存在");
-        }
+        AssertUtil.isNotNull(quartzJob, JOB_NOT_FOUND);
+
         quartzJob.setStatus(0);
         quartzJob.updateById();
         this.quartzManager.pauseJob(quartzJob.getId() + ":" + JOB_NAME, quartzJob.getJobGroupName());
-        return Result.ok(Boolean.TRUE);
+        return Result.ok(Boolean.TRUE, "暂停成功");
     }
 
     /**
@@ -126,13 +134,12 @@ public class SysQuartzJobServiceImpl extends ServiceImpl<SysQuartzJobMapper, Sys
     @Override
     public Result<Boolean> resumeJob(Long jobId) {
         SysQuartzJob quartzJob = this.getById(jobId);
-        if (Objects.isNull(quartzJob)) {
-            return Result.fail(Boolean.FALSE, "任务不存在");
-        }
+        AssertUtil.isNotNull(quartzJob, JOB_NOT_FOUND);
+
         quartzJob.setStatus(1);
         quartzJob.updateById();
         this.quartzManager.resumeJob(quartzJob.getId() + ":" + JOB_NAME, quartzJob.getJobGroupName());
-        return Result.ok(Boolean.TRUE);
+        return Result.ok(Boolean.TRUE, "开启成功");
     }
 
     /**
@@ -164,27 +171,23 @@ public class SysQuartzJobServiceImpl extends ServiceImpl<SysQuartzJobMapper, Sys
     public Result<Boolean> runJobNow(Long jobId) {
         SysQuartzJob quartzJob = this.getById(jobId);
         this.quartzManager.runJobNow(quartzJob.getId() + ":" + JOB_NAME, quartzJob.getJobGroupName());
-        return Result.ok(Boolean.TRUE);
-    }
-
-    @Override
-    public Result<Boolean> open(JobOpenParam jobOpenParam) {
-        try {
-            return Objects.equals(1, jobOpenParam.getStatus()) ? this.resumeJob(jobOpenParam.getId()) : this.pauseJob(jobOpenParam.getId());
-        } catch (Exception e) {
-            log.error("[任务状态修改失败]", e);
-        }
-        return Result.ok(Boolean.TRUE);
+        return Result.ok(Boolean.TRUE, "运行成功");
     }
 
     /**
-     * 检查是否存在
+     * 打开
      *
-     * @param sysQuartzJob quartz任务
-     * @return boolean
+     * @param jobOpenForm Job开启表单
+     * @return {@link Result }<{@link Boolean }>
      */
-    private boolean checkExists(SysQuartzJob sysQuartzJob) {
-        return Objects.isNull(this.getById(sysQuartzJob.getId()));
+    @Override
+    public Result<Boolean> open(JobOpenForm jobOpenForm) {
+        try {
+            return Objects.equals(1, jobOpenForm.getStatus()) ? this.resumeJob(jobOpenForm.getId()) : this.pauseJob(jobOpenForm.getId());
+        } catch (Exception e) {
+            log.error("[任务状态修改失败]", e);
+        }
+        throw new BreezeBizException(ResultCode.FAIL);
     }
 
 }

@@ -56,6 +56,12 @@ public class JobQuery extends PageQuery {
     private String jobGroupName;
 
     /**
+     * 状态
+     */
+    @Schema(description = "状态")
+    private Integer status;
+
+    /**
      * 开始时间
      */
     @Schema(description = "开始时间")

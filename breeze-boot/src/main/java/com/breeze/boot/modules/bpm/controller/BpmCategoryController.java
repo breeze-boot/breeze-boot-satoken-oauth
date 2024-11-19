@@ -32,6 +32,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -77,7 +78,7 @@ public class BpmCategoryController {
      */
     @Operation(summary = "详情")
     @GetMapping("/info/{categoryId}")
-    @SaCheckPermission("auth:dict:info")
+    @SaCheckPermission("bpm:category:info")
     public Result<BpmCategoryVO> info(@Parameter(description = "流程分类ID") @NotNull(message = "流程分类ID不能为空") @PathVariable("categoryId") Long categoryId) {
         return Result.ok(this.bpmCategoryService.getInfoById(categoryId));
     }
@@ -87,16 +88,18 @@ public class BpmCategoryController {
      *
      * @param categoryCode 流程分类编码
      * @param categoryId   流程分类ID
-     * @return {@link Result}<{@link BpmCategory}>
+     * @return {@link Result }<{@link Boolean }>
      */
     @Operation(summary = "校验流程分类编码是否重复")
     @GetMapping("/checkCategoryCode")
     @SaCheckPermission("bpm:category:list")
-    public Result<Boolean> checkFlowCategoryCode(@Parameter(description = "流程分类编码") @NotBlank(message = "流程分类编码不能为空") @RequestParam("categoryCode") String categoryCode,
-                                                 @Parameter(description = "流程分类ID") @RequestParam(value = "categoryId", required = false) Long categoryId) {
+    public Result<Boolean> checkCategoryCode(@Parameter(description = "流程分类编码") @NotBlank(message = "流程分类编码不能为空") @RequestParam("categoryCode") String categoryCode,
+                                             @Parameter(description = "流程分类ID") @RequestParam(value = "categoryId", required = false) Long categoryId) {
+        // @formatter:off
         return Result.ok(Objects.isNull(this.bpmCategoryService.getOne(Wrappers.<BpmCategory>lambdaQuery()
                 .ne(Objects.nonNull(categoryId), BpmCategory::getId, categoryId)
                 .eq(BpmCategory::getCategoryCode, categoryCode))));
+        // @formatter:on
     }
 
     /**
@@ -138,7 +141,8 @@ public class BpmCategoryController {
     @DeleteMapping
     @SaCheckPermission("bpm:category:delete")
     @BreezeSysLog(description = "流程分类信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@NotNull(message = "参数不能为空") @RequestBody Long[] ids) {
+    public Result<Boolean> delete(@Parameter(description = "流程分类IDS")
+                                  @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
         return Result.ok(this.bpmCategoryService.removeByIds(Arrays.asList(ids)));
     }
 

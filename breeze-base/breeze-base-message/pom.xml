@@ -54,7 +54,7 @@
             <version>0.8.11.RELEASE</version>
         </dependency>
         <!-- 这此依赖要加上，防止上面的错误 -->
-	
+
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-core</artifactId>

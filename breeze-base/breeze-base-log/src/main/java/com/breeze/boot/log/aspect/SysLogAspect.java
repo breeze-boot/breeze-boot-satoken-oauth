@@ -33,6 +33,10 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import static com.breeze.boot.log.enums.LogEnum.LogType.SYSTEM;
+import static com.breeze.boot.log.enums.LogEnum.Result.FAIL;
+import static com.breeze.boot.log.enums.LogEnum.Result.SUCCESS;
+
 /**
  * 系统日志方面
  *
@@ -53,7 +57,7 @@ public class SysLogAspect {
 
     public SysLogAspect(PublisherSaveSysLogEvent publisherSaveSysLogEvent) {
         this.publisherSaveSysLogEvent = publisherSaveSysLogEvent;
-        mapper.registerModules(new JavaTimeModule());
+        this.mapper.registerModules(new JavaTimeModule());
     }
 
     /**
@@ -83,7 +87,7 @@ public class SysLogAspect {
         } catch (Exception e) {
             log.error("[业务异常信息]", e);
             sysLogBO.setResultMsg(e.getMessage());
-            sysLogBO.setResult(0);
+            sysLogBO.setResult(FAIL.getCode());
             throw e;
         } finally {
             stopWatch.stop();
@@ -100,22 +104,21 @@ public class SysLogAspect {
      * @param breezeSysLog 日志
      * @param request      请求
      * @param param        参数
-     * @return
+     * @return {@link SysLogBO }
      */
     @SneakyThrows
     private SysLogBO buildLog(BreezeSysLog breezeSysLog, HttpServletRequest request, Object[] param) {
         String userAgent = request.getHeader("User-Agent");
         return SysLogBO.builder()
-                .systemModule("通用权限系统")
                 .system(userAgent)
                 .logTitle(breezeSysLog.description())
                 .doType(breezeSysLog.type().getCode())
-                .logType(0)
+                .logType(SYSTEM.getCode())
                 .resultMsg("")
                 .ip(request.getRemoteAddr())
                 .requestType(request.getMethod())
                 .paramContent(this.write(param))
-                .result(1)
+                .result(SUCCESS.getCode())
                 .build();
     }
 
@@ -148,7 +151,7 @@ public class SysLogAspect {
      */
     public String write(Object data) {
         try {
-            return mapper.writeValueAsString(data);
+            return this.mapper.writeValueAsString(data);
         } catch (Exception ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }

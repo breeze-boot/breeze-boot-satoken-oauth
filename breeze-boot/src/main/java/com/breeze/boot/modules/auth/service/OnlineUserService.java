@@ -14,19 +14,30 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.modules.auth.mapper;
+package com.breeze.boot.modules.auth.service;
 
-import com.breeze.boot.modules.auth.model.entity.SysTenant;
-import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
-import org.apache.ibatis.annotations.Mapper;
+import com.breeze.boot.core.base.PageQuery;
+import com.breeze.boot.core.utils.Result;
+import com.breeze.boot.modules.auth.model.vo.OnlineUserVO;
+
+import java.util.List;
 
 /**
- * 系统租户映射器
+ * 系统用户服务
  *
  * @author gaoweixuan
- * @since 2022-11-06
+ * @since 2021-12-06 22:03:39
  */
-@Mapper
-public interface SysTenantMapper extends BreezeBaseMapper<SysTenant> {
+public interface OnlineUserService {
+
+    Result<List<OnlineUserVO>> listAllOnlineUser(PageQuery pageQuery);
+
+    Result<Boolean> kickOut(Long userId);
+
+    Result<Boolean> kickOutByTokenValue(String token);
+
+    Result<Boolean> logoutByTokenValue(String token);
+
+    Result<Boolean> logout(Long userId);
 
 }

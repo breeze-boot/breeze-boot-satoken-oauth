@@ -17,9 +17,10 @@
 package com.breeze.boot.modules.auth.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.log.annotation.BreezeSysLog;
 import com.breeze.boot.log.enums.LogType;
@@ -36,13 +37,15 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import static com.breeze.boot.core.enums.ResultCode.IS_USED;
 
 /**
  * 系统平台控制器
@@ -98,16 +101,18 @@ public class SysPlatformController {
      *
      * @param platformCode 平台编码
      * @param platformId   平台ID
-     * @return {@link Result}<{@link SysPlatform}>
+     * @return {@link Result }<{@link Boolean }>
      */
     @Operation(summary = "校验平台编码是否重复")
     @GetMapping("/checkPlatformCode")
     @SaCheckPermission("auth:platform:list")
     public Result<Boolean> checkPlatformCode(@Parameter(description = "平台编码") @NotBlank(message = "平台编码不能为空") @RequestParam("platformCode") String platformCode,
                                              @Parameter(description = "平台ID") @RequestParam(value = "platformId", required = false) Long platformId) {
+        // @formatter:off
         return Result.ok(Objects.isNull(this.sysPlatformService.getOne(Wrappers.<SysPlatform>lambdaQuery()
                 .ne(Objects.nonNull(platformId), SysPlatform::getId, platformId)
                 .eq(SysPlatform::getPlatformCode, platformCode))));
+        // @formatter:on
     }
 
     /**
@@ -149,11 +154,10 @@ public class SysPlatformController {
     @DeleteMapping
     @SaCheckPermission("auth:platform:delete")
     @BreezeSysLog(description = "平台信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@Parameter(description = "平台IDS") @NotNull(message = "参数不能为空") @RequestBody Long[] ids) {
-        List<SysMenu> menuEntityList = this.sysMenuService.list(Wrappers.<SysMenu>lambdaQuery().in(SysMenu::getPlatformId, (Object[]) ids));
-        if (CollectionUtil.isNotEmpty(menuEntityList)) {
-            return Result.fail(Boolean.FALSE, "该平台有菜单配置");
-        }
+    public Result<Boolean> delete(@Parameter(description = "平台IDS")
+                                  @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
+        List<SysMenu> platformEntityList = this.sysMenuService.list(Wrappers.<SysMenu>lambdaQuery().in(SysMenu::getPlatformId, (Object[]) ids));
+        AssertUtil.isTrue(CollUtil.isEmpty(platformEntityList), IS_USED);
         return Result.ok(this.sysPlatformService.removeByIds(Arrays.asList(ids)));
     }
 

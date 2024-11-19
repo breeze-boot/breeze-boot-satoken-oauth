@@ -22,8 +22,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.breeze.boot.core.enums.ResultCode;
-import com.breeze.boot.core.exception.BreezeBizException;
+import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.mail.dto.MailDTO;
 import com.breeze.boot.mail.service.CustomJavaMailSender;
 import com.breeze.boot.modules.system.mapper.SysEmailConfigMapper;
@@ -43,6 +42,8 @@ import org.thymeleaf.TemplateEngine;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static com.breeze.boot.core.enums.ResultCode.EMAIL_CONFIG_NOT_FOUND;
 
 /**
  * 系统邮箱服务impl
@@ -133,10 +134,7 @@ public class SysEmailConfigServiceImpl extends ServiceImpl<SysEmailConfigMapper,
     @Override
     public void afterPropertiesSet() {
         SysEmailConfig sysEmailConfig = this.getOne(Wrappers.<SysEmailConfig>lambdaQuery().eq(SysEmailConfig::getStatus, 1));
-        if (Objects.isNull(sysEmailConfig)) {
-            log.error("未配置默认邮箱");
-            throw new BreezeBizException(ResultCode.SYSTEM_EXCEPTION);
-        }
+        AssertUtil.isNotNull(sysEmailConfig, EMAIL_CONFIG_NOT_FOUND);
         MailDTO mailDTO = this.sysEmailMapStruct.entity2DTO(sysEmailConfig);
         CustomJavaMailSender customJavaMailSender = new CustomJavaMailSender(templateEngine);
         customJavaMailSender.initMailConfig(mailDTO);

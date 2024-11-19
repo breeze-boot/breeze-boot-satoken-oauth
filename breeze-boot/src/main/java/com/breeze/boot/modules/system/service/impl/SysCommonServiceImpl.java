@@ -105,6 +105,11 @@ public class SysCommonServiceImpl implements SysCommonService {
     private final SysFileService sysFileService;
 
     /**
+     * 注册客户服务
+     */
+    private final SysRegisteredClientService registeredClientService;
+
+    /**
      * 菜单树形下拉框
      *
      * @param id id
@@ -308,6 +313,16 @@ public class SysCommonServiceImpl implements SysCommonService {
     @Override
     public void download(Long fileId, HttpServletResponse response) {
         this.sysFileService.download(fileId, response);
+    }
+
+    @Override
+    public Result<List<Map<String, String>>> selectRegisteredClient() {
+        return Result.ok(this.registeredClientService.list().stream().map(sysRegisteredClient -> {
+            Map<@Nullable String, @Nullable String> roleMap = Maps.newHashMap();
+            roleMap.put("value", sysRegisteredClient.getClientId());
+            roleMap.put("label", sysRegisteredClient.getClientName());
+            return roleMap;
+        }).collect(Collectors.toList()));
     }
 
 }

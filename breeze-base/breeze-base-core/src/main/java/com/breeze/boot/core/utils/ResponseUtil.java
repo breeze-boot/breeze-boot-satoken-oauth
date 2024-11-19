@@ -59,7 +59,7 @@ public class ResponseUtil {
     private static void response(HttpServletResponse response, Result<Object> errorMsg) {
         ServletOutputStream out = null;
         try {
-            response.setCharacterEncoding("utf-8");
+            response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             out = response.getOutputStream();
             ObjectMapper objectMapper = new ObjectMapper();

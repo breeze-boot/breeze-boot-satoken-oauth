@@ -25,6 +25,7 @@ import com.breeze.boot.modules.system.model.entity.SysLog;
 import com.breeze.boot.modules.system.model.mappers.SysLogMapStruct;
 import com.breeze.boot.modules.system.model.query.LogQuery;
 import com.breeze.boot.modules.system.model.vo.LogVO;
+import com.breeze.boot.modules.system.model.vo.StatisticLoginUser;
 import com.breeze.boot.modules.system.service.SysLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,16 +41,18 @@ import org.springframework.stereotype.Service;
 public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> implements SysLogService {
 
     private final SysLogMapStruct sysLogMapStruct;
+    private static final String systemName = "权限系统";
 
     /**
      * 日志列表
      *
      * @param logQuery 日志查询
+     * @param logType  日志类型
      * @return {@link Page}<{@link LogVO}>
      */
     @Override
-    public Page<LogVO> listPage(LogQuery logQuery) {
-        Page<SysLog> sysLogPage = this.baseMapper.listPage(new Page<>(logQuery.getCurrent(), logQuery.getLimit()), logQuery);
+    public Page<LogVO> listPage(LogQuery logQuery, Integer logType) {
+        Page<SysLog> sysLogPage = this.baseMapper.listPage(new Page<>(logQuery.getCurrent(), logQuery.getLimit()), logQuery, logType);
         return this.sysLogMapStruct.entityPage2VOPage(sysLogPage);
     }
 
@@ -67,7 +70,7 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
     @Override
     public void saveSysLog(SysLogBO sysLogBO) {
         SysLog sysLog = this.sysLogMapStruct.bo2Entity(sysLogBO);
-        sysLog.setSystemModule("权限系统");
+        sysLog.setSystemModule(systemName);
         this.save(sysLog);
     }
 
@@ -77,6 +80,19 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
     @Override
     public void truncate() {
         this.baseMapper.truncate();
+    }
+
+    /**
+     * 首页统计本年用户登录数量
+     *
+     * @return {@link StatisticLoginUser }
+     */
+    @Override
+    public StatisticLoginUser statisticLoginUserPie() {
+        return StatisticLoginUser.builder()
+                .legend(this.baseMapper.statisticLoginUserPieLegend())
+                .series(this.baseMapper.statisticLoginUserPie())
+                .build();
     }
 
 }

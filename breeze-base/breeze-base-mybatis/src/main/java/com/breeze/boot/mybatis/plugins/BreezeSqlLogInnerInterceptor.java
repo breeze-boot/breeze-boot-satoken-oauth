@@ -53,7 +53,7 @@ public class BreezeSqlLogInnerInterceptor implements InnerInterceptor {
         SqlCommandType sct = ms.getSqlCommandType();
         if (sct == SqlCommandType.INSERT || sct == SqlCommandType.UPDATE || sct == SqlCommandType.SELECT || sct == SqlCommandType.DELETE) {
             String sql = convertSql(mpSh.configuration(), sh.getBoundSql());
-            log.info("\n{} \n {} \n {}", line, sql, line);
+            log.info("\n{}\n{}\n{}", line, sql, line);
         }
     }
 

@@ -24,7 +24,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.breeze.boot.core.enums.ResultCode;
-import com.breeze.boot.core.exception.BreezeBizException;
+import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.auth.mapper.SysMenuMapper;
 import com.breeze.boot.modules.auth.model.bo.SysMenuBO;
@@ -46,6 +46,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.breeze.boot.core.constants.CoreConstants.ROOT;
+import static com.breeze.boot.core.enums.ResultCode.FAIL;
+import static com.breeze.boot.core.enums.ResultCode.IS_USED;
 
 /**
  * 系统菜单服务impl
@@ -151,14 +153,9 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     @Override
     public Result<Boolean> deleteById(Long id) {
         List<SysMenu> menuEntityList = this.list(Wrappers.<SysMenu>lambdaQuery().eq(SysMenu::getParentId, id));
-        if (CollUtil.isNotEmpty(menuEntityList)) {
-            log.warn("存在子菜单, 不可删除");
-            throw new BreezeBizException(ResultCode.IS_USED);
-        }
+        AssertUtil.isTrue(CollUtil.isEmpty(menuEntityList), IS_USED);
         boolean remove = this.removeById(id);
-        if (!remove) {
-            throw new BreezeBizException(ResultCode.FAIL);
-        }
+        AssertUtil.isTrue(remove, FAIL);
         // 删除已经关联的角色的菜单
         this.sysRoleMenuService.remove(Wrappers.<SysRoleMenu>lambdaQuery().eq(SysRoleMenu::getMenuId, id));
         return Result.ok(Boolean.TRUE, "删除成功");
@@ -173,9 +170,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     @Override
     public Result<Boolean> saveMenu(MenuForm menuForm) {
         SysMenu sysMenu = this.getById(menuForm.getParentId());
-        if (!Objects.equals(ROOT, menuForm.getParentId()) && Objects.isNull(sysMenu)) {
-            throw new BreezeBizException(ResultCode.NOT_FOUND);
-        }
+        AssertUtil.isFalse(!Objects.equals(ROOT, menuForm.getParentId()) && Objects.isNull(sysMenu), ResultCode.NOT_FOUND);
         return Result.ok(this.save(sysMenuMapStruct.form2Entity(menuForm)));
     }
 

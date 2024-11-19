@@ -21,7 +21,6 @@ import com.breeze.boot.satoken.oauth2.IUserDetailService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * 自定义权限加载接口实现类
@@ -33,14 +32,14 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class StpInterfaceImpl implements StpInterface {
 
-    private final Supplier<IUserDetailService> userDetailServiceSupplier;
+    private final IUserDetailService userDetailService;
 
     /**
      * 返回一个账号所拥有的权限码集合
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        return userDetailServiceSupplier.get().loadUserPermissionByUserId(loginId.toString());
+        return userDetailService.loadUserPermissionByUserId(loginId.toString());
     }
 
     /**
@@ -48,7 +47,7 @@ public class StpInterfaceImpl implements StpInterface {
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        return userDetailServiceSupplier.get().loadUserRoleByUserId(loginId.toString());
+        return userDetailService.loadUserRoleByUserId(loginId.toString());
     }
 
 }

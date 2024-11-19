@@ -22,8 +22,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.breeze.boot.core.enums.ResultCode;
-import com.breeze.boot.core.exception.BreezeBizException;
+import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.auth.mapper.SysTenantMapper;
 import com.breeze.boot.modules.auth.model.entity.SysTenant;
@@ -36,13 +35,14 @@ import com.breeze.boot.modules.auth.service.SysTenantService;
 import com.breeze.boot.modules.auth.service.SysUserService;
 import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.breeze.boot.core.enums.ResultCode.IS_USED;
 
 /**
  * 系统租户服务impl
@@ -111,15 +111,13 @@ public class SysTenantServiceImpl extends ServiceImpl<SysTenantMapper, SysTenant
     @Transactional(rollbackFor = Exception.class)
     public Result<Boolean> removeTenantByIds(List<Long> ids) {
         List<SysUser> sysUserList = this.sysUserService.list(Wrappers.<SysUser>lambdaQuery().in(SysUser::getTenantId, ids));
-        if (CollUtil.isNotEmpty(sysUserList)) {
-            throw new BreezeBizException(ResultCode.IS_USED);
-        }
+        AssertUtil.isTrue(CollUtil.isEmpty(sysUserList), IS_USED);
         return Result.ok(this.removeByIds(ids));
     }
 
     public List<Map<String, Object>> selectTenant() {
         return this.list().stream().map(tenant -> {
-            Map<@Nullable String, @Nullable Object> tenantMap = Maps.newHashMap();
+            Map<String, Object> tenantMap = Maps.newHashMap();
             tenantMap.put("value", tenant.getId());
             tenantMap.put("label", tenant.getTenantName());
             return tenantMap;

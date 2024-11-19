@@ -32,7 +32,7 @@ import com.breeze.boot.modules.auth.model.vo.PlatformVO;
 public interface SysPlatformService extends IService<SysPlatform> {
 
     /**
-     * 列表页面
+     * 列表
      *
      * @param platformQuery 平台查询
      * @return {@link Page}<{@link PlatformVO}>

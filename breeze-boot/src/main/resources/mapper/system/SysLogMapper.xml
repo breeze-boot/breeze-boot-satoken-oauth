@@ -56,11 +56,41 @@
             <if test="logQuery.logType != null">
                 AND log_type = #{logQuery.logType}
             </if>
+            <if test="logType != null">
+                AND log_type = #{logType}
+            </if>
             <if test="logQuery.result != null">
                 AND result = #{logQuery.result}
             </if>
         </where>
         ORDER BY create_time DESC
+    </select>
+
+    <select id="statisticLoginUserPie" resultType="com.breeze.boot.modules.system.model.vo.StatisticLoginUser$Series">
+        SELECT
+            DATE(create_time) AS name,
+            COUNT(*) AS value
+        FROM
+            sys_log
+        WHERE
+            log_type = 1
+        GROUP BY
+            DATE(create_time)
+        ORDER BY
+            name
+    </select>
+
+    <select id="statisticLoginUserPieLegend" resultType="java.lang.String">
+        SELECT
+            DATE(create_time) AS name
+        FROM
+            sys_log
+        WHERE
+            log_type = 1
+        GROUP BY
+            DATE(create_time)
+        ORDER BY
+            name
     </select>
 
 </mapper>

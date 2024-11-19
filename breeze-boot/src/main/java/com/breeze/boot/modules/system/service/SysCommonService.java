@@ -147,4 +147,11 @@ public interface SysCommonService {
      */
     void download(Long fileId,  HttpServletResponse response);
 
+    /**
+     * 客户端下拉框
+     *
+     * @return {@link Result }<{@link List }<{@link Map }<{@link String }, {@link String }>>>
+     */
+    Result<List<Map<String, String>>> selectRegisteredClient();
+
 }

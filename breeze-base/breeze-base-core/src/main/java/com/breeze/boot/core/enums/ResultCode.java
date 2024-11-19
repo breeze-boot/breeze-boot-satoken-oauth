@@ -12,77 +12,162 @@ public enum ResultCode {
     /**
      * 成功
      */
-    OK("result_ok", "请求成功"),
+    OK("result.ok", "请求成功"),
 
     /**
      * 失败
      */
-    FAIL("result_fail", "请求失败"),
+    FAIL("result.fail", "请求失败"),
 
     /**
      * 账号未找到，请先注册
      */
-    NOT_REGISTER_USER("result_not_register_user", "账号未找到，请先注册"),
+    NOT_REGISTER_USER("result.not.register.user", "账号未找到，请先注册"),
 
     /**
      * 不允许操作
      */
-    NO_ACTION_IS_ALLOWED("result_no_action_is_allowed", "固定权限无需修改，请修改自定义权限"),
+    NO_ACTION_IS_ALLOWED("result.no.action.is.allowed", "固定权限无需修改，请修改自定义权限"),
 
     /**
      * 已经使用
      */
-    IS_USED("result_is_used", "已经使用不允许操作"),
+    IS_USED("result.is.used", "已经使用不允许操作"),
 
     /**
      * 客户端不存在
      */
-    CLIENT_IS_NOT_EXISTS("result_client_is_not_exists", "客户端不存在"),
+    CLIENT_IS_NOT_EXISTS("result.client.is.not.exists", "客户端不存在"),
 
     /**
      * 验证码错误
      */
-    VERIFICATION_CODE_ERROR("result_verification_code_error", "验证码错误"),
-
-    /**
-     * 未找到
-     */
-    NOT_FOUND("result_not_found", "未找到要操作的数据"),
+    VERIFICATION_CODE_ERROR("result.verification.code.error", "验证码错误"),
 
     /**
      * 参数异常
      */
-    HTTP_MESSAGE_NOT_READABLE_EXCEPTION("result_http_message_not_readable_exception", "请求失败"),
+    HTTP_MESSAGE_NOT_READABLE_EXCEPTION("result.http.message.not.readable.exception", "参数异常"),
+
+    /**
+     * 请求参数校验失败
+     */
+    HANDLER_METHOD_VALIDATION_EXCEPTION("result.handler.method.validation.exception", "请求失败"),
 
     /**
      * 演示环境
      */
-    PREVIEW("result_preview", "演示环境不可删除修改"),
+    PREVIEW("result.preview", "演示环境不可删除修改"),
 
     /**
-     * 令牌无效
+     * 未授权资源
      */
-    SC_FORBIDDEN("result_sc_forbidden", "未授权资源"),
+    SC_FORBIDDEN("result.sc.forbidden", "未授权资源"),
 
     /**
      * 认证失败
      */
-    AUTHENTICATION_FAILURE("result_authentication_failure", "认证失败"),
+    AUTHENTICATION_FAILURE("result.authentication.failure", "认证失败"),
+
+    /**
+     * 未找到
+     */
+    NOT_FOUND("result.not.found", "未找到要操作的数据"),
+
+    /**
+     * 数据已经存在
+     */
+    EXISTS("result.exists", "数据已经存在"),
 
     /**
      * 用户不存在
      */
-    USER_NOT_FOUND("result_user_not_found", "用户不存在"),
+    USER_NOT_FOUND("result.user.not.found", "用户不存在"),
+
+    /**
+     * 角色不存在
+     */
+    ROLE_NOT_FOUND("result.role.not.found", "角色不存在"),
+
+    /**
+     * 部门不存在
+     */
+    DEPT_NOT_FOUND("result.dept.not.found", "部门不存在"),
+
+    /**
+     * 任务不存在
+     */
+    JOB_NOT_FOUND("result.job.not.found", "任务不存在"),
 
     /**
      * 租户未获取到
      */
-    TENANT_NOT_FOUND("result_tenant_not_found", "租户未获取到"),
+    TENANT_NOT_FOUND("result.tenant.not.found", "租户未获取到"),
 
     /**
-     * 验证码失败
+     * 文件不存在
      */
-    VERIFY_UN_FOUND("result_verify_un_found", "验证码失败"),
+    FILE_NOT_FOUND("result.file.not.found", "文件不存在"),
+
+    /**
+     * 用户需要初始角色
+     */
+    USERS_ROLE_IS_NULL("result.users.role.is.null", "用户需要初始角色"),
+
+    /**
+     * 邮箱不存在
+     */
+    EMAIL_NOT_FOUND("result.email.not.found", "邮箱不存在"),
+
+    /**
+     * 邮箱配置不存在
+     */
+    EMAIL_CONFIG_NOT_FOUND("result.email.config.not.found", "邮箱配置不存在"),
+
+    /**
+     * 未发现此消息
+     */
+    MSG_NOT_FOUND("result.msg.not.found", "未发现此消息"),
+
+    /**
+     * 未获取到流程实例
+     */
+    PROCESS_NOT_FOUND("result.process.not.found", "未获取到流程实例"),
+
+    /**
+     * 未获取到任务实例
+     */
+    TASK_NOT_FOUND("result.task.not.found", "未获取到任务实例"),
+
+    /**
+     * 未获取到流程定义
+     */
+    DEFINITION_NOT_FOUND("result.definition.not.found", "未获取到流程定义"),
+
+    /**
+     * 未获取到BPMN模型
+     */
+    BPM_MODEL_NOT_FOUND("result.bpm.model.not.found", "无法获取BPMN模型"),
+
+    /**
+     * 未获取到XML
+     */
+    XML_NOT_FOUND("result.xml.not.found", "未获取到XML"),
+
+    /**
+     * 流程已挂起
+     */
+    PROCESS_SUSPENDED("result.process.suspended", "流程已挂起"),
+
+    /**
+     * 系统异常
+     */
+    SYSTEM_EXCEPTION("result.system.exception", "系统异常"),
+
+    /**
+     * 分页过大
+     */
+    PAGE_EXCEPTION("result.page.exception", "分页过大"),
 
     /**
      * http消息转换异常
@@ -90,64 +175,11 @@ public enum ResultCode {
     HTTP_MESSAGE_CONVERSION_EXCEPTION("result_http_message_conversion_exception", "请求参数错误"),
 
     /**
-     * 文件不存在
+     * 未登录
      */
-    FILE_NOT_FOUND("result_file_not_found", "文件不存在"),
+    NOT_LOGIN("result.not.login", "未登录"),
 
-    /**
-     * 分页过大
-     */
-    PAGE_EXCEPTION("result_page_exception", "分页过大"),
-
-    /**
-     * 未获取到流程实例
-     */
-    PROCESS_NOT_FOUND("result_process_not_found", "未获取到流程实例"),
-
-    /**
-     * 未获取到任务实例
-     */
-    TASK_NOT_FOUND("result_task_not_found", "未获取到任务实例"),
-
-    /**
-     * 未获取到流程定义
-     */
-    DEFINITION_NOT_FOUND("result_definition_not_found", "未获取到流程定义"),
-
-    /**
-     * 未获取到BPMN模型
-     */
-    BPM_MODEL_NOT_FOUND("result_bpm_model_not_found", "无法获取BPMN模型"),
-
-    /**
-     * 未获取到XML
-     */
-    XML_NOT_FOUND("result_xml_not_found", "未获取到XML"),
-
-    /**
-     * 流程已挂起
-     */
-    PROCESS_SUSPENDED("result_process_suspended", "流程已挂起"),
-
-    /**
-     * 系统异常
-     */
-    SYSTEM_EXCEPTION("result_system_exception", "系统异常"),
-
-    /**
-     * 用户需要初始角色
-     */
-    USERS_ROLE_IS_NULL("result_users_role_is_null", "用户需要初始角色"),
-
-    /**
-     * 邮箱不存在
-     */
-    EMAIL_NOT_FOUND("result_email_not_found", "邮箱不存在"),
-
-    /**
-     * 未发现此消息
-     */
-    MSG_NOT_FOUND("result_msg_not_found", "未发现此消息");
+    ;
 
     private final String key;
 

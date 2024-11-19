@@ -25,7 +25,8 @@ import com.breeze.boot.quartz.domain.SysQuartzJobLog;
 import com.breeze.boot.quartz.domain.query.JobQuery;
 import com.breeze.boot.quartz.service.SysQuartzJobLogService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.constraints.NotNull;
+import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,7 +71,7 @@ public class QuartzJobLogController {
     @DeleteMapping
     @SaCheckPermission("sys:jLog:delete")
     @BreezeSysLog(description = "删除任务日志", type = LogType.DELETE)
-    public Result<Boolean> delete(@NotNull(message = "参数不能为空") @RequestBody List<Long> logIds) {
+    public Result<Boolean> delete(@Parameter(description = "任务日志IDS") @NotEmpty(message = "参数不能为空") @RequestBody List<Long> logIds) {
         return Result.ok(this.quartzJobLogService.deleteLogs(logIds));
     }
 

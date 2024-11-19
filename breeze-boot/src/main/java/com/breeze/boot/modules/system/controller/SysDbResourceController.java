@@ -31,6 +31,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -121,7 +122,8 @@ public class SysDbResourceController {
     @DeleteMapping
     @SaCheckPermission("sys:dbResource:delete")
     @BreezeSysLog(description = "数据源信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@NotNull(message = "参数不能为空") @RequestBody Long[] ids) {
+    public Result<Boolean> delete(@Parameter(description = "数据源IDS")
+                                  @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
         return Result.ok(this.sysDbResourceService.removeDbResourceByIds(Arrays.asList(ids)));
     }
 

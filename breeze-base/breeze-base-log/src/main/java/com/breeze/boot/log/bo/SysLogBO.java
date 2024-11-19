@@ -16,6 +16,11 @@
 
 package com.breeze.boot.log.bo;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.converters.localdatetime.LocalDateTimeStringConverter;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +28,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * 系统日志BO
@@ -50,7 +56,7 @@ public class SysLogBO implements Serializable {
     private String logTitle;
 
     /**
-     * 日志类型 0 普通日志 1 登录日志
+     * 日志类型 0 系统日志 1 登录日志
      */
     private Integer logType;
 
@@ -65,7 +71,7 @@ public class SysLogBO implements Serializable {
     private String ip;
 
     /**
-     * 操作类型 0 添加 1 删除 2 修改 3 查询 4 doLogin
+     * 操作类型 0 添加 1 删除 2 修改 3 登录
      */
     private Integer doType;
 
@@ -98,5 +104,27 @@ public class SysLogBO implements Serializable {
      * 执行结果
      */
     private String resultMsg;
+
+    /**
+     * 创建人
+     */
+    @ExcelIgnore
+    @Schema(description = "创建人编码", hidden = true)
+    private String createBy;
+
+    /**
+     * 创建人姓名
+     */
+    @ExcelIgnore
+    @Schema(description = "创建人姓名", hidden = true)
+    private String createName;
+
+    /**
+     * 创建时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Schema(hidden = true, description = "创建时间")
+    @ExcelProperty(value = "创建时间", converter = LocalDateTimeStringConverter.class)
+    private LocalDateTime createTime;
 
 }

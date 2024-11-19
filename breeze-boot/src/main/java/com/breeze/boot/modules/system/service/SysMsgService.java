@@ -18,10 +18,10 @@ package com.breeze.boot.modules.system.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.breeze.boot.message.vo.MsgVO;
 import com.breeze.boot.modules.system.model.entity.SysMsg;
 import com.breeze.boot.modules.system.model.form.MsgForm;
 import com.breeze.boot.modules.system.model.query.MsgQuery;
-import com.breeze.boot.message.vo.MsgVO;
 
 /**
  * 系统消息服务

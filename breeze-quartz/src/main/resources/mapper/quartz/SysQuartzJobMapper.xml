@@ -45,6 +45,9 @@
             <if test="jobQuery.jobName != null and jobQuery.jobName != ''">
                 AND a.job_name LIKE CONCAT( '%', #{jobQuery.jobName}, '%')
             </if>
+            <if test="jobQuery.status != null and jobQuery.status != ''">
+                AND a.status = #{jobQuery.status}
+            </if>
         </where>
     </select>
 

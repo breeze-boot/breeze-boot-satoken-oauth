@@ -50,9 +50,9 @@ public class LogQuery extends PageQuery {
     private String logTitle;
 
     /**
-     * 日志类型 0 普通日志 1 登录日志
+     * 日志类型 0 系统日志 1 登录日志
      */
-    @Schema(description = "日志类型 0 普通日志 1 登录日志")
+    @Schema(description = "日志类型 0 系统日志 1 登录日志")
     private Long logType;
 
     /**
@@ -62,9 +62,9 @@ public class LogQuery extends PageQuery {
     private Long requestType;
 
     /**
-     * 操作类型 0 添加 1 删除 2 修改 3 查询
+     * 操作类型 0 添加 1 删除 2 修改 3 登录
      */
-    @Schema(description = "操作类型 0 添加 1 删除 2 修改 3 查询")
+    @Schema(description = "操作类型 0 添加 1 删除 2 修改 3 登录 ")
     private Long doType;
 
     /**

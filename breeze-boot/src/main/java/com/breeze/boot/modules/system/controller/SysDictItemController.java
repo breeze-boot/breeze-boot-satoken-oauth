@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -120,7 +121,8 @@ public class SysDictItemController {
     @DeleteMapping
     @SaCheckPermission("sys:dict:delete")
     @BreezeSysLog(description = "字典项信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@Parameter(description = "字典项ID") @NotNull(message = "参数不能为空") @RequestBody Long[] ids) {
+    public Result<Boolean> delete(@Parameter(description = "字典项ID")
+                                  @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
         return Result.ok(this.sysDictItemService.removeByIds(Arrays.asList(ids)));
     }
 

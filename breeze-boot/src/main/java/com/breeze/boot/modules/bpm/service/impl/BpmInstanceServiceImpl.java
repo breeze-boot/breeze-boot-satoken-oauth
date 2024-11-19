@@ -128,7 +128,7 @@ public class BpmInstanceServiceImpl implements IBpmInstanceService {
         } catch (FlowableException ex) {
             log.error("启动失败", ex);
         }
-        return Result.fail("");
+        return Result.fail("启动失败");
     }
 
     /**

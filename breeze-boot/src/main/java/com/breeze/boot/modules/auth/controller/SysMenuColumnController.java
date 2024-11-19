@@ -31,7 +31,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -83,18 +83,21 @@ public class SysMenuColumnController {
     /**
      * 详情
      *
-     * @param menuColumnId 权限ID
+     * @param menuColumnId 菜单列ID
      * @return {@link Result }<{@link MenuColumnVO }>
      */
     @Operation(summary = "详情")
     @GetMapping("/info/{menuColumnId}")
     @SaCheckPermission("auth:menuColumn:info")
-    public Result<MenuColumnVO> info(@Parameter(description = "权限ID") @NotNull(message = "参数不能为空") @PathVariable("menuColumnId") Long menuColumnId) {
+    public Result<MenuColumnVO> info(@Parameter(description = "权限ID") @PathVariable("menuColumnId") Long menuColumnId) {
         return Result.ok(this.sysMenuColumnService.getInfoById(menuColumnId));
     }
 
     /**
      * 创建
+     *
+     * @param menuColumnForm 菜单列表单
+     * @return {@link Result }<{@link Boolean }>
      */
     @Operation(summary = "保存")
     @PostMapping
@@ -114,7 +117,8 @@ public class SysMenuColumnController {
     @DeleteMapping
     @SaCheckPermission("auth:menuColumn:delete")
     @BreezeSysLog(description = "数据权限信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@Parameter(description = "权限IDS") @NotNull(message = "参数不能为空") @RequestBody Long[] ids) {
+    public Result<Boolean> delete(@Parameter(description = "权限IDS")
+                                  @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
         return this.sysMenuColumnService.removeMenuColumnByIds(Arrays.asList(ids));
     }
 

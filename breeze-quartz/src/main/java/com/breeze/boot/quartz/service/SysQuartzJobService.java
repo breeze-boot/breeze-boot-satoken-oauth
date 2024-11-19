@@ -21,7 +21,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.quartz.domain.SysQuartzJob;
-import com.breeze.boot.quartz.domain.params.JobOpenParam;
+import com.breeze.boot.quartz.domain.form.SysQuartzJobForm;
+import com.breeze.boot.quartz.domain.form.JobOpenForm;
 import com.breeze.boot.quartz.domain.query.JobQuery;
 
 import java.util.List;
@@ -53,10 +54,11 @@ public interface SysQuartzJobService extends IService<SysQuartzJob> {
     /**
      * 更新任务通过id
      *
-     * @param sysQuartzJob quartz任务
+     * @param id            ID
+     * @param quartzJobForm quartz任务
      * @return {@link Result}<{@link Boolean}>
      */
-    Result<Boolean> updateJobById(SysQuartzJob sysQuartzJob);
+    Result<Boolean> modifyJob(Long id, SysQuartzJobForm quartzJobForm);
 
     /**
      * 暂停任务
@@ -91,9 +93,11 @@ public interface SysQuartzJobService extends IService<SysQuartzJob> {
     Result<Boolean> runJobNow(Long jobId);
 
     /**
-     * @param jobOpenParam
+     * 打开
+     *
+     * @param jobOpenForm Job开启表单
      * @return {@link Result}<{@link Boolean}>
      */
-    Result<Boolean> open(JobOpenParam jobOpenParam);
+    Result<Boolean> open(JobOpenForm jobOpenForm);
 
 }

@@ -33,6 +33,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -157,7 +158,8 @@ public class SysFileController {
     @DeleteMapping
     @SaCheckPermission("sys:file:delete")
     @BreezeSysLog(description = "文件信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@Parameter(description = "文件ID") @NotNull(message = "参数不能为空") @RequestBody Long[] ids) {
+    public Result<Boolean> delete(@Parameter(description = "文件ID")
+                                  @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
         return this.sysFileService.removeFileByIds(Arrays.asList(ids));
     }
 

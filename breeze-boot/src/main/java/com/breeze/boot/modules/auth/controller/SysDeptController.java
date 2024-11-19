@@ -17,7 +17,6 @@
 package com.breeze.boot.modules.auth.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.dev33.satoken.oauth2.annotation.SaCheckAccessToken;
 import cn.hutool.core.lang.tree.Tree;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.breeze.boot.core.utils.Result;
@@ -33,6 +32,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -67,7 +67,6 @@ public class SysDeptController {
     @Operation(summary = "列表")
     @GetMapping
     @SaCheckPermission("auth:dept:list")
-    @SaCheckAccessToken
     public Result<List<?>> list(DeptQuery deptQuery) {
         return Result.ok(this.sysDeptService.listDept(deptQuery));
     }
@@ -90,16 +89,18 @@ public class SysDeptController {
      *
      * @param deptCode 部门编码
      * @param deptId   部门ID
-     * @return {@link Result}<{@link SysDept}>
+     * @return {@link Result }<{@link Boolean }>
      */
     @Operation(summary = "校验部门编码是否重复")
     @GetMapping("/checkDeptCode")
     @SaCheckPermission("auth:dept:list")
     public Result<Boolean> checkDeptCode(@Parameter(description = "部门编码") @NotBlank(message = "部门编码不能为空") @RequestParam("deptCode") String deptCode,
                                          @Parameter(description = "部门ID") @RequestParam(value = "deptId", required = false) Long deptId) {
+        // @formatter:off
         return Result.ok(Objects.isNull(this.sysDeptService.getOne(Wrappers.<SysDept>lambdaQuery()
                 .ne(Objects.nonNull(deptId), SysDept::getId, deptId)
                 .eq(SysDept::getDeptCode, deptCode))));
+        // @formatter:on
     }
 
     /**
@@ -141,7 +142,8 @@ public class SysDeptController {
     @DeleteMapping
     @SaCheckPermission("auth:dept:delete")
     @BreezeSysLog(description = "部门信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@Parameter(description = "部门ID") @NotNull(message = "参数不能为空") @RequestBody Long id) {
+    public Result<Boolean> delete(@Parameter(description = "部门ID")
+                                  @NotEmpty(message = "参数不能为空") @RequestBody Long id) {
         return this.sysDeptService.deleteById(id);
     }
 

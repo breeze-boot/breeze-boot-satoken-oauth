@@ -37,7 +37,6 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * oauth令牌配置
@@ -48,11 +47,11 @@ import java.util.function.Supplier;
 @Slf4j
 @RequiredArgsConstructor
 public class SaTokenOauthConfigure {
-
     private final static String BCRYPT = "{bcrypt}";
-    private final Supplier<IUserDetailService> userDetailServiceSupplier;
+    private final IUserDetailService userDetailService;
+
+    private final AesSecretProperties aesSecretProperties;
     private final Function<HttpServletRequest, Boolean> captchaServiceFunction;
-    private final Supplier<AesSecretProperties> aesSecretPropertiesSupplier;
 
     /**
      * Sa-Token OAuth2 定制化配置
@@ -72,8 +71,8 @@ public class SaTokenOauthConfigure {
             if (captchaServiceFunction.apply(requestAttributes.getRequest())) {
 //                throw new BreezeBizException(ResultCode.VERIFY_UN_FOUND);
             }
-            String decodePwd = AesUtil.decryptStr(pwd, this.aesSecretPropertiesSupplier.get().getAesSecret());
-            UserPrincipal userPrincipal = this.userDetailServiceSupplier.get().loadUserByUsername(name);
+            String decodePwd = AesUtil.decryptStr(pwd, this.aesSecretProperties.getAesSecret());
+            UserPrincipal userPrincipal = this.userDetailService.loadUserByUsername(name);
             String pw_hash = BCrypt.hashpw(pwd, BCrypt.gensalt());
             if (BCrypt.checkpw(decodePwd, userPrincipal.getPassword().replace(BCRYPT, ""))) {
                 StpUtil.login(userPrincipal.getId());

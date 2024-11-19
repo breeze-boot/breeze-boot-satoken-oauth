@@ -123,7 +123,7 @@ public class SysMenuColumnServiceImpl extends ServiceImpl<SysMenuColumnMapper, S
                 this.save(sysMenuColumn);
             }
         }
-        return Result.ok(Boolean.TRUE);
+        return Result.ok(Boolean.TRUE, "设置成功");
     }
 
     /**

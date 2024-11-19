@@ -31,7 +31,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -119,7 +119,8 @@ public class SysEmailConfigController {
     @DeleteMapping
     @SaCheckPermission("sys:emailConfig:delete")
     @BreezeSysLog(description = "邮箱信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@Parameter(description = "邮箱IDS") @NotNull(message = "参数不能为空") @RequestBody Long[] ids) {
+    public Result<Boolean> delete(@Parameter(description = "邮箱IDS")
+                                  @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
         return Result.ok(this.sysEmailConfigService.removeByIds(Arrays.asList(ids)));
     }
 

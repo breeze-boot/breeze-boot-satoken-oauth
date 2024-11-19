@@ -14,36 +14,41 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.quartz.domain.params;
+package com.breeze.boot.modules.system.model.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.io.Serial;
-import java.io.Serializable;
+import java.util.List;
 
 /**
- * 任务的开启关闭参数
+ * 统计登录用户数据
  *
  * @author gaoweixuan
- * @since 2022-01-28
+ * @since 2024-07-13
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@Schema(description = "任务的开启关闭参数")
-public class JobOpenParam implements Serializable {
+@Schema(description = "统计登录用户数据")
+public class StatisticLoginUser {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+    private List<String> legend;
+    private List<Series> series;
 
-    @NotNull(message = "任务ID不能为空")
-    private Long id;
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    @Schema(description = "Series")
+    public static class Series {
 
-    @NotNull(message = "状态不能为空")
-    private Integer status;
+        private String value;
+        private String name;
+
+    }
 
 }

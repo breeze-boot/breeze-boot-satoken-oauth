@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import com.breeze.boot.core.enums.ResultCode;
-import com.breeze.boot.core.exception.BreezeBizException;
+import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.core.utils.BreezeThreadLocal;
 import com.breeze.boot.mybatis.config.BreezeLogicSqlInjector;
 import com.breeze.boot.mybatis.filters.TenantProperties;
@@ -87,10 +87,7 @@ public class MybatisPlusConfiguration {
             public Expression getTenantId() {
                 Long tenantId = BreezeThreadLocal.get();
                 log.info("[当前租户]： {}", tenantId);
-
-                if (Objects.isNull(tenantId)) {
-                    throw new BreezeBizException(ResultCode.TENANT_NOT_FOUND);
-                }
+                AssertUtil.isNotNull(tenantId, ResultCode.TENANT_NOT_FOUND);
                 return new LongValue(tenantId);
             }
 

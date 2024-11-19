@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.breeze.boot.core.jackson.propertise.AesSecretProperties;
+import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.auth.mapper.SysRegisteredClientMapper;
 import com.breeze.boot.modules.auth.model.entity.SysRegisteredClient;
@@ -47,6 +48,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static com.breeze.boot.core.enums.ResultCode.EXISTS;
 
 /**
  * 重写auth注册客户端库
@@ -100,10 +103,8 @@ public class SysRegisteredClientServiceImpl extends ServiceImpl<SysRegisteredCli
 
         RegisteredClientForm.TokenSettings tokenSettings = registeredClientForm.getTokenSettings();
         Assert.notNull(tokenSettings, "tokenSettings cannot be null");
-        SysRegisteredClient byClientId = this.getByClientId(registeredClientForm.getClientId());
-        if (Objects.nonNull(byClientId)) {
-            return Result.fail(Boolean.FALSE, "已经存在此客户端");
-        }
+        SysRegisteredClient registeredClient = this.getByClientId(registeredClientForm.getClientId());
+        AssertUtil.isTrue(Objects.isNull(registeredClient), EXISTS);
         return Result.ok(this.save(this.buildClient(registeredClientForm)));
     }
 

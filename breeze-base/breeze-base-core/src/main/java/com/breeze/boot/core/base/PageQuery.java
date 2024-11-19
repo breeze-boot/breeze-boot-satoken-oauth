@@ -20,7 +20,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.breeze.boot.core.enums.ResultCode;
-import com.breeze.boot.core.exception.BreezeBizException;
+import com.breeze.boot.core.utils.AssertUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Maps;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -169,9 +169,7 @@ public class PageQuery {
         if (this.size == null) {
             return 10;
         }
-        if (this.size > 1000) {
-            throw new BreezeBizException(ResultCode.PAGE_EXCEPTION);
-        }
+        AssertUtil.isFalse(this.size > 1000, ResultCode.PAGE_EXCEPTION);
         return size;
     }
 

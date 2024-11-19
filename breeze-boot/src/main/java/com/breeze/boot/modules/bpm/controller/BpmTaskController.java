@@ -51,7 +51,7 @@ public class BpmTaskController {
      * 获取用户任务列表
      *
      * @param userTaskQuery 用户任务查询
-     * @return {@link List}<{@link UserTaskVO}>
+     * @return {@link Result }<{@link List }<{@link UserTaskVO }>>
      */
     @GetMapping(value = "/listUserTodoTask")
     @ResponseBody
@@ -63,7 +63,7 @@ public class BpmTaskController {
      * 获取任务详情
      *
      * @param taskId 任务ID
-     * @return {@link List}<{@link UserTaskVO}>
+     * @return {@link Result }<{@link UserTaskVO }>
      */
     @GetMapping(value = "/getTaskInfo")
     @ResponseBody
@@ -117,7 +117,9 @@ public class BpmTaskController {
      */
     @GetMapping(value = "/getFlowButtonInfo")
     @ResponseBody
-    public Result<BpmInfoVO> getFlowButtonInfo(@RequestParam @NotBlank(message = "流程定义KEY不能为空") String procDefKey, @RequestParam String businessKey, @RequestParam String procInstId) {
+    public Result<BpmInfoVO> getFlowButtonInfo(@RequestParam @NotBlank(message = "流程定义KEY不能为空") String procDefKey,
+                                               @RequestParam String businessKey,
+                                               @RequestParam String procInstId) {
         return Result.ok(bpmTaskService.getFlowButtonInfo(procDefKey, businessKey, procInstId));
     }
 

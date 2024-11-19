@@ -61,7 +61,7 @@ public abstract class WebSocketMsgService {
     /**
      * 发送信息给指定用户
      *
-     * @param bpmParam  用户消息参数
+     * @param bpmParam 用户消息参数
      */
     public abstract void asyncSendMsgToUser(BpmParam bpmParam);
 

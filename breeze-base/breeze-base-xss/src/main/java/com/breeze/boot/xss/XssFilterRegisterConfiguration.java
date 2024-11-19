@@ -46,9 +46,7 @@ public class XssFilterRegisterConfiguration {
      */
     private final XssProperties xssProperties;
 
-    @Resource
-    @Qualifier("requestMappingHandlerMapping")
-    private RequestMappingHandlerMapping requestMappingHandlerMapping;
+    private final RequestMappingHandlerMapping requestMappingHandlerMapping;
 
     private final ApplicationContext applicationContext;
 

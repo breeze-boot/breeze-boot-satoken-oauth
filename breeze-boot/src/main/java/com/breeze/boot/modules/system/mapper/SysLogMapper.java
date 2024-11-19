@@ -19,9 +19,12 @@ package com.breeze.boot.modules.system.mapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.modules.system.model.entity.SysLog;
 import com.breeze.boot.modules.system.model.query.LogQuery;
+import com.breeze.boot.modules.system.model.vo.StatisticLoginUser;
 import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 系统日志映射器
@@ -42,8 +45,23 @@ public interface SysLogMapper extends BreezeBaseMapper<SysLog> {
      *
      * @param page     页面
      * @param logQuery 日志查询
+     * @param logType 日志类型
      * @return {@link Page}<{@link SysLog}>
      */
-    Page<SysLog> listPage(Page<SysLog> page, @Param("logQuery") LogQuery logQuery);
+    Page<SysLog> listPage(Page<SysLog> page, @Param("logQuery") LogQuery logQuery, @Param("logType") Integer logType);
+
+    /**
+     * 统计登录用户饼图
+     *
+     * @return {@link List }<{@link StatisticLoginUser.Series }>
+     */
+    List<StatisticLoginUser.Series> statisticLoginUserPie();
+
+    /**
+     * 统计登录用户饼图图例
+     *
+     * @return {@link List }<{@link String }>
+     */
+    List<String> statisticLoginUserPieLegend();
 
 }

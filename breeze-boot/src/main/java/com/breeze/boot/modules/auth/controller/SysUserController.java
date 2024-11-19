@@ -128,7 +128,10 @@ public class SysUserController {
     @SaCheckPermission("auth:user:modify")
     @BreezeSysLog(description = "用户头像信息修改", type = LogType.EDIT)
     public Result<Boolean> modifyAvatar(@Valid @RequestBody UserAvatarForm userAvatarForm) {
-        return Result.ok(sysUserService.update(Wrappers.<SysUser>lambdaUpdate().set(SysUser::getAvatar, userAvatarForm.getAvatar()).set(SysUser::getAvatarFileId, userAvatarForm.getAvatarFileId()).eq(SysUser::getId, userAvatarForm.getId())));
+        return Result.ok(sysUserService.update(Wrappers.<SysUser>lambdaUpdate()
+                .set(SysUser::getAvatar, userAvatarForm.getAvatar())
+                .set(SysUser::getAvatarFileId, userAvatarForm.getAvatarFileId())
+                .eq(SysUser::getId, userAvatarForm.getId())));
     }
 
     /**
@@ -136,14 +139,18 @@ public class SysUserController {
      *
      * @param username 平台编码
      * @param userId   用户ID
-     * @return {@link Result}<{@link Boolean}>
+     * @return {@link Result }<{@link Boolean }>
      */
     @Operation(summary = "校验用户名是否重复")
     @GetMapping("/checkUsername")
     @SaCheckPermission("auth:user:list")
     public Result<Boolean> checkUsername(@Parameter(description = "用户名") @NotBlank(message = "用户名不能为空") @RequestParam("username") String username,
                                          @Parameter(description = "用户ID") @RequestParam(value = "userId", required = false) Long userId) {
-        return Result.ok(Objects.isNull(this.sysUserService.getOne(Wrappers.<SysUser>lambdaQuery().ne(Objects.nonNull(userId), SysUser::getId, userId).eq(SysUser::getUsername, username))));
+        // @formatter:off
+        return Result.ok(Objects.isNull(this.sysUserService.getOne(Wrappers.<SysUser>lambdaQuery()
+                .ne(Objects.nonNull(userId), SysUser::getId, userId)
+                .eq(SysUser::getUsername, username))));
+        // @formatter:on
     }
 
     /**
@@ -169,7 +176,8 @@ public class SysUserController {
     @DeleteMapping
     @SaCheckPermission("auth:user:delete")
     @BreezeSysLog(description = "用户信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@Parameter(description = "用户ID") @NotNull(message = "参数不能为空") @RequestBody List<Long> ids) {
+    public Result<Boolean> delete(@Parameter(description = "用户ID")
+                                  @NotEmpty(message = "参数不能为空") @RequestBody List<Long> ids) {
         return this.sysUserService.removeUser(ids);
     }
 

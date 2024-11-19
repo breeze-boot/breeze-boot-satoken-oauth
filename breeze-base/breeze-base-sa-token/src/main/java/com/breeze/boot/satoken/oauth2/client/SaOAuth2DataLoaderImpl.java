@@ -26,7 +26,6 @@ import com.breeze.boot.satoken.oauth2.IClientService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * Sa-Token OAuth2：自定义数据加载器
@@ -37,9 +36,9 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class SaOAuth2DataLoaderImpl implements SaOAuth2DataLoader {
 
-    private final Supplier<IClientService> clientServiceSupplier;
+    private final IClientService iClientService;
 
-    private final Supplier<AesSecretProperties> aesSecretPropertiesSupplier;
+    private final AesSecretProperties aesSecretProperties;
 
     /**
      * 根据 clientId 获取 Client 信息
@@ -49,12 +48,12 @@ public class SaOAuth2DataLoaderImpl implements SaOAuth2DataLoader {
      */
     @Override
     public SaClientModel getClientModel(String clientId) {
-        BaseSysRegisteredClient registeredClient = clientServiceSupplier.get().getByClientId(clientId);
+        BaseSysRegisteredClient registeredClient = iClientService.getByClientId(clientId);
         if (registeredClient == null) {
             return null;
         }
         return new SaClientModel().setClientId(registeredClient.getClientId())
-                .setClientSecret(SaSecureUtil.aesDecrypt(aesSecretPropertiesSupplier.get().getAesSecret(), registeredClient.getClientSecret())) // client 秘钥
+                .setClientSecret(SaSecureUtil.aesDecrypt(aesSecretProperties.getAesSecret(), registeredClient.getClientSecret())) // client 秘钥
                 .addAllowRedirectUris(registeredClient.getRedirectUris().split(","))    // 所有允许授权的 url
                 .addContractScopes(registeredClient.getScopes().split(","))    // 所有签约的权限
                 .addAllowGrantTypes(registeredClient.getAuthorizationGrantTypes().split(","));
@@ -69,7 +68,7 @@ public class SaOAuth2DataLoaderImpl implements SaOAuth2DataLoader {
      */
     @Override
     public String getOpenid(String clientId, Object loginId) {
-        BaseSysRegisteredClient registeredClient = this.clientServiceSupplier.get().getByClientId(clientId);
+        BaseSysRegisteredClient registeredClient = this.iClientService.getByClientId(clientId);
         if (Objects.nonNull(registeredClient)) {
             // 从数据库查询
             return SaSecureUtil.md5(SaOAuth2Manager.getServerConfig().getOpenidDigestPrefix() + "_" + registeredClient.getClientId() + "_" + loginId);

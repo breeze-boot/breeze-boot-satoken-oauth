@@ -120,31 +120,4 @@ public class Result<T> implements Serializable {
         return result;
     }
 
-    /**
-     * 失败
-     *
-     * @return {@link Result}<{@link T}>
-     */
-    public static <T> Result<T> fail() {
-        Result<T> result = new Result<>();
-        result.setCode(FAIL);
-        result.setMessage(null);
-        return result;
-    }
-
-    /**
-     * 失败
-     *
-     * @param data    数据
-     * @param message 消息
-     * @return {@link Result}<{@link T}>
-     */
-    public static <T> Result<T> fail(T data, String message) {
-        Result<T> result = new Result<>();
-        result.setCode(FAIL);
-        result.setMessage(message);
-        result.setData(data);
-        return result;
-    }
-
 }

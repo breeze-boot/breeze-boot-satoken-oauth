@@ -33,7 +33,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -89,16 +89,18 @@ public class SysPostController {
      *
      * @param postCode 岗位编码
      * @param postId   岗位ID
-     * @return {@link Result}<{@link SysPost}>
+     * @return {@link Result }<{@link Boolean }>
      */
     @Operation(summary = "校验岗位编码是否重复")
     @GetMapping("/checkPostCode")
     @SaCheckPermission("auth:post:list")
     public Result<Boolean> checkPostCode(@Parameter(description = "岗位编码") @NotBlank(message = "岗位编码不能为空") @RequestParam("postCode") String postCode,
                                          @Parameter(description = "岗位ID") @RequestParam(value = "postId", required = false) Long postId) {
+        // @formatter:off
         return Result.ok(Objects.isNull(this.sysPostService.getOne(Wrappers.<SysPost>lambdaQuery()
                 .ne(Objects.nonNull(postId), SysPost::getId, postId)
                 .eq(SysPost::getPostCode, postCode))));
+        // @formatter:on
     }
 
     /**
@@ -140,7 +142,8 @@ public class SysPostController {
     @DeleteMapping
     @SaCheckPermission("auth:post:delete")
     @BreezeSysLog(description = "岗位信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@Parameter(description = "岗位IDS") @NotNull(message = "参数不能为空") @RequestBody List<Long> ids) {
+    public Result<Boolean> delete(@Parameter(description = "岗位IDS")
+                                  @NotEmpty(message = "参数不能为空") @RequestBody List<Long> ids) {
         return Result.ok(this.sysPostService.removeByIds(ids));
     }
 
