@@ -147,4 +147,16 @@ public class SysDeptController {
         return this.sysDeptService.deleteById(id);
     }
 
+    /**
+     * 部门下拉框
+     *
+     * @param id id
+     * @return {@link Result}<{@link List}<{@link Tree}<{@link Long}>>>
+     */
+    @Operation(summary = "部门下拉框", description = "下拉框接口")
+    @GetMapping("/selectDept")
+    public Result<List<?>> selectDept(@RequestParam(defaultValue = "", required = false) Long id) {
+        return this.sysDeptService.selectDept(id);
+    }
+
 }

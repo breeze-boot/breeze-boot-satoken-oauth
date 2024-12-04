@@ -38,6 +38,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -141,9 +143,18 @@ public class BpmCategoryController {
     @DeleteMapping
     @SaCheckPermission("bpm:category:delete")
     @BreezeSysLog(description = "流程分类信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@Parameter(description = "流程分类IDS")
-                                  @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
+    public Result<Boolean> delete(@Parameter(description = "流程分类IDS") @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
         return Result.ok(this.bpmCategoryService.removeByIds(Arrays.asList(ids)));
     }
 
+    /**
+     * 流程分类下拉框
+     *
+     * @return {@link Result }<{@link List }<{@link Map }<{@link String }, {@link Object }>>>
+     */
+    @Operation(summary = "流程分类下拉框", description = "下拉框接口")
+    @GetMapping("/selectCategory")
+    public Result<List<Map<String, Object>>> selectCategory() {
+        return this.bpmCategoryService.selectCategory();
+    }
 }

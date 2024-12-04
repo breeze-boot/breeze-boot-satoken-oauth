@@ -73,8 +73,11 @@
         a.create_time DESC
     </select>
 
-    <select id="listUserRoles" resultType="java.lang.Long">
-        SELECT a.id
+    <select id="listUserRoles"  resultType="com.breeze.boot.modules.auth.model.vo.RoleVO">
+        SELECT
+            a.id,
+            a.role_code,
+            a.role_name
         FROM sys_role AS a
                  LEFT JOIN sys_user_role AS b ON a.id = b.role_id
         WHERE b.user_id = #{userId}

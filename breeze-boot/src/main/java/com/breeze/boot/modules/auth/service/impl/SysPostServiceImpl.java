@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.auth.mapper.SysPostMapper;
 import com.breeze.boot.modules.auth.model.entity.SysPost;
 import com.breeze.boot.modules.auth.model.form.PostForm;
@@ -28,8 +29,13 @@ import com.breeze.boot.modules.auth.model.mappers.SysPostMapStruct;
 import com.breeze.boot.modules.auth.model.query.PostQuery;
 import com.breeze.boot.modules.auth.model.vo.PostVO;
 import com.breeze.boot.modules.auth.service.SysPostService;
+import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 系统岗服务impl
@@ -96,6 +102,20 @@ public class SysPostServiceImpl extends ServiceImpl<SysPostMapper, SysPost> impl
         return this.updateById(sysPost);
     }
 
+    /**
+     * 岗位下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    @Override
+    public Result<List<Map<String, Object>>> selectPost() {
+        return Result.ok(this.list().stream().map(post -> {
+            Map< String,  Object> postMap = Maps.newHashMap();
+            postMap.put("value", post.getId());
+            postMap.put("label", post.getPostName());
+            return postMap;
+        }).collect(Collectors.toList()));
+    }
 }
 
 

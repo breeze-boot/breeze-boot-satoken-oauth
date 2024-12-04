@@ -16,9 +16,7 @@
 
 package com.breeze.boot.modules.system.controller;
 
-import cn.hutool.core.lang.tree.Tree;
 import com.breeze.boot.core.utils.Result;
-import com.breeze.boot.modules.auth.model.entity.SysUser;
 import com.breeze.boot.modules.system.model.form.FileForm;
 import com.breeze.boot.modules.system.service.SysCommonService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +29,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -54,143 +51,6 @@ public class SysCommonController {
      * 公共服务
      */
     private final SysCommonService sysCommonService;
-
-    /**
-     * 菜单树形下拉框
-     *
-     * @param id id
-     * @return {@link Result}<{@link List}<{@link Tree}<{@link Long}>>>
-     */
-    @Operation(summary = "菜单树形下拉框", description = "下拉框接口")
-    @GetMapping("/selectMenu")
-    public Result<List<Tree<Long>>> selectMenu(@RequestParam(defaultValue = "", required = false) Long id) {
-        return this.sysCommonService.selectMenu(id);
-    }
-
-    /**
-     * 客户端下拉框
-     *
-     * @return {@link Result }<{@link List }<{@link Map }<{@link String }, {@link String }>>>
-     */
-    @Operation(summary = "客户端下拉框", description = "下拉框接口")
-    @GetMapping("/selectRegisteredClient")
-    public Result<List<Map<String, String>>> selectRegisteredClient() {
-        return this.sysCommonService.selectRegisteredClient();
-    }
-
-    /**
-     * 平台下拉框
-     *
-     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
-     */
-    @Operation(summary = "平台下拉框", description = "下拉框接口")
-    @GetMapping("/selectPlatform")
-    public Result<List<Map<String, Object>>> selectPlatform() {
-        return this.sysCommonService.selectPlatform();
-
-    }
-
-    /**
-     * 部门下拉框
-     *
-     * @param id id
-     * @return {@link Result}<{@link List}<{@link Tree}<{@link Long}>>>
-     */
-    @Operation(summary = "部门下拉框", description = "下拉框接口")
-    @GetMapping("/selectDept")
-    public Result<List<?>> selectDept(@RequestParam(defaultValue = "", required = false) Long id) {
-        return this.sysCommonService.selectDept(id);
-    }
-
-    /**
-     * 用户列表
-     *
-     * @param deptId 部门ID
-     * @return {@link Result}<{@link List}<{@link SysUser}>>
-     */
-    @Operation(summary = "用户下拉框", description = "下拉框接口")
-    @GetMapping("/listUser")
-    public Result<List<SysUser>> listUser(@RequestParam(value = "deptId" ,required = false) Long deptId) {
-        return this.sysCommonService.listUser(deptId);
-    }
-
-    /**
-     * 角色下拉框
-     *
-     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
-     */
-    @Operation(summary = "角色下拉框", description = "下拉框接口")
-    @GetMapping("/selectRole")
-    public Result<List<Map<String, Object>>> selectRole() {
-        return this.sysCommonService.selectRole();
-    }
-
-    /**
-     * 租户下拉框
-     *
-     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
-     */
-    @Operation(summary = "租户下拉框", description = "下拉框接口")
-    @GetMapping("/selectTenant")
-    public Result<List<Map<String, Object>>> selectTenant() {
-        return this.sysCommonService.selectTenant();
-    }
-
-    /**
-     * 岗位下拉框
-     *
-     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
-     */
-    @Operation(summary = "岗位下拉框", description = "下拉框接口")
-    @GetMapping("/selectPost")
-    public Result<List<Map<String, Object>>> selectPost() {
-        return this.sysCommonService.selectPost();
-    }
-
-    /**
-     * 表名下拉框
-     *
-     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
-     */
-    @Operation(summary = "表名下拉框", description = "下拉框接口")
-    @GetMapping("/selectTable")
-    public Result<List<Map<String, Object>>> selectTable() {
-        return this.sysCommonService.selectTable();
-    }
-
-    /**
-     * 字段下拉框
-     *
-     * @param tableName 表名
-     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
-     */
-    @Operation(summary = "字段下拉框", description = "下拉框接口")
-    @GetMapping("/selectTableColumn")
-    public Result<List<Map<String, Object>>> selectTableColumn(@RequestParam("tableName") String tableName) {
-        return this.sysCommonService.selectTableColumn(tableName);
-    }
-
-    /**
-     * 行数据权限类型下拉框
-     *
-     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
-     */
-    @Operation(summary = "行数据权限类型下拉框", description = "下拉框接口")
-    @GetMapping("/selectPermissionType")
-    public Result<List<Map<String, Object>>> selectPermissionType() {
-        return this.sysCommonService.selectPermissionType();
-    }
-
-    /**
-     * 数据权限下拉框
-     *
-     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
-     */
-    @Operation(summary = "数据权限下拉框", description = "下拉框接口")
-    @GetMapping("/selectCustomizePermission")
-    public Result<List<Map<String, Object>>> selectCustomizePermission() {
-        return this.sysCommonService.selectCustomizePermission();
-    }
 
     /**
      * 文件上传到minio

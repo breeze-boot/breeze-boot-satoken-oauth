@@ -21,6 +21,7 @@ import com.breeze.boot.modules.auth.model.bo.RoleBO;
 import com.breeze.boot.modules.auth.model.bo.UserRoleBO;
 import com.breeze.boot.modules.auth.model.entity.SysRole;
 import com.breeze.boot.modules.auth.model.query.RoleQuery;
+import com.breeze.boot.modules.auth.model.vo.RoleVO;
 import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -73,8 +74,8 @@ public interface SysRoleMapper extends BreezeBaseMapper<SysRole> {
      * 获取用户角色列表
      *
      * @param userId 用户id
-     * @return {@link List}<{@link Long}>
+     * @return {@link List}<{@link RoleVO}>
      */
-    List<Long> listUserRoles(@Param("userId") Long userId);
+    List<RoleVO> listUserRoles(@Param("userId") Long userId);
 
 }

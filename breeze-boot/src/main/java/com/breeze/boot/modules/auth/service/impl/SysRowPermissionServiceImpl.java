@@ -18,6 +18,7 @@
 package com.breeze.boot.modules.auth.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -38,6 +39,7 @@ import com.breeze.boot.modules.auth.model.vo.RowPermissionVO;
 import com.breeze.boot.modules.auth.service.SysRoleRowPermissionService;
 import com.breeze.boot.modules.auth.service.SysRowPermissionService;
 import com.breeze.boot.modules.auth.service.SysTenantService;
+import com.google.common.collect.Maps;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +49,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.breeze.boot.core.constants.CacheConstants.ROW_PERMISSION;
@@ -218,8 +222,7 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
     @Transactional(rollbackFor = Exception.class)
     public Result<Boolean> removeRowPermissionByIds(List<Long> ids) {
         Cache cache = cacheManager.getCache(ROW_PERMISSION);
-        List<SysRoleRowPermission> rolePermissionList = this.sysRoleRowPermissionService.list(Wrappers.<SysRoleRowPermission>lambdaQuery()
-                .in(SysRoleRowPermission::getPermissionId, ids));
+        List<SysRoleRowPermission> rolePermissionList = this.sysRoleRowPermissionService.list(Wrappers.<SysRoleRowPermission>lambdaQuery().in(SysRoleRowPermission::getPermissionId, ids));
         AssertUtil.isTrue(CollUtil.isEmpty(rolePermissionList), IS_USED);
         List<SysRowPermission> rowPermissionList = this.listByIds(ids);
         for (SysRowPermission rowPermission : rowPermissionList) {
@@ -228,5 +231,39 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
         }
 
         return Result.ok(this.removeBatchByIds(ids));
+    }
+
+    /**
+     * 数据权限类型下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    @Override
+    public Result<List<Map<String, Object>>> selectPermissionType() {
+        return Result.ok(Arrays.stream(DataPermissionType.values()).map(permission -> {
+            Map<String, Object> permissionMap = Maps.newHashMap();
+            permissionMap.put("value", permission.getType());
+            permissionMap.put("label", permission.getDesc());
+            if (StrUtil.equals(DataPermissionType.CUSTOMIZES.getType(), permission.getType())) {
+                permissionMap.put("flag", Boolean.TRUE);
+            }
+            return permissionMap;
+        }).collect(Collectors.toList()));
+    }
+
+
+    /**
+     * 数据权限下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    @Override
+    public Result<List<Map<String, Object>>> selectCustomizePermission() {
+        return Result.ok(this.list().stream().map(permission -> {
+            Map<String, Object> customizePermissionMap = Maps.newHashMap();
+            customizePermissionMap.put("value", permission.getId());
+            customizePermissionMap.put("label", permission.getPermissionName());
+            return customizePermissionMap;
+        }).collect(Collectors.toList()));
     }
 }

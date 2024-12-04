@@ -23,7 +23,6 @@ import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.log.annotation.BreezeSysLog;
 import com.breeze.boot.log.enums.LogType;
 import com.breeze.boot.modules.auth.model.entity.SysRowPermission;
-import com.breeze.boot.modules.auth.model.entity.SysTenant;
 import com.breeze.boot.modules.auth.model.form.RowPermissionForm;
 import com.breeze.boot.modules.auth.model.query.RowPermissionQuery;
 import com.breeze.boot.modules.auth.model.vo.RowPermissionVO;
@@ -40,6 +39,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -157,4 +158,25 @@ public class SysRowPermissionController {
         return this.sysRowPermissionService.removeRowPermissionByIds(Arrays.asList(ids));
     }
 
+    /**
+     * 行数据权限类型下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    @Operation(summary = "行数据权限类型下拉框", description = "下拉框接口")
+    @GetMapping("/selectPermissionType")
+    public Result<List<Map<String, Object>>> selectPermissionType() {
+        return this.sysRowPermissionService.selectPermissionType();
+    }
+
+    /**
+     * 数据权限下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    @Operation(summary = "数据权限下拉框", description = "下拉框接口")
+    @GetMapping("/selectCustomizePermission")
+    public Result<List<Map<String, Object>>> selectCustomizePermission() {
+        return this.sysRowPermissionService.selectCustomizePermission();
+    }
 }

@@ -150,7 +150,18 @@ public class SysMenuController {
     @SaCheckPermission("auth:menu:delete")
     @BreezeSysLog(description = "菜单信息删除", type = LogType.DELETE)
     public Result<Boolean> delete(@Parameter(description = "菜单ID") @NotNull(message = "参数不能为空") @RequestBody Long id) {
-        return this.sysMenuService.deleteById(id);
+        return this.sysMenuService.deleteMenu(id);
     }
 
+    /**
+     * 菜单树形下拉框
+     *
+     * @param id id
+     * @return {@link Result}<{@link List}<{@link Tree}<{@link Long}>>>
+     */
+    @Operation(summary = "菜单树形下拉框", description = "下拉框接口")
+    @GetMapping("/selectMenu")
+    public Result<List<Tree<Long>>> selectMenu(@RequestParam(defaultValue = "", required = false) Long id) {
+        return this.sysMenuService.selectMenu(id);
+    }
 }

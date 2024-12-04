@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.breeze.boot.core.enums.ResultCode.IS_USED;
@@ -161,4 +162,14 @@ public class SysPlatformController {
         return Result.ok(this.sysPlatformService.removeByIds(Arrays.asList(ids)));
     }
 
+    /**
+     * 平台下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    @Operation(summary = "平台下拉框", description = "下拉框接口")
+    @GetMapping("/selectPlatform")
+    public Result<List<Map<String, Object>>> selectPlatform() {
+        return this.sysPlatformService.selectPlatform();
+    }
 }

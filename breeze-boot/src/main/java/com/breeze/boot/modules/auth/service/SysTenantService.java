@@ -16,7 +16,6 @@
 
 package com.breeze.boot.modules.auth.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.breeze.boot.core.utils.Result;
@@ -26,6 +25,7 @@ import com.breeze.boot.modules.auth.model.query.TenantQuery;
 import com.breeze.boot.modules.auth.model.vo.TenantVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 系统租户服务
@@ -67,5 +67,12 @@ public interface SysTenantService extends IService<SysTenant> {
      * @return {@link Result}<{@link Boolean}>
      */
     Result<Boolean> removeTenantByIds(List<Long> ids);
+
+    /**
+     * 租户下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    Result<List<Map<String, Object>>> selectTenant();
 
 }

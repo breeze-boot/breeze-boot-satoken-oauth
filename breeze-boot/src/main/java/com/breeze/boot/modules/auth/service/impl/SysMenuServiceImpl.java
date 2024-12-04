@@ -144,22 +144,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         return this.listTreeRolePermission(type);
     }
 
-    /**
-     * 删除通过ID
-     *
-     * @param id id
-     * @return {@link Result}
-     */
-    @Override
-    public Result<Boolean> deleteById(Long id) {
-        List<SysMenu> menuEntityList = this.list(Wrappers.<SysMenu>lambdaQuery().eq(SysMenu::getParentId, id));
-        AssertUtil.isTrue(CollUtil.isEmpty(menuEntityList), IS_USED);
-        boolean remove = this.removeById(id);
-        AssertUtil.isTrue(remove, FAIL);
-        // 删除已经关联的角色的菜单
-        this.sysRoleMenuService.remove(Wrappers.<SysRoleMenu>lambdaQuery().eq(SysRoleMenu::getMenuId, id));
-        return Result.ok(Boolean.TRUE, "删除成功");
-    }
 
     /**
      * 保存菜单
@@ -186,6 +170,51 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         SysMenu sysMenu = sysMenuMapStruct.form2Entity(menuForm);
         sysMenu.setId(id);
         return Result.ok(this.updateById(sysMenu));
+    }
+
+    /**
+     * 删除通过ID
+     *
+     * @param id id
+     * @return {@link Result}
+     */
+    @Override
+    public Result<Boolean> deleteMenu(Long id) {
+        List<SysMenu> menuEntityList = this.list(Wrappers.<SysMenu>lambdaQuery().eq(SysMenu::getParentId, id));
+        AssertUtil.isTrue(CollUtil.isEmpty(menuEntityList), IS_USED);
+        boolean remove = this.removeById(id);
+        AssertUtil.isTrue(remove, FAIL);
+        // 删除已经关联的角色的菜单
+        this.sysRoleMenuService.remove(Wrappers.<SysRoleMenu>lambdaQuery().eq(SysRoleMenu::getMenuId, id));
+        return Result.ok(Boolean.TRUE, "删除成功");
+    }
+
+    /**
+     * 菜单树形下拉框
+     *
+     * @param id id
+     * @return {@link Result}<{@link List}<{@link Tree}<{@link Long}>>>
+     */
+    @Override
+    public Result<List<Tree<Long>>> selectMenu(Long id) {
+        List<SysMenu> menuList = this.list(Wrappers.<SysMenu>lambdaQuery().ne(SysMenu::getType, 2));
+        List<TreeNode<Long>> treeNodeList = menuList.stream().map(
+                menu -> {
+                    TreeNode<Long> treeNode = new TreeNode<>();
+                    treeNode.setId(menu.getId());
+                    treeNode.setParentId(menu.getParentId());
+                    treeNode.setName(menu.getName());
+                    Map<String, Object> leafMap = Maps.newHashMap();
+                    if (Objects.equals(menu.getId(), id)) {
+                        leafMap.put("disabled", Boolean.TRUE);
+                    }
+                    leafMap.put("label", menu.getTitle());
+                    leafMap.put("value", menu.getId());
+                    treeNode.setExtra(leafMap);
+                    return treeNode;
+                }
+        ).collect(Collectors.toList());
+        return Result.ok(TreeUtil.build(treeNodeList, ROOT));
     }
 
     /**

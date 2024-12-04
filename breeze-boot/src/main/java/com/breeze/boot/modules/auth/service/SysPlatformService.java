@@ -18,10 +18,14 @@ package com.breeze.boot.modules.auth.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.auth.model.entity.SysPlatform;
 import com.breeze.boot.modules.auth.model.form.PlatformForm;
 import com.breeze.boot.modules.auth.model.query.PlatformQuery;
 import com.breeze.boot.modules.auth.model.vo.PlatformVO;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 系统平台服务
@@ -63,5 +67,12 @@ public interface SysPlatformService extends IService<SysPlatform> {
      * @return {@link Boolean }
      */
     Boolean modifyPlatform(Long id, PlatformForm platformForm);
+
+    /**
+     * 平台下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    Result<List<Map<String, Object>>> selectPlatform();
 
 }

@@ -137,19 +137,36 @@ public class SysUserController {
     /**
      * 校验用户名是否重复
      *
-     * @param username 平台编码
+     * @param username 用户名
      * @param userId   用户ID
      * @return {@link Result }<{@link Boolean }>
      */
     @Operation(summary = "校验用户名是否重复")
     @GetMapping("/checkUsername")
-    @SaCheckPermission("auth:user:list")
     public Result<Boolean> checkUsername(@Parameter(description = "用户名") @NotBlank(message = "用户名不能为空") @RequestParam("username") String username,
                                          @Parameter(description = "用户ID") @RequestParam(value = "userId", required = false) Long userId) {
         // @formatter:off
         return Result.ok(Objects.isNull(this.sysUserService.getOne(Wrappers.<SysUser>lambdaQuery()
                 .ne(Objects.nonNull(userId), SysUser::getId, userId)
                 .eq(SysUser::getUsername, username))));
+        // @formatter:on
+    }
+
+    /**
+     * 校验用户账户是否重复
+     *
+     * @param userCode 用户账户
+     * @param userId   用户ID
+     * @return {@link Result }<{@link Boolean }>
+     */
+    @Operation(summary = "校验用户账户是否重复")
+    @GetMapping("/checkUserCode")
+    public Result<Boolean> checkUserCode(@Parameter(description = "用户账户") @NotBlank(message = "用户账户不能为空") @RequestParam("userCode") String userCode,
+                                         @Parameter(description = "用户ID") @RequestParam(value = "userId", required = false) Long userId) {
+        // @formatter:off
+        return Result.ok(Objects.isNull(this.sysUserService.getOne(Wrappers.<SysUser>lambdaQuery()
+                .ne(Objects.nonNull(userId), SysUser::getId, userId)
+                .eq(SysUser::getUserCode, userCode))));
         // @formatter:on
     }
 
@@ -244,6 +261,18 @@ public class SysUserController {
     @BreezeSysLog(description = "用户分配角色", type = LogType.EDIT)
     public Result<Boolean> setRole(@Valid @RequestBody UserRolesForm userRolesForm) {
         return sysUserService.setRole(userRolesForm);
+    }
+
+    /**
+     * 用户列表
+     *
+     * @param deptId 部门ID
+     * @return {@link Result}<{@link List}<{@link SysUser}>>
+     */
+    @Operation(summary = "用户下拉框", description = "下拉框接口")
+    @GetMapping("/listDeptUser")
+    public Result<List<SysUser>> listDeptUser(@RequestParam(value = "deptId" ,required = false) Long deptId) {
+        return this.sysUserService.listDeptUser(deptId);
     }
 
 }

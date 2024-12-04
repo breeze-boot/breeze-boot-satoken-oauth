@@ -35,12 +35,14 @@ import com.breeze.boot.modules.auth.model.vo.RoleVO;
 import com.breeze.boot.modules.auth.service.SysRoleMenuService;
 import com.breeze.boot.modules.auth.service.SysRoleRowPermissionService;
 import com.breeze.boot.modules.auth.service.SysRoleService;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -167,11 +169,25 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      * 获取用户角色列表
      *
      * @param userId 用户Id
-     * @return {@link Result}<{@link List}<{@link Long}>>
+     * @return {@link Result}<{@link List}<{@link RoleVO}>>
      */
     @Override
-    public List<Long> listUserRoles(Long userId) {
+    public List<RoleVO> listUserRoles(Long userId) {
         return this.baseMapper.listUserRoles(userId);
     }
 
+    /**
+     * 角色下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    @Override
+    public Result<List<Map<String, Object>>> selectRole() {
+        return Result.ok(this.list().stream().map(sysRole -> {
+            Map<String, Object> roleMap = Maps.newHashMap();
+            roleMap.put("value", sysRole.getId());
+            roleMap.put("label", sysRole.getRoleName());
+            return roleMap;
+        }).collect(Collectors.toList()));
+    }
 }

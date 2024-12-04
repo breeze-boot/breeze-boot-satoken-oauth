@@ -18,10 +18,14 @@ package com.breeze.boot.modules.bpm.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.bpm.model.entity.BpmCategory;
 import com.breeze.boot.modules.bpm.model.form.BpmCategoryForm;
 import com.breeze.boot.modules.bpm.model.query.BpmCategoryQuery;
 import com.breeze.boot.modules.bpm.model.vo.BpmCategoryVO;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 流程分类服务
@@ -63,5 +67,12 @@ public interface IBpmCategoryService extends IService<BpmCategory> {
      * @return {@link Boolean }
      */
     Boolean modifyFlowCategory(Long id, BpmCategoryForm bpmCategoryForm);
+
+    /**
+     * 类别下拉框
+     *
+     * @return {@link Result }<{@link List }<{@link Map }<{@link String }, {@link Object }>>>
+     */
+    Result<List<Map<String, Object>>> selectCategory();
 
 }

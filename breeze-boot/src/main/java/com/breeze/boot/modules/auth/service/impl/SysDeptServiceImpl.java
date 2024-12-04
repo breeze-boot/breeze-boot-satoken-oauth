@@ -137,6 +137,17 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
         return this.baseMapper.selectDeptById(deptId);
     }
 
+    /**
+     * 部门下拉框
+     *
+     * @param id id
+     * @return {@link Result}<{@link List}<{@link Tree}<{@link Long}>>>
+     */
+    @Override
+    public Result<List<?>> selectDept(Long id) {
+        return Result.ok(this.listDept(DeptQuery.builder().id(id).build()));
+    }
+
     public List<Long> findPropertyInTree(SysDeptBO node) {
         List<Long> result = new ArrayList<>();
         if (node != null) {

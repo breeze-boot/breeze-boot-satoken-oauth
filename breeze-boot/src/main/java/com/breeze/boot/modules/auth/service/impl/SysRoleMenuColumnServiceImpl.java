@@ -50,8 +50,7 @@ public class SysRoleMenuColumnServiceImpl extends ServiceImpl<SysRoleMenuColumnM
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result<Boolean> saveRoleMenuColumn(RoleMenuColumnForm roleMenuColumnForm) {
-        boolean remove = this.remove(Wrappers.<SysRoleMenuColumn>lambdaQuery().eq(SysRoleMenuColumn::getRoleId, roleMenuColumnForm.getRoleId()));
-        AssertUtil.isTrue(remove, ResultCode.FAIL);
+        this.remove(Wrappers.<SysRoleMenuColumn>lambdaQuery().eq(SysRoleMenuColumn::getRoleId, roleMenuColumnForm.getRoleId()));
         return Result.ok(this.saveBatch(roleMenuColumnForm.getMenu().stream().map(menu -> {
             SysRoleMenuColumn sysRoleMenuColumn = new SysRoleMenuColumn();
             sysRoleMenuColumn.setMenu(menu);

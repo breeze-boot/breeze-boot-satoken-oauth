@@ -39,6 +39,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -148,6 +149,17 @@ public class SysTenantController {
     public Result<Boolean> delete(@Parameter(description = "租户IDS")
                                   @NotEmpty(message = "参数不能为空") @RequestBody List<Long> ids) {
         return this.sysTenantService.removeTenantByIds(ids);
+    }
+
+    /**
+     * 租户下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    @Operation(summary = "租户下拉框", description = "下拉框接口")
+    @GetMapping("/selectTenant")
+    public Result<List<Map<String, Object>>> selectTenant() {
+        return this.sysTenantService.selectTenant();
     }
 
 }

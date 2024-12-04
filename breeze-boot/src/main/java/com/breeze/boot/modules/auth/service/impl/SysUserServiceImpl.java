@@ -358,6 +358,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     /**
+     * 用户列表
+     */
+    @Override
+    public Result<List<SysUser>> listDeptUser(Long deptId) {
+        return Result.ok(this.list(Wrappers.<SysUser>lambdaQuery()
+                .eq(Objects.nonNull(deptId), SysUser::getDeptId, deptId)));
+    }
+
+    /**
      * 加载登录用户
      *
      * @param sysUser 系统用户实体

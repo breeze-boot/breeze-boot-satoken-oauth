@@ -82,5 +82,12 @@ public interface SysDeptService extends IService<SysDept> {
      */
     List<SysDeptBO> listSubDeptId(Long deptId);
 
+    /**
+     * 部门下拉框
+     *
+     * @param id id
+     * @return {@link Result}<{@link List}<{@link Tree}<{@link Long}>>>
+     */
+    Result<List<?>> selectDept(Long id);
 }
 

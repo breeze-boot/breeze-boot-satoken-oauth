@@ -25,6 +25,7 @@ import com.breeze.boot.modules.auth.model.query.RowPermissionQuery;
 import com.breeze.boot.modules.auth.model.vo.RowPermissionVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 系统行级数据权限服务
@@ -76,5 +77,19 @@ public interface SysRowPermissionService extends IService<SysRowPermission> {
      * @return {@link Result}<{@link Boolean}>
      */
     Result<Boolean> modifyRowPermission(Long id, RowPermissionForm rowPermissionForm);
+
+    /**
+     * 数据权限类型下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    Result<List<Map<String, Object>>> selectPermissionType();
+
+    /**
+     * 数据权限下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    Result<List<Map<String, Object>>> selectCustomizePermission();
 
 }

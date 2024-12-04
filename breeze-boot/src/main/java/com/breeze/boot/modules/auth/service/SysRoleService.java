@@ -26,6 +26,7 @@ import com.breeze.boot.modules.auth.model.query.RoleQuery;
 import com.breeze.boot.modules.auth.model.vo.RoleVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 系统角色服务
@@ -71,9 +72,9 @@ public interface SysRoleService extends IService<SysRole> {
      * 获取用户角色列表
      *
      * @param userId 用户Id
-     * @return {@link Result}<{@link List}<{@link Long}>>
+     * @return {@link Result}<{@link List}<{@link RoleVO}>>
      */
-    List<Long> listUserRoles(Long userId);
+    List<RoleVO> listUserRoles(Long userId);
 
     /**
      * 修改
@@ -91,6 +92,13 @@ public interface SysRoleService extends IService<SysRole> {
      * @return {@link Boolean}
      */
     Result<Boolean> saveRole(RoleForm roleForm);
+
+    /**
+     * 角色下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    Result<List<Map<String, Object>>> selectRole();
 
 }
 

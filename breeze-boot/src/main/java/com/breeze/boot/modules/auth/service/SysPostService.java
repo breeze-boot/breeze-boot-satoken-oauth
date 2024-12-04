@@ -18,10 +18,14 @@ package com.breeze.boot.modules.auth.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.auth.model.entity.SysPost;
 import com.breeze.boot.modules.auth.model.form.PostForm;
 import com.breeze.boot.modules.auth.model.query.PostQuery;
 import com.breeze.boot.modules.auth.model.vo.PostVO;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 系统岗位服务
@@ -64,4 +68,10 @@ public interface SysPostService extends IService<SysPost> {
      */
     Boolean modifyPost(Long id, PostForm postForm);
 
+    /**
+     * 岗位下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    Result<List<Map<String, Object>>> selectPost();
 }

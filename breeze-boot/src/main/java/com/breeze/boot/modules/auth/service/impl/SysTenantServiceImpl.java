@@ -115,13 +115,19 @@ public class SysTenantServiceImpl extends ServiceImpl<SysTenantMapper, SysTenant
         return Result.ok(this.removeByIds(ids));
     }
 
-    public List<Map<String, Object>> selectTenant() {
-        return this.list().stream().map(tenant -> {
+    /**
+     * 租户下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    @Override
+    public Result<List<Map<String, Object>>> selectTenant() {
+        return Result.ok(this.list().stream().map(tenant -> {
             Map<String, Object> tenantMap = Maps.newHashMap();
-            tenantMap.put("value", tenant.getId());
+            tenantMap.put("value", String.valueOf(tenant.getId()));
             tenantMap.put("label", tenant.getTenantName());
             return tenantMap;
-        }).collect(Collectors.toList());
+        }).collect(Collectors.toList()));
     }
 }
 

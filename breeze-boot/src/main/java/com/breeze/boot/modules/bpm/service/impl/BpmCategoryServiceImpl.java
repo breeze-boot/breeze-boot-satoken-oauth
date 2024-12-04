@@ -20,6 +20,7 @@ import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.bpm.mapper.BpmCategoryMapper;
 import com.breeze.boot.modules.bpm.model.entity.BpmCategory;
 import com.breeze.boot.modules.bpm.model.form.BpmCategoryForm;
@@ -27,8 +28,13 @@ import com.breeze.boot.modules.bpm.model.mappers.BpmCategoryMapStruct;
 import com.breeze.boot.modules.bpm.model.query.BpmCategoryQuery;
 import com.breeze.boot.modules.bpm.model.vo.BpmCategoryVO;
 import com.breeze.boot.modules.bpm.service.IBpmCategoryService;
+import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 流程分类服务impl
@@ -91,4 +97,21 @@ public class BpmCategoryServiceImpl extends ServiceImpl<BpmCategoryMapper, BpmCa
         bpmCategory.setId(id);
         return this.updateById(bpmCategory);
     }
+
+    /**
+     * 类别下拉框
+     *
+     * @return {@link Result }<{@link List }<{@link Map }<{@link String }, {@link Object }>>>
+     */
+    @Override
+    public Result<List<Map<String, Object>>> selectCategory() {
+        List<BpmCategory> bpmCategoryList = this.list();
+        return Result.ok(bpmCategoryList.stream().map(item -> {
+            Map<String, Object> resultMap = Maps.newHashMap();
+            resultMap.put("label", item.getCategoryName());
+            resultMap.put("value", item.getCategoryCode());
+            return resultMap;
+        }).collect(Collectors.toList()));
+    }
+
 }

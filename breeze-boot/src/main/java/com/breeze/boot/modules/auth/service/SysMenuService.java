@@ -68,13 +68,6 @@ public interface SysMenuService extends IService<SysMenu> {
      */
     Result<List<Tree<Long>>> listTreePermission(List<Integer> type);
 
-    /**
-     * 删除通过id
-     *
-     * @param id id
-     * @return {@link Result}<{@link Boolean}>
-     */
-    Result<Boolean> deleteById(Long id);
 
     /**
      * 保存菜单
@@ -93,5 +86,20 @@ public interface SysMenuService extends IService<SysMenu> {
      */
     Result<Boolean> modifyMenu(Long id, MenuForm menuForm);
 
+    /**
+     * 删除通过id
+     *
+     * @param id id
+     * @return {@link Result}<{@link Boolean}>
+     */
+    Result<Boolean> deleteMenu(Long id);
+
+    /**
+     * 菜单树形下拉框
+     *
+     * @param id id
+     * @return {@link Result}<{@link List}<{@link Tree}<{@link Long}>>>
+     */
+    Result<List<Tree<Long>>> selectMenu(Long id);
 }
 

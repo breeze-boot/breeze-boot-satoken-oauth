@@ -36,16 +36,14 @@ import com.breeze.boot.modules.auth.model.vo.TokenSettingsVO;
 import com.breeze.boot.modules.auth.service.SysRegisteredClientService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -228,6 +226,20 @@ public class SysRegisteredClientServiceImpl extends ServiceImpl<SysRegisteredCli
         return registeredClientVO;
     }
 
+    /**
+     * 客户端下拉框
+     *
+     * @return {@link Result }<{@link List }<{@link Map }<{@link String }, {@link String }>>>
+     */
+    @Override
+    public Result<List<Map<String, String>>> selectRegisteredClient() {
+        return Result.ok(this.list().stream().map(sysRegisteredClient -> {
+            Map<String, String> roleMap = Maps.newHashMap();
+            roleMap.put("value", sysRegisteredClient.getClientId());
+            roleMap.put("label", sysRegisteredClient.getClientName());
+            return roleMap;
+        }).collect(Collectors.toList()));
+    }
     /**
      * 写
      *

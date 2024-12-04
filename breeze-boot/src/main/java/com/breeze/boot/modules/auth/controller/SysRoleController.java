@@ -22,7 +22,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.log.annotation.BreezeSysLog;
 import com.breeze.boot.log.enums.LogType;
-import com.breeze.boot.modules.auth.model.entity.SysPost;
 import com.breeze.boot.modules.auth.model.entity.SysRole;
 import com.breeze.boot.modules.auth.model.entity.SysRoleMenu;
 import com.breeze.boot.modules.auth.model.form.MenuPermissionForm;
@@ -44,6 +43,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -165,11 +165,11 @@ public class SysRoleController {
      * 不加权限标识
      *
      * @param userId 用户Id
-     * @return {@link Result}<{@link List}<{@link Long}>>
+     * @return {@link Result}<{@link List}<{@link RoleVO}>>
      */
     @Operation(summary = "获取用户角色列表回显", description = "选中的用户角色列表回显")
     @GetMapping("/listUserRoles")
-    public Result<List<Long>> listUserRoles(@Parameter(description = "用户Id") @RequestParam("id") Long userId) {
+    public Result<List<RoleVO>> listUserRoles(@Parameter(description = "用户Id") @RequestParam("id") Long userId) {
         return Result.ok(this.sysRoleService.listUserRoles(userId));
     }
 
@@ -202,4 +202,16 @@ public class SysRoleController {
     public Result<Boolean> modifyMenuPermission(@Valid @RequestBody MenuPermissionForm menuPermissionForm) {
         return this.sysRoleMenuService.modifyMenuPermission(menuPermissionForm);
     }
+
+    /**
+     * 角色下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    @Operation(summary = "角色下拉框", description = "下拉框接口")
+    @GetMapping("/selectRole")
+    public Result<List<Map<String, Object>>> selectRole() {
+        return this.sysRoleService.selectRole();
+    }
+
 }

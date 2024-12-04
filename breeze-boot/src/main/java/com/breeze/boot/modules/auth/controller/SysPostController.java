@@ -38,6 +38,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -145,6 +146,17 @@ public class SysPostController {
     public Result<Boolean> delete(@Parameter(description = "岗位IDS")
                                   @NotEmpty(message = "参数不能为空") @RequestBody List<Long> ids) {
         return Result.ok(this.sysPostService.removeByIds(ids));
+    }
+
+    /**
+     * 岗位下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    @Operation(summary = "岗位下拉框", description = "下拉框接口")
+    @GetMapping("/selectPost")
+    public Result<List<Map<String, Object>>> selectPost() {
+        return this.sysPostService.selectPost();
     }
 
 }

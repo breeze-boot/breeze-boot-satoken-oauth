@@ -37,6 +37,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -141,4 +143,14 @@ public class SysRegisteredClientController {
         return Result.ok(this.registeredClientService.resetClientSecret(resetClientSecretForm));
     }
 
+    /**
+     * 客户端下拉框
+     *
+     * @return {@link Result }<{@link List }<{@link Map }<{@link String }, {@link String }>>>
+     */
+    @Operation(summary = "客户端下拉框", description = "下拉框接口")
+    @GetMapping("/selectRegisteredClient")
+    public Result<List<Map<String, String>>> selectRegisteredClient() {
+        return this.registeredClientService.selectRegisteredClient();
+    }
 }

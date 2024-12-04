@@ -20,6 +20,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.auth.mapper.SysPlatformMapper;
 import com.breeze.boot.modules.auth.model.entity.SysPlatform;
 import com.breeze.boot.modules.auth.model.form.PlatformForm;
@@ -27,8 +28,14 @@ import com.breeze.boot.modules.auth.model.mappers.SysPlatformMapStruct;
 import com.breeze.boot.modules.auth.model.query.PlatformQuery;
 import com.breeze.boot.modules.auth.model.vo.PlatformVO;
 import com.breeze.boot.modules.auth.service.SysPlatformService;
+import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 系统平台服务impl
@@ -94,6 +101,23 @@ public class SysPlatformServiceImpl extends ServiceImpl<SysPlatformMapper, SysPl
         SysPlatform sysPlatform = sysPlatformMapStruct.form2Entity(platformForm);
         sysPlatform.setId(id);
         return this.updateById(sysPlatform);
+    }
+
+    /**
+     * 平台下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    @Override
+    public Result<List<Map<String, Object>>> selectPlatform() {
+        List<SysPlatform> platformList = this.list();
+        List<Map<String, Object>> collect = platformList.stream().map(sysPlatform -> {
+            HashMap<String, Object> map = Maps.newHashMap();
+            map.put("value", sysPlatform.getId());
+            map.put("label", sysPlatform.getPlatformName());
+            return map;
+        }).collect(Collectors.toList());
+        return Result.ok(collect);
     }
 
 }

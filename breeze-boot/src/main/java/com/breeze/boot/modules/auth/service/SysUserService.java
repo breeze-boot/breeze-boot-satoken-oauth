@@ -149,4 +149,6 @@ public interface SysUserService extends IService<SysUser>, IUserDetailService {
      */
     void syncFlowableUser();
 
+    Result<List<SysUser>> listDeptUser(Long deptId);
+
 }

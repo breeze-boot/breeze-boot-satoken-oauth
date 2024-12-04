@@ -26,6 +26,9 @@ import com.breeze.boot.modules.auth.model.query.RegisteredClientQuery;
 import com.breeze.boot.modules.auth.model.vo.RegisteredClientVO;
 import com.breeze.boot.satoken.oauth2.IClientService;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 注册客户服务接口
  *
@@ -92,5 +95,12 @@ public interface SysRegisteredClientService extends IService<SysRegisteredClient
      * @return {@link RegisteredClientVO}
      */
     RegisteredClientVO info(Long clientId);
+
+    /**
+     * 客户端下拉框
+     *
+     * @return {@link Result }<{@link List }<{@link Map }<{@link String }, {@link String }>>>
+     */
+    Result<List<Map<String, String>>> selectRegisteredClient();
 
 }

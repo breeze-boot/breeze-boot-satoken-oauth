@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 系统表元数据控制器
@@ -68,6 +69,29 @@ public class SysDbMateController {
     @SaCheckPermission("auth:db:columns")
     public Result<List<?>> listTableColumn(@RequestParam String tableName) {
         return Result.ok(this.sysDbMateService.listTableColumn(tableName));
+    }
+
+    /**
+     * 表名下拉框
+     *
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    @Operation(summary = "表名下拉框", description = "下拉框接口")
+    @GetMapping("/selectTable")
+    public Result<List<Map<String, Object>>> selectTable() {
+        return Result.ok(this.sysDbMateService.selectTable());
+    }
+
+    /**
+     * 字段下拉框
+     *
+     * @param tableName 表名
+     * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
+     */
+    @Operation(summary = "字段下拉框", description = "下拉框接口")
+    @GetMapping("/selectTableColumn")
+    public Result<List<Map<String, Object>>> selectTableColumn(@RequestParam("tableName") String tableName) {
+        return Result.ok(this.sysDbMateService.selectTableColumn(tableName));
     }
 
 }
