@@ -37,16 +37,28 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-        this.strictInsertFill(metaObject, "createBy", this::getUserCode, String.class);
-        this.strictInsertFill(metaObject, "createName", this::getUsername, String.class);
-        this.strictInsertFill(metaObject, "createTime", LocalDateTime::now, LocalDateTime.class);
+        if (metaObject.hasGetter("createBy")) {
+            this.strictInsertFill(metaObject, "createBy", this::getUserCode, String.class);
+        }
+        if (metaObject.hasGetter("createName")) {
+            this.strictInsertFill(metaObject, "createName", this::getUsername, String.class);
+        }
+        if (metaObject.hasGetter("createTime")) {
+            this.strictInsertFill(metaObject, "createTime", LocalDateTime::now, LocalDateTime.class);
+        }
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        this.strictUpdateFill(metaObject, "updateBy", this::getUserCode, String.class);
-        this.strictUpdateFill(metaObject, "updateName", this::getUsername, String.class);
-        this.strictUpdateFill(metaObject, "updateTime", LocalDateTime::now, LocalDateTime.class);
+        if (metaObject.hasGetter("updateBy")) {
+            this.strictUpdateFill(metaObject, "updateBy", this::getUserCode, String.class);
+        }
+        if (metaObject.hasGetter("updateName")) {
+            this.strictUpdateFill(metaObject, "updateName", this::getUsername, String.class);
+        }
+        if (metaObject.hasGetter("updateTime")) {
+            this.strictUpdateFill(metaObject, "updateTime", LocalDateTime::now, LocalDateTime.class);
+        }
     }
 
     private String getUsername() {
@@ -64,5 +76,6 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
         }
         return null;
     }
+
 }
 

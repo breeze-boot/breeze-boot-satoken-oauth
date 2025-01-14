@@ -29,13 +29,8 @@ import com.breeze.boot.satoken.oauth2.oidc.BreezeOidcScopeHandler;
 import com.breeze.boot.satoken.oauth2.phone.PhoneCodeGrantTypeHandler;
 import com.breeze.boot.satoken.oauth2.userinfo.UserinfoScopeHandler;
 import com.breeze.boot.satoken.spt.StpInterfaceImpl;
-import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.info.License;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -71,12 +66,12 @@ public class ResourceServerConfiguration {
 
     @Bean
     public StpInterfaceImpl stpInterfaceImpl() {
-        return new StpInterfaceImpl(userService);
+        return new StpInterfaceImpl(this.userService);
     }
 
     @Bean
     public SaTokenOauthConfigure saTokenOauthConfigure() {
-        return new SaTokenOauthConfigure(userService, aesSecretProperties, this::check);
+        return new SaTokenOauthConfigure(userService, aesSecretProperties, this::checkCapture);
     }
 
     /**
@@ -99,14 +94,6 @@ public class ResourceServerConfiguration {
         return new PhoneCodeGrantTypeHandler(() -> userService);
     }
 
-    @Bean
-    public OpenAPI customOpenAPI(@Value("${springdoc.version}") String appVersion) {
-        return new OpenAPI()
-                .components(new Components())
-                .info(new Info().title("").version(appVersion)
-                        .license(new License().name("Apache 2.0").url("http://springdoc.org")));
-    }
-
     /**
      * 用户服务
      *
@@ -117,9 +104,9 @@ public class ResourceServerConfiguration {
         return new UserinfoScopeHandler(() -> userService);
     }
 
-    private boolean check(HttpServletRequest contextRequest) {
+    private boolean checkCapture(HttpServletRequest contextRequest) {
         if (getActiveProfile().endsWith("dev")) {
-            return true;
+            return false;
         }
         CaptchaVO captchaVO = new CaptchaVO();
         String captchaVerification = contextRequest.getParameter("captchaVerification");
@@ -127,7 +114,7 @@ public class ResourceServerConfiguration {
             return false;
         }
         captchaVO.setCaptchaVerification(captchaVerification);
-        ResponseModel response = captchaService.verification(captchaVO);
+        ResponseModel response = this.captchaService.verification(captchaVO);
         //验证码校验失败，返回信息告诉前端
         //repCode  0000  无异常，代表成功
         //repCode  9999  服务器内部异常

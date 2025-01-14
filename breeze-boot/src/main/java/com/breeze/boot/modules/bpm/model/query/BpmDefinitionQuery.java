@@ -40,7 +40,4 @@ public class BpmDefinitionQuery extends PageQuery {
     @Schema(description = "业务Key")
     private String businessKey;
 
-    @Schema(description = "租户ID")
-    private String tenantId;
-
 }

@@ -64,7 +64,7 @@
     </div>
 </form>
 
-<script src="/js/layui.min.js"></script>
+<script src="/js/layui.js"></script>
 <script src="/js/crypto-js.min.js"></script>
 <script src="/js/jquery.min.js"></script>
 
@@ -74,7 +74,7 @@
 
     function getTenant(loadIndex) {
         $.ajax({
-            url: '/sys/v1/common/selectTenant',
+            url: '/auth/v1/tenant/selectTenant',
             success: function (response) {
                 $.each(response.data, function (index, item) {
                     $('#tenant').append(new Option(item.label, item.value));

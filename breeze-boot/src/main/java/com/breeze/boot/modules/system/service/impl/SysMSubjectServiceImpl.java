@@ -16,6 +16,7 @@
 
 package com.breeze.boot.modules.system.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -164,10 +165,12 @@ public class SysMSubjectServiceImpl extends ServiceImpl<SysEmailSubjectMapper, S
     @Override
     public Boolean setEmailUser(Long id, MSubjectSetUserForm mSubjectSetUserForm) {
         SysEmailSubject sysEmailSubject = getSysEmailSubject(id);
-
-        sysEmailSubject.setCc(String.join(",", Optional.ofNullable(mSubjectSetUserForm.getCcUserId()).orElse(Collections.singletonList(""))));
-        sysEmailSubject.setTo(String.join(",", Optional.ofNullable(mSubjectSetUserForm.getToUserId()).orElse(Collections.singletonList(""))));
-
+        if (CollUtil.isNotEmpty(mSubjectSetUserForm.getCcUserId())) {
+            sysEmailSubject.setCc(String.join(",", mSubjectSetUserForm.getCcUserId()));
+        }
+        if (CollUtil.isEmpty(mSubjectSetUserForm.getCcUserId())) {
+            sysEmailSubject.setTo(String.join(",", mSubjectSetUserForm.getToUserId()));
+        }
         return sysEmailSubject.updateById();
     }
 

@@ -25,6 +25,7 @@ import com.breeze.boot.core.enums.ResultCode;
 import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.core.utils.BreezeThreadLocal;
 import com.breeze.boot.mybatis.config.BreezeLogicSqlInjector;
+import com.breeze.boot.mybatis.filters.TenantLoadFilter;
 import com.breeze.boot.mybatis.filters.TenantProperties;
 import com.breeze.boot.mybatis.plugins.BreezeDataPermissionInterceptor;
 import com.breeze.boot.mybatis.plugins.BreezeSqlLogInnerInterceptor;
@@ -34,8 +35,7 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-
-import java.util.Objects;
+import org.springframework.context.annotation.Import;
 
 import static com.breeze.boot.core.constants.CoreConstants.TENANT_ID_COLUMN;
 
@@ -68,7 +68,7 @@ public class MybatisPlusConfiguration {
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(customTenantLineInnerInterceptor(this.tenantProperties));
+        interceptor.addInnerInterceptor(tenantLineInnerInterceptor(this.tenantProperties));
         interceptor.addInnerInterceptor(new BreezeDataPermissionInterceptor());
         // 如果用了分页插件注意先 add TenantLineInnerInterceptor 再 add PaginationInnerInterceptor
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
@@ -81,7 +81,7 @@ public class MybatisPlusConfiguration {
      *
      * @return {@link TenantLineInnerInterceptor}
      */
-    private TenantLineInnerInterceptor customTenantLineInnerInterceptor(TenantProperties tenantProperties) {
+    private TenantLineInnerInterceptor tenantLineInnerInterceptor(TenantProperties tenantProperties) {
         return new TenantLineInnerInterceptor(new TenantLineHandler() {
             @Override
             public Expression getTenantId() {
@@ -104,8 +104,7 @@ public class MybatisPlusConfiguration {
              */
             @Override
             public boolean ignoreTable(String tableName) {
-                log.debug("[当前拦截的表名] {}", tableName);
-                log.debug("[在多租户表序列中？] {}", CollUtil.contains(tenantProperties.getTables(), tableName));
+                log.info("[在多租户表序列中？] {}", CollUtil.contains(tenantProperties.getTables(), tableName));
                 return !CollUtil.contains(tenantProperties.getTables(), tableName);
             }
         });

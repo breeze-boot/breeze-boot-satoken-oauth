@@ -27,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BreezeThreadLocal {
 
-
     private static final ThreadLocal<Long> threadLocal = new ThreadLocal<>();
 
     public static Long get() {

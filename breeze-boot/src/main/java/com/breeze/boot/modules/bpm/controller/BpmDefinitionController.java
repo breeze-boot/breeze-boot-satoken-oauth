@@ -158,7 +158,7 @@ public class BpmDefinitionController {
     @PutMapping("/suspendedDefinition")
     public Result<Boolean> suspendedDefinition(@NotBlank(message = "流程定义ID不能为空") @Schema(description = "流程定义ID")
                                                @RequestParam(name = "procDefId") String procDefId) {
-        return Result.ok(this.bpmDefinitionService.suspendedDefinition(procDefId));
+        return this.bpmDefinitionService.suspendedDefinition(procDefId);
     }
 
     /**

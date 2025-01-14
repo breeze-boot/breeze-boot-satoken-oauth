@@ -64,9 +64,9 @@ public interface IBpmDefinitionService {
      * 挂起/激活
      *
      * @param definitionId 流程定义ID
-     * @return {@link Boolean}
+     * @return {@link Result }<{@link Boolean }>
      */
-    Boolean suspendedDefinition(String definitionId);
+    Result<Boolean> suspendedDefinition(String definitionId);
 
     /**
      * 获得版本流程定义png

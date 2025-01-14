@@ -37,9 +37,9 @@ public interface IBpmTaskService {
      * 获取待办列表
      *
      * @param userTaskQuery 用户任务查询
-     * @return {@link List}<{@link UserTaskVO}>
+     * @return {@link Page}<{@link UserTaskVO}>
      */
-    List<UserTaskVO> listUserTodoTask(UserTaskQuery userTaskQuery);
+    Page<UserTaskVO> listUserTodoTask(UserTaskQuery userTaskQuery);
 
     /**
      * 获取任务详情

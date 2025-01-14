@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.validation.annotation.Validated;
@@ -114,7 +115,7 @@ public class BpmInstanceController {
      */
     @DeleteMapping
     @ResponseBody
-    public Result<?> remove(@NotBlank(message = "流程实例ID不能为空") @Schema(description = "流程实例ID")
+    public Result<?> delete(@NotEmpty(message = "流程实例ID不能为空") @Schema(description = "流程实例ID")
                             @RequestBody List<String> processInstanceIdList) {
         bpmInstanceService.remove(processInstanceIdList);
         return Result.ok();

@@ -41,11 +41,6 @@ public class BpmInstanceVO {
     private String id;
 
     /**
-     * 租户ID
-     */
-    private String tenantId;
-
-    /**
      * 挂起状态
      */
     private String suspensionState;
@@ -114,5 +109,10 @@ public class BpmInstanceVO {
      * 电子邮件
      */
     private String email;
+
+    /**
+     * 当前节点审批人
+     */
+    private String assignee;
 
 }

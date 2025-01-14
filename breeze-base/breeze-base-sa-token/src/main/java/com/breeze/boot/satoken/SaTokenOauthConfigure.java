@@ -21,6 +21,7 @@ import cn.dev33.satoken.oauth2.strategy.SaOAuth2Strategy;
 import cn.dev33.satoken.secure.BCrypt;
 import cn.dev33.satoken.stp.StpUtil;
 import com.breeze.boot.core.base.UserPrincipal;
+import com.breeze.boot.core.exception.BreezeBizException;
 import com.breeze.boot.core.jackson.propertise.AesSecretProperties;
 import com.breeze.boot.core.utils.AesUtil;
 import com.breeze.boot.core.utils.Result;
@@ -37,6 +38,8 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
+import static com.breeze.boot.core.enums.ResultCode.VERIFY_UN_PASS;
 
 /**
  * oauth令牌配置
@@ -69,7 +72,7 @@ public class SaTokenOauthConfigure {
             Assert.notNull(requestAttributes, "requestAttributes is null");
 
             if (captchaServiceFunction.apply(requestAttributes.getRequest())) {
-//                throw new BreezeBizException(ResultCode.VERIFY_UN_FOUND);
+                throw new BreezeBizException(VERIFY_UN_PASS);
             }
             String decodePwd = AesUtil.decryptStr(pwd, this.aesSecretProperties.getAesSecret());
             UserPrincipal userPrincipal = this.userDetailService.loadUserByUsername(name);

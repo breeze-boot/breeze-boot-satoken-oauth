@@ -80,12 +80,12 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
      */
     @Override
     public Result<String> deploy(BpmDesignXmlStringForm xmlStringForm) {
-        Long currentUserId = 0L;
-        Long tenantId = 0L;
+        String username = BreezeStpUtil.getUser().getUsername();
+        Long tenantId = BreezeStpUtil.getUser().getTenantId();
         try {
-            Authentication.setAuthenticatedUserId(String.valueOf(currentUserId));
+            Authentication.setAuthenticatedUserId(username);
             // 构造文件名
-            String xmlName = generateXmlName(xmlStringForm);
+            String xmlName = this.generateXmlName(xmlStringForm);
             Deployment deploy = this.repositoryService.createDeployment()
                     .addString(xmlName, xmlStringForm.getXml())
                     .name(xmlStringForm.getProcDefName())
@@ -96,7 +96,7 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
 
             return Result.ok(deploy.getId(), "发布成功");
         } catch (Exception e) {
-            log.error("流程部署失败, 用户ID: " + currentUserId, e);
+            log.error("流程部署失败, 用户ID:{} ", username, e);
             return Result.fail("发布失败：" + e.getMessage());
         } finally {
             Authentication.setAuthenticatedUserId(null);
@@ -116,8 +116,9 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
     @Override
     public Result<String> deploy(BpmDesignXmlFileForm xmlFileForm) {
         try {
-            Authentication.setAuthenticatedUserId(String.valueOf(BreezeStpUtil.getUser().getUsername()));
-            Long tenantId = 0L;
+            String username = BreezeStpUtil.getUser().getUsername();
+            Long tenantId = BreezeStpUtil.getUser().getTenantId();
+            Authentication.setAuthenticatedUserId(username);
             // 生成文件名的逻辑
             String xmlName = this.generateXmlName(xmlFileForm);
             // @formatter:off
@@ -164,10 +165,11 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
      * @return {@link Boolean}
      */
     @Override
-    public Boolean suspendedDefinition(String procDefId) {
-        Long tenantId = 0L;
+    public Result<Boolean> suspendedDefinition(String procDefId) {
+        Long tenantId = BreezeStpUtil.getUser().getTenantId();
+        String username = BreezeStpUtil.getUser().getUsername();
         try {
-            Authentication.setAuthenticatedUserId(String.valueOf(0L));
+            Authentication.setAuthenticatedUserId(username);
             // @formatter:off
             ProcessDefinition processDefinition = this.repositoryService.createProcessDefinitionQuery()
                     .processDefinitionId(procDefId)
@@ -185,16 +187,18 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
             if (processDefinition.isSuspended()) {
                 // 被挂起 => 去激活
                 this.repositoryService.activateProcessDefinitionById(procDefId, true, null);
+                return Result.ok(Boolean.TRUE, "激活成功");
             } else {
                 // 激活状态 => 去挂起
                 this.repositoryService.suspendProcessDefinitionById(procDefId, true, null);
+                return Result.ok(Boolean.TRUE, "挂起成功");
             }
-            // //这个方法最终使用一个ThreadLocal类型的变量进行存储，也就是与当前的线程绑定，所以流程实例启动完毕之后，需要设置为null，防止多线程的时候出问题。
-            Authentication.setAuthenticatedUserId(null);
-            return Boolean.TRUE;
         } catch (Exception e) {
             log.error("处理流程定义状态时发生错误", e);
-            return Boolean.FALSE;
+            throw new BreezeBizException(ResultCode.SYSTEM_EXCEPTION);
+        } finally {
+            // 最终使用一个ThreadLocal类型的变量进行存储，也就是与当前的线程绑定，所以流程实例启动完毕之后，需要设置为null，防止多线程的时候出问题。
+            Authentication.setAuthenticatedUserId(null);
         }
     }
 
@@ -312,7 +316,7 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
                 .stream()
                 .filter(s -> !StrUtil.equals(s.getActivityType(), "sequenceFlow"))
                 .map(HistoricActivityInstance::getActivityId)
-                .collect(Collectors.toList());
+                .toList();
 
         // 查询当前活动节点
         Set<String> currentTaskIdSet = this.historyService.createHistoricActivityInstanceQuery()
@@ -333,7 +337,7 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
 
     private String getXmlStr(String definitionKey) {
         // @formatter:off
-        Long tenantId = 0L;
+        Long tenantId = BreezeStpUtil.getUser().getTenantId();
         ProcessDefinition processDefinition = this.repositoryService.createProcessDefinitionQuery()
                 .processDefinitionKey(definitionKey)
                 .processDefinitionTenantId(String.valueOf(tenantId))

@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -237,8 +238,13 @@ public abstract class AbstractCaptchaService implements CaptchaService {
         try {
             if (waterMarkFontStr.toLowerCase().endsWith(".ttf") || waterMarkFontStr.toLowerCase().endsWith(".ttc")
                     || waterMarkFontStr.toLowerCase().endsWith(".otf")) {
-                this.waterMarkFont = Font.createFont(Font.TRUETYPE_FONT,
-                                getClass().getResourceAsStream("/fonts/" + waterMarkFontStr))
+                InputStream resourceAsStream = getClass().getResourceAsStream("/fonts/" + waterMarkFontStr);
+
+                if (resourceAsStream == null) {
+                    logger.error("load font error is null");
+                    throw new Exception("load font error");
+                }
+                this.waterMarkFont = Font.createFont(Font.TRUETYPE_FONT, resourceAsStream)
                         .deriveFont(Font.BOLD, HAN_ZI_SIZE / 2);
             } else {
                 this.waterMarkFont = new Font(waterMarkFontStr, Font.BOLD, HAN_ZI_SIZE / 2);

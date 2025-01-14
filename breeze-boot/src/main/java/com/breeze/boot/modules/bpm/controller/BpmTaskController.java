@@ -55,7 +55,7 @@ public class BpmTaskController {
      */
     @GetMapping(value = "/listUserTodoTask")
     @ResponseBody
-    public Result<List<UserTaskVO>> listUserTodoTask(UserTaskQuery userTaskQuery) {
+    public Result<Page<UserTaskVO>> listUserTodoTask(UserTaskQuery userTaskQuery) {
         return Result.ok(bpmTaskService.listUserTodoTask(userTaskQuery));
     }
 

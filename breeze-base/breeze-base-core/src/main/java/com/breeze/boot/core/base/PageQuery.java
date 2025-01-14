@@ -125,7 +125,9 @@ public class PageQuery {
      * @param queryWrapper 查询包装器
      */
     public void getSortQueryWrapper(QueryWrapper<?> queryWrapper) {
-        this.getColumns().forEach((sort, columnList) -> queryWrapper.orderBy(this.isSort(), StrUtil.equals("asc", sort), columnList));
+        this.getColumns().forEach((sort, columnList) -> {
+            queryWrapper.orderBy(this.isSort(), StrUtil.equals("asc", sort), columnList);
+        });
     }
 
     /**

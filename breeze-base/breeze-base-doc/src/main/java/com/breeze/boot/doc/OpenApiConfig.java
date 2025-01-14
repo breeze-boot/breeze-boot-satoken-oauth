@@ -57,7 +57,7 @@ public class OpenApiConfig {
                 .group("系统服务")
                 // 增加自定义装备，这儿增加了一个用户认证的 header，否则 knife4j 里会没有 header
                 .addOperationCustomizer((operation, handlerMethod) -> operation.security(
-                        Collections.singletonList(getSecurityItem()))
+                        Collections.singletonList(this.getSecurityItem()))
                 )
                 .build();
     }
@@ -90,7 +90,7 @@ public class OpenApiConfig {
         OpenAPI openAPI = new OpenAPI()
                 .info(getInfo())
                 .addServersItem(getServer())
-                .addSecurityItem(getSecurityItem())
+                .addSecurityItem(this.getSecurityItem())
                 .externalDocs(getExternalDocumentation());
         openAPI.schemaRequirement("OAuth2 Password Flow", this.buildPasswordSecurityScheme());
         openAPI.schemaRequirement("Bearer access_token", this.buildBearerSecurityScheme());
@@ -113,15 +113,10 @@ public class OpenApiConfig {
                 .in(HEADER)
                 .scheme("bearer")
                 .description("使用有效access_token [Bearer access_token]")
-                .flows(bearerOAuthFlows());
+                .flows(new OAuthFlows().authorizationCode(geOAuthFlow()));
         // @formatter:on
     }
 
-    private OAuthFlows bearerOAuthFlows() {
-        // @formatter:off
-        return new OAuthFlows().authorizationCode(geOAuthFlow());
-        // @formatter:on
-    }
 
     private SecurityScheme buildPasswordSecurityScheme() {
         // @formatter:off
@@ -129,14 +124,7 @@ public class OpenApiConfig {
                 .name("OAuth2 Password Flow")
                 .type(SecurityScheme.Type.OAUTH2)
                 .description("OAuth2密码认证")
-                .flows(passwordFlows());
-        // @formatter:on
-    }
-
-    private OAuthFlows passwordFlows() {
-        // @formatter:off
-        return new OAuthFlows()
-                .password(geOAuthFlow());
+                .flows(new OAuthFlows().password(geOAuthFlow()));
         // @formatter:on
     }
 
@@ -146,18 +134,13 @@ public class OpenApiConfig {
                         .getTokenUrl())
                 .authorizationUrl(openApiProperties.getOAuthFlow()
                         .getAuthorizationUrl())
-                .scopes(getScopes());
+                .scopes( new Scopes()
+                        .addString("user_info", "user_info")
+                        .addString("phone", "手机号")
+                        .addString("email", "电子邮件")
+                        .addString("profile", "用户身份信息")
+                        .addString("openid", "openid"));
         // @formatter:on
     }
 
-    private Scopes getScopes() {
-        // @formatter:off
-        return new Scopes()
-                .addString("user_info", "user_info")
-                .addString("phone", "手机号")
-                .addString("email", "电子邮件")
-                .addString("profile", "用户身份信息")
-                .addString("openid", "openid");
-        // @formatter:on
-    }
 }

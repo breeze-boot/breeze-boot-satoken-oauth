@@ -58,7 +58,6 @@ public class UserinfoScopeHandler implements SaOAuth2ScopeHandlerInterface {
         UserPrincipal userPrincipal = userDetailServiceSupplier.get().loadUserByUserId(at.getLoginId().toString());
         StpUtil.getSession().set(USER_TYPE, userPrincipal);
         log.info("--------- userinfo 权限，加工 AccessTokenModel --------- ");
-        // 模拟账号信息 （真实环境需要查询数据库获取信息）
         Map<String, Object> map = new LinkedHashMap<>();
         userPrincipal.setPassword(null);
         Map<String, Object> toMap = BeanUtil.beanToMap(userPrincipal, map, false, true);

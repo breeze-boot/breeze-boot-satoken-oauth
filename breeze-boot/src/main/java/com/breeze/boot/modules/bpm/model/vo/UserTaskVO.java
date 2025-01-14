@@ -48,11 +48,6 @@ public class UserTaskVO {
     private String taskName;
 
     /**
-     * 任务标题
-     */
-    private String taskTitle;
-
-    /**
      * 流程实例ID
      */
     private String procInstId;
@@ -131,11 +126,6 @@ public class UserTaskVO {
      * 表单KEY
      */
     private String formKey;
-
-    /**
-     * 任务所属人
-     */
-    private String owner;
 
     /**
      * 委托状态

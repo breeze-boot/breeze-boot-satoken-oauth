@@ -17,7 +17,6 @@
 package com.breeze.boot.modules.bpm.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.core.enums.ResultCode;
@@ -51,11 +50,12 @@ import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toCollection;
+import static com.breeze.boot.core.enums.ResultCode.TASK_NOT_FOUND;
+import static java.util.stream.Collectors.*;
 import static org.flowable.identitylink.api.IdentityLinkType.ASSIGNEE;
 import static org.flowable.identitylink.api.IdentityLinkType.CANDIDATE;
 
@@ -80,93 +80,56 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
 
     private final IdentityService identityService;
 
-    private static BpmInfoVO defaultStartButton() {
-        BpmInfoVO bpmInfoVO = new BpmInfoVO();
-        List<TaskButtonVO> buttonList = new ArrayList<>();
-        // @formatter:off
-        buttonList.add(TaskButtonVO.builder()
-                .name("发起")
-                .event("start")
-                .key("start")
-                .procInstId(null)
-                .taskId(null)
-                .username(BreezeStpUtil.getUser().getUsername())
-                .build());
-        // @formatter:on
-        bpmInfoVO.setButtons(buttonList);
-        return bpmInfoVO;
-    }
-
-    private static TaskButtonVO defaultClaimButton(String procInstId, Task task) {
-        // @formatter:off
-        return (TaskButtonVO.builder()
-                .name("签收")
-                .event("claim")
-                .key("claim")
-                .procInstId(procInstId)
-                .taskId(task.getId())
-                .username(BreezeStpUtil.getUser().getUsername())
-                .build());
-        // @formatter:on
-    }
-
-    private static TaskButtonVO defaultUnClaimButton(String procInstId, Task task) {
-        // @formatter:off
-        return (TaskButtonVO.builder()
-                .name("反签收")
-                .event("unClaim")
-                .key("unClaim")
-                .procInstId(procInstId)
-                .taskId(task.getId())
-                .username(BreezeStpUtil.getUser().getUsername())
-                .build());
-        // @formatter:on
-    }
-
-    private static TaskButtonVO defaultAgreeButton(String procInstId, Task task) {
-        // @formatter:off
-        return TaskButtonVO.builder()
-                .name("通过")
-                .event("agree")
-                .key("agree")
-                .procInstId(procInstId)
-                .taskId(task.getId())
-                .username(BreezeStpUtil.getUser().getUsername())
-                .build();
-        // @formatter:on
-    }
-
-    private static TaskButtonVO defaultRejectButton(String procInstId, Task task) {
-        // @formatter:off
-        return TaskButtonVO.builder()
-                .name("驳回")
-                .event("reject")
-                .key("reject")
-                .procInstId(procInstId)
-                .taskId(task.getId())
-                .username(BreezeStpUtil.getUser().getUsername())
-                .build();
-        // @formatter:on
-    }
-
     /**
      * 获取用户任务列表
      *
      * @param userTaskQuery 用户任务查询
-     * @return {@link List}<{@link UserTaskVO}>
+     * @return {@link Page}<{@link UserTaskVO}>
      */
     @Override
-    public List<UserTaskVO> listUserTodoTask(UserTaskQuery userTaskQuery) {
-        List<UserTaskVO> result = new ArrayList<>();
-        // 已签收的任务
-        result.addAll(this.getUserTaskList(String.valueOf(BreezeStpUtil.getUser().getUsername()), userTaskQuery.getTaskTitle(), true));
-        // 待签收的任务
-        result.addAll(this.getUserTaskList(String.valueOf(BreezeStpUtil.getUser().getUsername()), userTaskQuery.getTaskTitle(), false));
-        // 按照任务时间倒序排列
+    public Page<UserTaskVO> listUserTodoTask(UserTaskQuery userTaskQuery) {
+        Page<UserTaskVO> resultPage = new Page<>(userTaskQuery.getCurrent(), userTaskQuery.getSize(), 0L);
+        TaskQuery taskQuery = this.taskService.createTaskQuery();
+        TaskQuery todoTaskQuery;
+        String username = BreezeStpUtil.getUser().getUsername();
+        if (userTaskQuery.getIsAssigned()) {
+            todoTaskQuery = BreezeStpUtil.isAdmin() ? taskQuery.active().includeProcessVariables() : taskQuery.taskAssignee(username).active().includeProcessVariables();
+        } else {
+            todoTaskQuery = BreezeStpUtil.isAdmin() ? taskQuery.active().includeProcessVariables() : taskQuery.taskCandidateUser(username).active().includeProcessVariables();
+        }
+        if (StringUtils.isNotBlank(userTaskQuery.getTaskName())) {
+            todoTaskQuery.taskNameLike("%" + userTaskQuery.getTaskName() + "%");
+        }
         // @formatter:off
-        return result.stream()
-                .sorted((o1, o2) -> o1.getCreateTime().compareTo(o2.getCreateTime()) * -1)
-                .collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(UserTaskVO::getTaskId))), ArrayList::new));
+        List<Task> taskList = todoTaskQuery
+                .orderByTaskCreateTime().desc()
+                .listPage(userTaskQuery.getOffset(), userTaskQuery.getSize());
+        if (CollUtil.isEmpty(taskList)) {
+            return resultPage;
+        }
+        long count = todoTaskQuery
+                .orderByTaskCreateTime().desc()
+                .taskAssignee(BreezeStpUtil.getUser().getUsername())
+                .count();
+        Map<String,Task> taskMap = taskList.stream().collect(toMap(Task::getProcessInstanceId, Function.identity()));
+        Set<String> procInstIdSet = taskList.stream().map(Task::getProcessInstanceId).collect(toSet());
+        List<ProcessInstance> procInstList = this.runtimeService.createProcessInstanceQuery()
+                .processInstanceIds(procInstIdSet)
+                .list();
+
+        List<UserTaskVO> userTaskVOList = procInstList.stream()
+                .map(procInst -> {
+                    Task task = taskMap.get(procInst.getProcessInstanceId());
+                    if (Objects.isNull(task)) {
+                        throw new BreezeBizException(TASK_NOT_FOUND);
+                    }
+                    return this.getUserTaskVO(task, procInst);
+                })
+                .collect(toList());
+
+        resultPage.setRecords(userTaskVOList);
+        resultPage.setTotal(count);
+        return resultPage;
         // @formatter:on
     }
 
@@ -179,13 +142,25 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
     @Override
     public UserTaskVO getTaskInfo(String taskId) {
         // @formatter:off
-        TaskQuery taskQuery = this.taskService.createTaskQuery();
-        TaskQuery todoTaskQuery = taskQuery.taskId(taskId)
+        Task task = this.taskService.createTaskQuery()
+                .taskId(taskId)
                 .includeProcessVariables()
                 .includeTaskLocalVariables()
                 .includeIdentityLinks()
-                .active();
-        return this.buildUserTaskVO(todoTaskQuery.singleResult());
+                .active()
+                .singleResult();
+        if (Objects.isNull(task)) {
+            throw new BreezeBizException(TASK_NOT_FOUND);
+        }
+
+        // 查询流程实例
+        ProcessInstance procInst = this.runtimeService.createProcessInstanceQuery()
+                .processInstanceId(task.getProcessInstanceId())
+                .singleResult();
+        if (Objects.isNull(procInst)) {
+            throw new BreezeBizException(ResultCode.PROCESS_NOT_FOUND);
+        }
+        return this.getUserTaskVO(task, procInst);
         // @formatter:on
     }
 
@@ -199,10 +174,9 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
     public Page<UserTaskVO> listCompletedTask(UserTaskQuery userTaskQuery) {
         // 查询历史任务实例
         // @formatter:off
-        List<HistoricTaskInstance> hisTaskInsList = historyService.createHistoricTaskInstanceQuery()
+        List<HistoricTaskInstance> hisTaskInstList = historyService.createHistoricTaskInstanceQuery()
                 .taskAssignee(BreezeStpUtil.getUser().getUsername())
                 .orderByTaskCreateTime().asc()
-                .includeIdentityLinks()
                 .includeProcessVariables()
                 .finished()
                 .listPage(userTaskQuery.getOffset(), userTaskQuery.getSize());
@@ -212,91 +186,25 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
                 .orderByTaskCreateTime().asc()
                 .finished()
                 .count();
+        Page<UserTaskVO> resultPage = new Page<>(userTaskQuery.getOffset(), userTaskQuery.getSize());
         // @formatter:on
-
-        List<UserTaskVO> userTaskList = new ArrayList<>();
-        hisTaskInsList.forEach(hisTask -> {
-            // 查询任务对应的历史流程实例列表
-            // @formatter:off
-            HistoricProcessInstance hisProcInst = historyService.createHistoricProcessInstanceQuery()
-                    .processInstanceId(hisTask.getProcessInstanceId())
-                    .singleResult();
-            if (Objects.isNull(hisProcInst)) {
-                throw new BreezeBizException(ResultCode.PROCESS_NOT_FOUND);
-            }
-            userTaskList.add(this.buildTaskList(hisProcInst, hisTask));
-            // @formatter:on
-        });
-
-        Page<UserTaskVO> resultPage = new Page<>(userTaskQuery.getCurrent(), userTaskQuery.getSize(), count);
-        resultPage.setRecords(userTaskList);
-        return resultPage;
-    }
-
-    public UserTaskVO buildTaskList(HistoricProcessInstance hisInst, HistoricTaskInstance hisTask) {
-        // @formatter:off
-        List<String> userList = Lists.newArrayList();
-        hisTask.getIdentityLinks().forEach(identityLink -> {
-            if (StrUtil.isNotBlank(identityLink.getGroupId()) && StrUtil.equals(CANDIDATE, identityLink.getType())) {
-                for (User user : identityService.createUserQuery().memberOfGroup(identityLink.getGroupId()).list()) {
-                    userList.add(user.getId());
-                }
-            } else if(Objects.nonNull(identityLink.getUserId())) {
-                User user = this.identityService.createUserQuery().userId(identityLink.getUserId()).singleResult();
-                if (Objects.nonNull(user)) {
-                    userList.add(user.getId());
-                }
-            }
-        });
-        userList.add(hisTask.getAssignee());
-        UserTaskVO userTaskVO = UserTaskVO.builder()
-                .taskId(hisTask.getId())
-                .taskName(hisTask.getName())
-                .taskDefKey(hisTask.getTaskDefinitionKey())
-                .procDefKey(hisInst.getProcessDefinitionKey())
-                .formKey(hisTask.getFormKey())
-                .owner(hisTask.getOwner())
-                .businessKey(hisInst.getBusinessKey())
-                .procDefKey(hisInst.getProcessDefinitionKey())
-                .procInstId(hisInst.getSuperProcessInstanceId())
-                .procDefId(hisInst.getProcessDefinitionId())
-                .userList(userList)
-                .assignee(hisTask.getAssignee())
-                .assigneeName(hisTask.getAssignee())
-                .applyUser(hisInst.getStartUserId())
-                .applyUserName(hisInst.getStartUserId())
-                .comment(MapUtil.getStr(hisTask.getProcessVariables(), "comment", ""))
-                .variable(new UserTaskVO.Variable(hisTask.getProcessVariables()))
-                .tenantId(hisInst.getTenantId())
-                .createTime(hisTask.getCreateTime())
-                .build();
-        // @formatter:on
-
-        this.setTaskTitle(hisTask.getProcessVariables(), userTaskVO);
-
-        // 查找流程发起人
-        this.setStarUser(userTaskVO, hisInst.getBusinessKey());
-
-        // 设置状态
-        if (Objects.isNull(hisTask.getEndTime())) {
-            userTaskVO.setStatus("todo");
-        } else {
-            userTaskVO.setStatus("finish");
-            userTaskVO.setEndTime(hisTask.getEndTime());
-            // 当前节点拒绝原因为空，则查询审批意见
-            if (StrUtil.isEmpty(hisTask.getDeleteReason())) {
-                List<Comment> taskComments = taskService.getTaskComments(hisTask.getId());
-                taskComments.forEach(comment -> {
-                    // 同意
-                    userTaskVO.setComment("审核信息:" + comment.getFullMessage());
-                });
-            } else {
-                // 驳回
-                userTaskVO.setAssignee("驳回节点:" + hisTask.getAssignee());
-                userTaskVO.setComment("驳回原因:" + hisTask.getDeleteReason());
-            }
+        Map<String, HistoricTaskInstance> hisTaskMap = hisTaskInstList.stream().collect(toMap(HistoricTaskInstance::getProcessInstanceId, Function.identity()));
+        Set<String> procInstIdSet = hisTaskInstList.stream().map(HistoricTaskInstance::getProcessInstanceId).collect(toSet());
+        if (CollUtil.isEmpty(procInstIdSet)) {
+            return resultPage;
         }
-        return userTaskVO;
+        // 查询任务对应的历史流程实例列表
+        List<HistoricProcessInstance> procInstList = this.historyService.createHistoricProcessInstanceQuery().processInstanceIds(procInstIdSet).list();
+        List<UserTaskVO> userTaskVOList = procInstList.stream().map(hisProcInst -> {
+            HistoricTaskInstance hisTaskInst = hisTaskMap.get(hisProcInst.getId());
+            if (Objects.isNull(hisTaskInst)) {
+                throw new BreezeBizException(TASK_NOT_FOUND);
+            }
+            return this.getUserHisTaskVO(hisTaskInst, hisProcInst);
+        }).collect(toList());
+        resultPage.setRecords(userTaskVOList);
+        resultPage.setTotal(count);
+        return resultPage;
     }
 
     /**
@@ -322,8 +230,6 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
     }
 
     /**
-     * 是相关活动
-     *
      * @param historicActivityInstance 历史活动实例
      * @return boolean
      */
@@ -341,18 +247,18 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
      */
     private List<HistoricActivityInstance> getHistoricActivityInstanceList(String procDefKey, String businessKey) {
         // @formatter:off
-        List<HistoricProcessInstance> historicProcessInstanceList = this.historyService.createHistoricProcessInstanceQuery()
+        List<HistoricProcessInstance> hisProcInstList = this.historyService.createHistoricProcessInstanceQuery()
                 .processDefinitionKey(procDefKey)
                 .processInstanceBusinessKey(businessKey)
                 .orderByProcessInstanceStartTime()
                 .desc()
                 .list();
         // @formatter:on
-        if (CollUtil.isEmpty(historicProcessInstanceList)) {
+        if (CollUtil.isEmpty(hisProcInstList)) {
             return Lists.newArrayList();
         }
 
-        HistoricProcessInstance historicProcessInstance = historicProcessInstanceList.get(0);
+        HistoricProcessInstance historicProcessInstance = hisProcInstList.get(0);
         if (Objects.isNull(historicProcessInstance)) {
             return Lists.newArrayList();
         }
@@ -373,21 +279,19 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
      *
      * @param activityType 活动类型
      * @return {@link String }
-     */private String determineTaskName(String activityType) {
-        switch (activityType) {
-            case "startEvent":
-                return "开始";
-            case "endEvent":
-                return "结束";
-            default:
-                return activityType;
-        }
+     */
+    private String determineTaskName(String activityType) {
+        return  switch (activityType) {
+                    case "startEvent"->"开始";
+                    case "endEvent"->"结束";
+                    default->activityType;
+                };
     }
 
     /**
      * 构建任务对象
      *
-     * @param historicActivityInstance  历史活动实例
+     * @param historicActivityInstance 历史活动实例
      * @return {@link TaskApproveInfoVO }
      */
     private TaskApproveInfoVO buildTaskApproveVO(HistoricActivityInstance historicActivityInstance) {
@@ -402,7 +306,7 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
     }
 
     /**
-     * 丰富任务数据
+     * 构建任务数据
      *
      * @param historicActivityInstance 历史活动实例
      * @param taskApproveInfo          任务审批信息
@@ -484,7 +388,7 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
                         .userId(item.getUserId())
                         .username(item.getUserId())
                         .build())
-                .collect(Collectors.toList()));
+                .collect(toList()));
         // @formatter:on
     }
 
@@ -548,36 +452,6 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
     private void appendUserInfo(User user, StringBuilder assignees, StringBuilder assigneeNames) {
         assignees.append("->").append(user.getId());
         assigneeNames.append("->").append(user.getFirstName());
-    }
-
-    /**
-     * 获取用户任务列表
-     *
-     * @param username   用户名
-     * @param taskTitle  任务标题
-     * @param isAssigned 是否分配
-     * @return {@link List }<{@link UserTaskVO }>
-     */
-    private List<UserTaskVO> getUserTaskList(String username, String taskTitle, boolean isAssigned) {
-        TaskQuery taskQuery = this.taskService.createTaskQuery();
-        TaskQuery todoTaskQuery;
-        if (isAssigned) {
-            todoTaskQuery = BreezeStpUtil.isAdmin() ? taskQuery.active().includeProcessVariables() : taskQuery.taskAssignee(username).active().includeProcessVariables();
-        } else {
-            todoTaskQuery = BreezeStpUtil.isAdmin() ? taskQuery.active().includeProcessVariables() : taskQuery.taskCandidateUser(username).active().includeProcessVariables();
-        }
-        if (StringUtils.isNotBlank(taskTitle)) {
-            todoTaskQuery.processVariableValueLike("taskTitle", "%" + taskTitle + "%");
-        }
-        // @formatter:off
-        List<Task> taskList = todoTaskQuery
-                .orderByTaskCreateTime().desc()
-                .includeProcessVariables()
-                .includeTaskLocalVariables()
-                .includeIdentityLinks()
-                .list();
-        return taskList.stream().map(this::buildUserTaskVO).collect(Collectors.toList());
-        // @formatter:on
     }
 
     private TaskButtonVO addButtonsForTask(FormProperty prop, Task task, String username) {
@@ -704,7 +578,6 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
             variables = Maps.newHashMap();
         }
         variables.put("pass", bpmApprovalForm.getPass());
-        variables.put("taskTitle", bpmApprovalForm.getPass() ? "同意" : "拒绝");
         this.taskService.complete(bpmApprovalForm.getTaskId(), variables);
         return Boolean.TRUE;
     }
@@ -718,7 +591,10 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
     @Override
     public Boolean claim(String taskId) {
         String username = BreezeStpUtil.getUser().getUsername();
-        Task task = getTask(taskId);
+        Task task = this.taskService.createTaskQuery().taskId(taskId).singleResult();
+        if (Objects.isNull(task)) {
+            throw new BreezeBizException(TASK_NOT_FOUND);
+        }
         taskService.addComment(taskId, task.getProcessInstanceId(), username + "签收任务");
         this.taskService.claim(taskId, username);
         return Boolean.TRUE;
@@ -734,7 +610,7 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
     public Boolean unClaim(String taskId) {
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
         if (Objects.isNull(task)) {
-            throw new BreezeBizException(ResultCode.TASK_NOT_FOUND);
+            throw new BreezeBizException(TASK_NOT_FOUND);
         }
         // 添加审批意见
         taskService.addComment(taskId, task.getProcessInstanceId(), BreezeStpUtil.getUser().getUsername() + "释放签收任务");
@@ -777,7 +653,10 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
      */
     @Override
     public Boolean resolveTask(String taskId) {
-        Task task = getTask(taskId);
+        Task task = this.taskService.createTaskQuery().taskId(taskId).singleResult();
+        if (Objects.isNull(task)) {
+            throw new BreezeBizException(TASK_NOT_FOUND);
+        }
         taskService.addComment(taskId, task.getProcessInstanceId(), BreezeStpUtil.getUser().getUsername() + "审批加签任务");
         // 通过resolveTask完成加签任务，加签任务没有更改任务的基本信息,只是更新了assignee
         taskService.resolveTask(taskId);
@@ -816,43 +695,98 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
                 .startedBy(BreezeStpUtil.getUser().getUsername())
                 .orderByProcessInstanceStartTime().asc()
                 .listPage(userTaskQuery.getOffset(), userTaskQuery.getSize());
+
+        Page<UserTaskVO> resultPage = new Page<>(userTaskQuery.getCurrent(), userTaskQuery.getSize());
+        if (CollUtil.isEmpty(hisProcInstList)) {
+            return resultPage;
+        }
+        Set<String> hisProcInstIdSet = hisProcInstList.stream().map(HistoricProcessInstance::getId).collect(Collectors.toSet());
+
+        List<HistoricTaskInstance> hisTaskInstList = historyService.createHistoricTaskInstanceQuery()
+                .processInstanceIdIn(hisProcInstIdSet)
+                .unfinished()
+                .list();
+
+        long count = historyService.createHistoricTaskInstanceQuery()
+                .processInstanceIdIn(hisProcInstIdSet)
+                .unfinished()
+                .count();
+        if (CollUtil.isEmpty(hisTaskInstList)) {
+            throw new BreezeBizException(TASK_NOT_FOUND);
+        }
+
+        Map<String, HistoricProcessInstance> hisInstMap = hisProcInstList.stream().collect(toMap(HistoricProcessInstance::getId, Function.identity()));
+        List<UserTaskVO> userTaskVOList = hisTaskInstList.stream().map(hisTask -> {
+            // 查询流程实例
+            // @formatter:off
+            HistoricProcessInstance hisInst = hisInstMap.get(hisTask.getProcessInstanceId());
+            if (Objects.isNull(hisInst)) {
+                throw new BreezeBizException(TASK_NOT_FOUND);
+            }
+            return getUserHisTaskVO(hisTask, hisInst);
+        }).collect(toList());
+
         // @formatter:on
-        Page<UserTaskVO> resultPage = new Page<>(userTaskQuery.getCurrent(), userTaskQuery.getSize(), 0L);
-        List<UserTaskVO> userTaskList = new ArrayList<>();
-        hisProcInstList.forEach(hisInst -> userTaskList.addAll(this.buildTaskList(hisInst, resultPage)));
-        resultPage.setRecords(userTaskList);
+        resultPage.setRecords(userTaskVOList);
+        resultPage.setTotal(count);
         return resultPage;
     }
 
-    private List<UserTaskVO> buildTaskList(HistoricProcessInstance hisProcInst, Page<UserTaskVO> resultPage) {
+    /**
+     * 获取用户历史任务
+     *
+     * @param hisTaskInst 历史任务实例
+     * @param hisProcInst 历史流程实例
+     * @return {@link UserTaskVO }
+     */
+    private UserTaskVO getUserHisTaskVO(HistoricTaskInstance hisTaskInst, HistoricProcessInstance hisProcInst) {
+        List<String> userList = Lists.newArrayList();
+        userList.add(hisTaskInst.getAssignee());
         // @formatter:off
-        List<HistoricTaskInstance> hisTaskInstList = this.historyService.createHistoricTaskInstanceQuery()
-                .includeProcessVariables()
-                .processInstanceId(hisProcInst.getId())
-                .orderByTaskCreateTime().desc().list();
-        long count = this.historyService.createHistoricTaskInstanceQuery()
-                .processInstanceId(hisProcInst.getId())
-                .orderByTaskCreateTime().desc()
-                .count();
-        // @formatter:on
-        resultPage.setTotal(resultPage.getTotal() + count);
-        if (CollUtil.isEmpty(hisTaskInstList)) {
-            throw new BreezeBizException(ResultCode.TASK_NOT_FOUND);
-        }
+            UserTaskVO userTaskVO = UserTaskVO.builder()
+                    .taskId(hisTaskInst.getId())
+                    .taskName(hisTaskInst.getName())
+                    .taskDefKey(hisTaskInst.getTaskDefinitionKey())
+                    .procDefKey(hisProcInst.getProcessDefinitionKey())
+                    .formKey(hisTaskInst.getFormKey())
+                    .businessKey(hisProcInst.getBusinessKey())
+                    .procDefKey(hisProcInst.getProcessDefinitionKey())
+                    .procInstId(hisProcInst.getSuperProcessInstanceId())
+                    .procDefId(hisTaskInst.getProcessDefinitionId())
+                    .userList(userList)
+                    .assignee(hisTaskInst.getAssignee())
+                    .assigneeName(hisTaskInst.getAssignee())
+                    .applyUser(hisProcInst.getStartUserId())
+                    .applyUserName(hisProcInst.getStartUserId())
+                    .variable(new UserTaskVO.Variable(hisTaskInst.getProcessVariables()))
+                    .tenantId(hisTaskInst.getTenantId())
+                    .createTime(hisTaskInst.getCreateTime())
+                    .build();
+            // @formatter:on
 
-        List<UserTaskVO> taskList = Lists.newArrayList();
-        for (HistoricTaskInstance historicTaskInstance : hisTaskInstList) {
-            taskList.add(buildTaskList(hisProcInst, historicTaskInstance));
-        }
-        return taskList;
-    }
+        // 查找流程发起人
+        this.setStarUser(userTaskVO, hisTaskInst.getProcessVariables());
 
-    private Task getTask(String taskId) {
-        Task task = this.taskService.createTaskQuery().taskId(taskId).singleResult();
-        if (Objects.isNull(task)) {
-            throw new BreezeBizException(ResultCode.TASK_NOT_FOUND);
+        // 设置状态
+        if (Objects.isNull(hisTaskInst.getEndTime())) {
+            userTaskVO.setStatus("todo");
+        } else {
+            userTaskVO.setStatus("finish");
+            userTaskVO.setEndTime(hisTaskInst.getEndTime());
+            // 当前节点拒绝原因为空，则查询审批意见
+            if (StrUtil.isEmpty(hisTaskInst.getDeleteReason())) {
+                List<Comment> taskComments = taskService.getTaskComments(hisTaskInst.getId());
+                taskComments.forEach(comment -> {
+                    // 同意
+                    userTaskVO.setComment("审核信息:" + comment.getFullMessage());
+                });
+            } else {
+                // 驳回
+                userTaskVO.setAssignee("驳回节点:" + hisTaskInst.getAssignee());
+                userTaskVO.setComment("驳回原因:" + hisTaskInst.getDeleteReason());
+            }
         }
-        return task;
+        return userTaskVO;
     }
 
     /**
@@ -916,90 +850,159 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
         return buttonList;
     }
 
-    private UserTaskVO buildUserTaskVO(Task task) {
-        if (Objects.isNull(task)) {
-            throw new BreezeBizException(ResultCode.TASK_NOT_FOUND);
-        }
-
+    /**
+     * 获取用户任务
+     *
+     * @param task     任务
+     * @param procInst 流程实例
+     * @return {@link UserTaskVO }
+     */
+    private UserTaskVO getUserTaskVO(Task task, ProcessInstance procInst) {
         // 查询流程实例
         // @formatter:off
-        ProcessInstance processInstance = this.runtimeService.createProcessInstanceQuery()
-                .processInstanceId(task.getProcessInstanceId())
-                .singleResult();
-        if (Objects.isNull(processInstance)) {
-            throw new BreezeBizException(ResultCode.PROCESS_NOT_FOUND);
-        }
-
         List<String> userList = Lists.newArrayList();
-        task.getIdentityLinks().forEach(identityLink -> {
-            if (StrUtil.isNotBlank(identityLink.getGroupId()) && StrUtil.equals(CANDIDATE, identityLink.getType())) {
-                for (User user : identityService.createUserQuery().memberOfGroup(identityLink.getGroupId()).list()) {
-                    userList.add(user.getId());
-                }
-            } else {
-                User user = this.identityService.createUserQuery().userId(identityLink.getUserId()).singleResult();
-                if (Objects.nonNull(user)) {
-                    userList.add(user.getId());
-                }
-            }
-        });
         userList.add(task.getAssignee());
         UserTaskVO userTaskVO = UserTaskVO.builder()
                 .taskId(task.getId())
                 .taskName(task.getName())
                 .taskDefKey(task.getTaskDefinitionKey())
-                .procDefKey(processInstance.getProcessDefinitionKey())
+                .procDefKey(procInst.getProcessDefinitionKey())
                 .formKey(task.getFormKey())
-                .owner(task.getOwner())
-                .delegationState(Objects.isNull(task.getDelegationState()) ? "nan" : task.getDelegationState().name())
-                .businessKey(processInstance.getBusinessKey())
-                .procDefKey(processInstance.getProcessDefinitionKey())
-                .procInstId(processInstance.getProcessInstanceId())
-                .procDefId(processInstance.getProcessDefinitionId())
+                .delegationState(Objects.isNull(task.getDelegationState()) ? "NAN" : task.getDelegationState().name())
+                .businessKey(procInst.getBusinessKey())
+                .procDefKey(procInst.getProcessDefinitionKey())
+                .procInstId(procInst.getProcessInstanceId())
+                .procDefId(procInst.getProcessDefinitionId())
                 .userList(userList)
                 .assignee(task.getAssignee())
                 .assigneeName(task.getAssignee())
-                .applyUser(processInstance.getStartUserId())
-                .applyUserName(processInstance.getStartUserId())
-                .comment(MapUtil.getStr(task.getProcessVariables(), "comment", ""))
-                .variable(new UserTaskVO.Variable(task.getProcessVariables()))
-                .tenantId(processInstance.getTenantId())
+                .applyUser(procInst.getStartUserId())
+                .applyUserName(procInst.getStartUserId())
+                .tenantId(procInst.getTenantId())
                 .createTime(task.getCreateTime())
                 .build();
         // @formatter:on
 
-        this.setTaskTitle(task.getProcessVariables(), userTaskVO);
-
         // 查找流程发起人
-        this.setStarUser(userTaskVO, processInstance.getBusinessKey());
+        this.setStarUser(userTaskVO, procInst.getProcessVariables());
 
         return userTaskVO;
     }
 
-    private void setStarUser(UserTaskVO userTaskVO, String processInstance) {
-        // @formatter:off
-        List<HistoricTaskInstance> historicTaskInstanceList = this.historyService.createHistoricTaskInstanceQuery()
-                .processInstanceId(userTaskVO.getProcInstId())
-                .processInstanceBusinessKey(processInstance)
-                //
-                .orderByTaskCreateTime()
-                .asc()
-                .list();
-        // @formatter:on
-        if (CollUtil.isNotEmpty(historicTaskInstanceList) && StrUtil.isNotBlank(historicTaskInstanceList.get(0).getAssignee())) {
-            User user = this.identityService.createUserQuery().userId(historicTaskInstanceList.get(0).getAssignee()).singleResult();
-            if (Objects.nonNull(user) && StrUtil.isNotBlank(user.getId())) {
-                userTaskVO.setApplyUserName(user.getFirstName());
-                userTaskVO.setApplyUser(user.getId());
-            }
-        }
+    /**
+     * 查找流程发起人
+     *
+     * @param userTaskVO       用户任务vo
+     * @param processVariables 过程变量
+     */
+    private void setStarUser(UserTaskVO userTaskVO, Map<String, Object> processVariables) {
+        Optional.ofNullable(processVariables.get("applyUserName")).ifPresent(applyUserName -> {
+            userTaskVO.setApplyUserName(String.valueOf(applyUserName));
+        });
+        Optional.ofNullable(processVariables.get("applyUser")).ifPresent(applyUser -> {
+            userTaskVO.setApplyUser(String.valueOf(applyUser));
+        });
     }
 
-    private void setTaskTitle(Map<String, Object> processVariableMap, UserTaskVO userTaskVO) {
+    /**
+     * 默认启动按钮
+     *
+     * @return {@link BpmInfoVO }
+     */
+    private static BpmInfoVO defaultStartButton() {
+        BpmInfoVO bpmInfoVO = new BpmInfoVO();
+        List<TaskButtonVO> buttonList = new ArrayList<>();
         // @formatter:off
-        Optional.ofNullable(processVariableMap.get("taskTitle"))
-                .filter(v -> v instanceof String).map(Object::toString)
-                .ifPresent(userTaskVO::setTaskTitle);
+        buttonList.add(TaskButtonVO.builder()
+                .name("发起")
+                .event("start")
+                .key("start")
+                .procInstId(null)
+                .taskId(null)
+                .username(BreezeStpUtil.getUser().getUsername())
+                .build());
+        // @formatter:on
+        bpmInfoVO.setButtons(buttonList);
+        return bpmInfoVO;
+    }
+
+    /**
+     * 默认签收按钮
+     *
+     * @param procInstId 流程实例id
+     * @param task       任务
+     * @return {@link TaskButtonVO }
+     */
+    private static TaskButtonVO defaultClaimButton(String procInstId, Task task) {
+        // @formatter:off
+        return (TaskButtonVO.builder()
+                .name("签收")
+                .event("claim")
+                .key("claim")
+                .procInstId(procInstId)
+                .taskId(task.getId())
+                .username(BreezeStpUtil.getUser().getUsername())
+                .build());
+        // @formatter:on
+    }
+
+    /**
+     * 默认反签收按钮
+     *
+     * @param procInstId 流程实例id
+     * @param task       任务
+     * @return {@link TaskButtonVO }
+     */
+    private static TaskButtonVO defaultUnClaimButton(String procInstId, Task task) {
+        // @formatter:off
+        return (TaskButtonVO.builder()
+                .name("反签收")
+                .event("unClaim")
+                .key("unClaim")
+                .procInstId(procInstId)
+                .taskId(task.getId())
+                .username(BreezeStpUtil.getUser().getUsername())
+                .build());
+        // @formatter:on
+    }
+
+    /**
+     * 默认同意按钮
+     *
+     * @param procInstId 流程实例id
+     * @param task       任务
+     * @return {@link TaskButtonVO }
+     */
+    private static TaskButtonVO defaultAgreeButton(String procInstId, Task task) {
+        // @formatter:off
+        return TaskButtonVO.builder()
+                .name("通过")
+                .event("agree")
+                .key("agree")
+                .procInstId(procInstId)
+                .taskId(task.getId())
+                .username(BreezeStpUtil.getUser().getUsername())
+                .build();
+        // @formatter:on
+    }
+
+    /**
+     * 默认拒绝按钮
+     *
+     * @param procInstId 流程实例id
+     * @param task       任务
+     * @return {@link TaskButtonVO }
+     */
+    private static TaskButtonVO defaultRejectButton(String procInstId, Task task) {
+        // @formatter:off
+        return TaskButtonVO.builder()
+                .name("驳回")
+                .event("reject")
+                .key("reject")
+                .procInstId(procInstId)
+                .taskId(task.getId())
+                .username(BreezeStpUtil.getUser().getUsername())
+                .build();
         // @formatter:on
     }
 }

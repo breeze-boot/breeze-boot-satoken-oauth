@@ -172,12 +172,17 @@ public enum ResultCode {
     /**
      * http消息转换异常
      */
-    HTTP_MESSAGE_CONVERSION_EXCEPTION("result_http_message_conversion_exception", "请求参数错误"),
+    HTTP_MESSAGE_CONVERSION_EXCEPTION("result.http.message.conversion.exception", "请求参数错误"),
 
     /**
      * 未登录
      */
     NOT_LOGIN("result.not.login", "未登录"),
+
+    /**
+     * 验证码未通过
+     */
+    VERIFY_UN_PASS("result.verify.un.pass", "验证码未通过"),
 
     ;
 

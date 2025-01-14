@@ -23,13 +23,13 @@ public class UserTaskQuery extends PageQuery implements Serializable {
     private String taskName;
 
     /**
-     * 任务标题
-     */
-    private String taskTitle;
-
-    /**
      * 流程定义key
      */
     private String procDefKey;
+
+    /**
+     * 是否签收
+     */
+    private Boolean isAssigned = Boolean.FALSE;
 
 }

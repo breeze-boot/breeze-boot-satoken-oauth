@@ -43,7 +43,6 @@ import java.util.List;
 @Tag(name = "在线用户管理模块", description = "OnlineUserController")
 public class OnlineUserController {
 
-
     private final OnlineUserService onlineUserService;
 
     /**

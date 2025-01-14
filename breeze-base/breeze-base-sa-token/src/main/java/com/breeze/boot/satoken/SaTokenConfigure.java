@@ -45,7 +45,7 @@ public class SaTokenConfigure implements WebMvcConfigurer {
     private final List<String> websocketJumpUrl = Lists.newArrayList("/ws/**");
     private final List<String> staticJumpUrl = Lists.newArrayList("/**/*.js", "/**/*.css", "/**/*.png", "/*.html", "/**/*.html", "/*.ico", "/**/*.ico");
 
-    private final List<String> swaggerJumpUrl = Lists.newArrayList("/webjars/**", "/doc.html", "/v3/api-docs/**", "/swagger-ui/**");
+    private final List<String> swaggerJumpUrl = Lists.newArrayList("/v3/api-docs", "/swagger-ui.html", "/swagger-ui/**", "/webjars/**");
 
     /**
      * 注册 Sa-Token 拦截器打开注解鉴权功能

@@ -72,8 +72,9 @@ public class BpmInstanceServiceImpl implements IBpmInstanceService {
      */
     @Override
     public Result<String> startProcess(BpmStartForm startForm) {
-        String tenantId = String.valueOf(BreezeStpUtil.getUser().getTenantId());
-        Authentication.setAuthenticatedUserId(String.valueOf(BreezeStpUtil.getUser().getUsername()));
+        Long tenantId = BreezeStpUtil.getUser().getTenantId();
+        String username = BreezeStpUtil.getUser().getUsername();
+        Authentication.setAuthenticatedUserId(username);
         // @formatter:off
         List<Execution> executionList = runtimeService.createExecutionQuery()
                 .processDefinitionKey(startForm.getProcDefKey())
@@ -84,7 +85,6 @@ public class BpmInstanceServiceImpl implements IBpmInstanceService {
         // }
         // @formatter:on
         try {
-
             // @formatter:off
             ProcessDefinition processDefinition = this.repositoryService.createProcessDefinitionQuery()
                     .processDefinitionKey(startForm.getProcDefKey())
@@ -103,12 +103,14 @@ public class BpmInstanceServiceImpl implements IBpmInstanceService {
             }
 
             //启动流程
+            startForm.getVariables().put("applyUser", BreezeStpUtil.getUser().getUsername());
+            startForm.getVariables().put("applyUserName", BreezeStpUtil.getUser().getDisplayName());
             // @formatter:off
             ProcessInstance processInstance = runtimeService.startProcessInstanceByKeyAndTenantId(
                     startForm.getProcDefKey(),
                     startForm.getBusinessKey(),
                     startForm.getVariables(),
-                    tenantId);
+                    String.valueOf(tenantId));
             // @formatter:on
 
             // //这个方法最终使用一个ThreadLocal类型的变量进行存储，也就是与当前的线程绑定，所以流程实例启动完毕之后，需要设置为null，防止多线程的时候出问题。
@@ -156,12 +158,13 @@ public class BpmInstanceServiceImpl implements IBpmInstanceService {
             // 挂起--》激活
             runtimeService.activateProcessInstanceById(id);
             log.info("流程定义：" + id + "，已激活");
+            return Result.ok(Boolean.TRUE, "激活成功");
         } else {
             // 激活--》挂起
             runtimeService.suspendProcessInstanceById(id);
             log.info("流程定义：" + id + "，已挂起");
+            return Result.ok(Boolean.TRUE, "挂起成功");
         }
-        return Result.ok();
     }
 
 
