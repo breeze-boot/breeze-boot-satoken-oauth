@@ -25,9 +25,14 @@ import com.breeze.boot.core.exception.BreezeBizException;
 import com.breeze.boot.core.jackson.propertise.AesSecretProperties;
 import com.breeze.boot.core.utils.AesUtil;
 import com.breeze.boot.core.utils.Result;
+import com.breeze.boot.log.bo.SysLogBO;
+import com.breeze.boot.log.enums.LogType;
+import com.breeze.boot.log.events.PublisherSaveSysLogEvent;
+import com.breeze.boot.log.events.SysLogSaveEvent;
 import com.breeze.boot.satoken.oauth2.IUserDetailService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -35,11 +40,15 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 import static com.breeze.boot.core.enums.ResultCode.VERIFY_UN_PASS;
+import static com.breeze.boot.log.enums.LogEnum.LogType.LOGIN;
+import static com.breeze.boot.log.enums.LogEnum.Result.FAIL;
+import static com.breeze.boot.log.enums.LogEnum.Result.SUCCESS;
 
 /**
  * oauth令牌配置
@@ -51,9 +60,13 @@ import static com.breeze.boot.core.enums.ResultCode.VERIFY_UN_PASS;
 @RequiredArgsConstructor
 public class SaTokenOauthConfigure {
     private final static String BCRYPT = "{bcrypt}";
+
     private final IUserDetailService userDetailService;
 
     private final AesSecretProperties aesSecretProperties;
+
+    private final PublisherSaveSysLogEvent publisherSaveSysLogEvent;
+
     private final Function<HttpServletRequest, Boolean> captchaServiceFunction;
 
     /**
@@ -78,9 +91,13 @@ public class SaTokenOauthConfigure {
             UserPrincipal userPrincipal = this.userDetailService.loadUserByUsername(name);
             String pw_hash = BCrypt.hashpw(pwd, BCrypt.gensalt());
             if (BCrypt.checkpw(decodePwd, userPrincipal.getPassword().replace(BCRYPT, ""))) {
+                SysLogBO sysLogBO = this.buildLog(requestAttributes.getRequest(), SUCCESS.getCode(), name);
+                this.publisherSaveSysLogEvent.publisherEvent(new SysLogSaveEvent(sysLogBO));
                 StpUtil.login(userPrincipal.getId());
                 return Result.ok();
             }
+            SysLogBO sysLogBO = this.buildLog(requestAttributes.getRequest(), FAIL.getCode(), name);
+            this.publisherSaveSysLogEvent.publisherEvent(new SysLogSaveEvent(sysLogBO));
             return Result.fail("账号名或密码错误");
         };
 
@@ -97,6 +114,33 @@ public class SaTokenOauthConfigure {
             log.info("----返回会话令牌");
             return StpUtil.getOrCreateLoginSession(loginId);
         };
+    }
+
+    /**
+     * 执行日志 业务
+     *
+     * @param request  请求
+     * @param result 日志结果
+     * @param username 参数
+     *
+     * @return {@link SysLogBO }
+     */
+    @SneakyThrows
+    private SysLogBO buildLog(HttpServletRequest request, Integer result, String username) {
+        String userAgent = request.getHeader("User-Agent");
+        return SysLogBO.builder()
+                .system(userAgent)
+                .logTitle(LogType.USERNAME_LOGIN.getName())
+                .doType(LogType.USERNAME_LOGIN.getCode())
+                .logType(LOGIN.getCode())
+                .result(result)
+                .ip(request.getRemoteAddr())
+                .requestType(request.getMethod())
+                .paramContent(username)
+                .createTime(LocalDateTime.now())
+                .createBy(username)
+                .createName(username)
+                .build();
     }
 
 }

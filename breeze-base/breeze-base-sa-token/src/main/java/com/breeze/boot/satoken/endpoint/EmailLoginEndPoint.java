@@ -21,27 +21,30 @@ import cn.dev33.satoken.util.SaFoxUtil;
 import com.breeze.boot.core.utils.Result;
 import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import static com.breeze.boot.core.constants.CacheConstants.VALIDATE_SMS_CODE;
+import static com.breeze.boot.core.constants.CacheConstants.VALIDATE_EMAIL_CODE;
 
 /**
- * 自定义手机登录接口
+ * 自定义邮箱登录接口
  *
  * @author gaoweixuan
  * @since 2024/09/05
  */
 @Slf4j
 @RestController
-public class PhoneLoginEndPoint {
+public class EmailLoginEndPoint {
 
-    @GetMapping("/oauth2/sendPhoneCode")
+    @GetMapping("/oauth2/sendEmailCode")
     @ResponseBody
-    public Result<Boolean> sendCode(@NotBlank(message = "手机号不能为空") @RequestParam String phone) {
+    public Result<Boolean> sendCode(@NotBlank(message = "邮箱不能为空") @RequestParam String email) {
         String code = SaFoxUtil.getRandomNumber(100000, 999999) + "";
-        SaManager.getSaTokenDao().set(VALIDATE_SMS_CODE + phone, code, 60 * 5);
-        log.info("手机号：" + phone + "，验证码：" + code + "，已发送成功");
-        return Result.ok(Boolean.TRUE,"验证码发送成功");
+        SaManager.getSaTokenDao().set(VALIDATE_EMAIL_CODE + email, code, 60 * 5);
+        log.info("邮箱：" + email + "，验证码：" + code + "，已发送成功");
+        return Result.ok(Boolean.TRUE, "验证码发送成功");
     }
 
 }

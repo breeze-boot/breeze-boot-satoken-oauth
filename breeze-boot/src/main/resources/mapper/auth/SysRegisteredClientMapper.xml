@@ -15,9 +15,7 @@
         client_authentication_methods AS str_client_authentication_methods,
         authorization_grant_types AS str_authorization_grant_types,
         redirect_uris AS str_redirect_uris,
-        scopes AS str_scopes,
-        json_client_settings,
-        json_token_settings
+        scopes AS str_scopes
         FROM
         sys_registered_client
         <where>
@@ -43,9 +41,7 @@
         client_authentication_methods,
         authorization_grant_types,
         redirect_uris,
-        scopes,
-        json_client_settings,
-        json_token_settings
+        scopes
         FROM
         sys_registered_client
         <where>

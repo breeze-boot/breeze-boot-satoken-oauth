@@ -32,6 +32,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -105,7 +106,8 @@ public class SysEmailConfigController {
     @PutMapping("/{id}")
     @SaCheckPermission("sys:emailConfig:modify")
     @BreezeSysLog(description = "邮箱信息修改", type = LogType.EDIT)
-    public Result<Boolean> modify(@Parameter(description = "邮箱ID") @PathVariable Long id, @Valid @RequestBody EmailConfigForm emailConfigForm) {
+    public Result<Boolean> modify(@Parameter(description = "邮箱ID") @NotNull(message = "邮箱ID不能为空") @PathVariable Long id,
+                                  @Valid @RequestBody EmailConfigForm emailConfigForm) {
         return Result.ok(this.sysEmailConfigService.modifyEmail(id, emailConfigForm));
     }
 

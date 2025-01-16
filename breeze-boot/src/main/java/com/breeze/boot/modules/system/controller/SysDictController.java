@@ -162,7 +162,7 @@ public class SysDictController {
     @PutMapping("/{id}")
     @SaCheckPermission("sys:dict:modify")
     @BreezeSysLog(description = "字典信息修改", type = LogType.EDIT)
-    public Result<Boolean> modify(@Parameter(description = "字典ID") @NotNull(message = "字典ID")@PathVariable Long id,
+    public Result<Boolean> modify(@Parameter(description = "字典ID") @NotNull(message = "字典ID不能为空") @PathVariable Long id,
                                   @Valid @RequestBody DictForm dictForm) {
         return Result.ok(this.sysDictService.modifyDict(id, dictForm));
     }

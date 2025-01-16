@@ -336,6 +336,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         return this.baseMapper.listUserByRole(roleCode);
     }
 
+    /**
+     * 同步审批流用户
+     */
     @Override
     public void syncFlowableUser() {
         List<SysUser> sysUserList = this.list();

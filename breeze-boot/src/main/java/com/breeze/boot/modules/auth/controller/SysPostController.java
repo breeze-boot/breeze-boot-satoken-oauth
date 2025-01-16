@@ -34,6 +34,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -128,7 +129,7 @@ public class SysPostController {
     @PutMapping("/{id}")
     @SaCheckPermission("auth:post:modify")
     @BreezeSysLog(description = "岗位信息修改", type = LogType.EDIT)
-    public Result<Boolean> modify(@Parameter(description = "岗位ID") @PathVariable Long id,
+    public Result<Boolean> modify(@Parameter(description = "岗位ID") @NotNull(message = "岗位ID不能为空") @PathVariable Long id,
                                   @Valid @RequestBody PostForm postForm) {
         return Result.ok(this.sysPostService.modifyPost(id, postForm));
     }

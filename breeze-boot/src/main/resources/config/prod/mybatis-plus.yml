@@ -7,7 +7,7 @@ mybatis-plus:
       id-type: auto
       insert-strategy: not_empty
       where-strategy: not_empty
-      update-strategy: ignored
+      update-strategy: not_empty
   configuration:
     jdbc-type-for-null: null
     call-setters-on-nulls: true

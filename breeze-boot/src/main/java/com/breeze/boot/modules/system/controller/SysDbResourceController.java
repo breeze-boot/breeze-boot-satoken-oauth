@@ -107,7 +107,7 @@ public class SysDbResourceController {
     @PutMapping("/{id}")
     @SaCheckPermission("sys:dbResource:modify")
     @BreezeSysLog(description = "数据源信息修改", type = LogType.EDIT)
-    public Result<Boolean> modify(@Parameter(description = "数据源ID") @NotNull(message = "数据源ID") @PathVariable Long id,
+    public Result<Boolean> modify(@Parameter(description = "数据源ID") @NotNull(message = "数据源ID不能为空") @PathVariable Long id,
                                   @Valid @RequestBody DbResourceForm dbResourceForm) {
         return Result.ok(this.sysDbResourceService.modifyDbResource(id, dbResourceForm));
     }

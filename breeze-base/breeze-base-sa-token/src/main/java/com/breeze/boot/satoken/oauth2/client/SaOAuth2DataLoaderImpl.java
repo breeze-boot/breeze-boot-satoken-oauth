@@ -16,6 +16,7 @@
 
 package com.breeze.boot.satoken.oauth2.client;
 
+import cn.dev33.satoken.exception.SaTokenException;
 import cn.dev33.satoken.oauth2.SaOAuth2Manager;
 import cn.dev33.satoken.oauth2.data.loader.SaOAuth2DataLoader;
 import cn.dev33.satoken.oauth2.data.model.loader.SaClientModel;
@@ -25,6 +26,7 @@ import com.breeze.boot.satoken.model.BaseSysRegisteredClient;
 import com.breeze.boot.satoken.oauth2.IClientService;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -50,7 +52,12 @@ public class SaOAuth2DataLoaderImpl implements SaOAuth2DataLoader {
     public SaClientModel getClientModel(String clientId) {
         BaseSysRegisteredClient registeredClient = iClientService.getByClientId(clientId);
         if (registeredClient == null) {
-            return null;
+            throw new SaTokenException("未发现客户端配置");
+        }
+
+        LocalDateTime clientIdIssuedAt = registeredClient.getClientIdIssuedAt();
+        if (clientIdIssuedAt.isBefore(LocalDateTime.now())){
+            throw new SaTokenException("客户端过期");
         }
         return new SaClientModel().setClientId(registeredClient.getClientId())
                 .setClientSecret(SaSecureUtil.aesDecrypt(aesSecretProperties.getAesSecret(), registeredClient.getClientSecret())) // client 秘钥

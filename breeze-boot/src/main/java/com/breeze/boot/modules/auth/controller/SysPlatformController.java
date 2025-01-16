@@ -38,6 +38,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -140,7 +141,7 @@ public class SysPlatformController {
     @PutMapping("/{id}")
     @SaCheckPermission("auth:platform:modify")
     @BreezeSysLog(description = "平台信息修改", type = LogType.EDIT)
-    public Result<Boolean> modify(@Parameter(description = "菜单ID") @PathVariable Long id,
+    public Result<Boolean> modify(@Parameter(description = "平台ID") @NotNull(message = "平台ID不能为空") @PathVariable Long id,
                                   @Valid @RequestBody PlatformForm platformForm) {
         return Result.ok(this.sysPlatformService.modifyPlatform(id, platformForm));
     }

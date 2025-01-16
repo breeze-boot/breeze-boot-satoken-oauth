@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.satoken.oauth2.phone;
+package com.breeze.boot.satoken.oauth2.email;
 
 import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.context.model.SaRequest;
@@ -31,44 +31,45 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static com.breeze.boot.core.constants.CacheConstants.VALIDATE_SMS_CODE;
+import static com.breeze.boot.core.constants.CacheConstants.VALIDATE_EMAIL_CODE;
 
 /**
  * 自定义 sms_code 授权模式处理器
  *
  * @author gaoweixuan
- * @since 2024/09/05
+ * @since 2025/01/05
  */
 @Slf4j
 @RequiredArgsConstructor
-public class PhoneCodeGrantTypeHandler implements SaOAuth2GrantTypeHandlerInterface {
+public class EmailCodeGrantTypeHandler implements SaOAuth2GrantTypeHandlerInterface {
 
     private final Supplier<IUserDetailService> userDetailServiceSupplier;
 
     @Override
     public String getHandlerGrantType() {
-        return "sms_code";
+        return "email_code";
     }
 
     @Override
     public AccessTokenModel getAccessToken(SaRequest req, String clientId, List<String> scopes) {
-        RequestAuthModel ra = new RequestAuthModel();
-        String phone = req.getParamNotNull("phone");
+        String email = req.getParamNotNull("email");
         String code = req.getParamNotNull("code");
-        String realCode = SaManager.getSaTokenDao().get(VALIDATE_SMS_CODE + phone);
+        String realCode = SaManager.getSaTokenDao().get(VALIDATE_EMAIL_CODE + email);
 
         // 校验验证码是否正确
         if (!code.equals(realCode)) {
             throw new SaOAuth2Exception("登录失败");
         }
         // 校验通过，删除验证码
-        SaManager.getSaTokenDao().delete(VALIDATE_SMS_CODE + phone);
+        SaManager.getSaTokenDao().delete(this.getHandlerGrantType() +":" + email);
         // 去登录获取用户信息
-        UserPrincipal userPrincipal = userDetailServiceSupplier.get().loadUserByPhone(phone);
+        UserPrincipal userPrincipal = userDetailServiceSupplier.get().loadUserByEmail(email);
 
+        RequestAuthModel ra = new RequestAuthModel();
         ra.clientId = clientId;
         ra.loginId = userPrincipal.getId();
         ra.scopes = scopes;
+
         // 生成 Access-Token
         return SaOAuth2Manager.getDataGenerate().generateAccessToken(ra, true);
     }

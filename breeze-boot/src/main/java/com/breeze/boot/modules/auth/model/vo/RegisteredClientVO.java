@@ -88,16 +88,6 @@ public class RegisteredClientVO {
     private Set<String> scopes;
 
     /**
-     * 客户端设置
-     */
-    private ClientSettingsVO clientSettings;
-
-    /**
-     * 令牌设置
-     */
-    private TokenSettingsVO tokenSettings;
-
-    /**
      * 客户端身份验证方法
      */
     @JsonIgnore
@@ -120,17 +110,5 @@ public class RegisteredClientVO {
      */
     @JsonIgnore
     private String strScopes;
-
-    /**
-     * 客户端设置
-     */
-    @JsonIgnore
-    private String jsonClientSettings;
-
-    /**
-     * 令牌设置
-     */
-    @JsonIgnore
-    private String jsonTokenSettings;
 
 }

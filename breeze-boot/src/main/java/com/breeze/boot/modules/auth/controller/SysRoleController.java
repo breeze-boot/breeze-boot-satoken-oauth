@@ -139,7 +139,7 @@ public class SysRoleController {
     @PutMapping("/{id}")
     @SaCheckPermission("auth:role:modify")
     @BreezeSysLog(description = "角色信息修改", type = LogType.EDIT)
-    public Result<Boolean> modify(@Parameter(description = "角色ID") @PathVariable Long id,
+    public Result<Boolean> modify(@Parameter(description = "角色ID") @NotNull(message = "角色ID不能为空") @PathVariable Long id,
                                   @Valid @RequestBody RoleForm roleForm) {
         return sysRoleService.modifyRole(id, roleForm);
     }

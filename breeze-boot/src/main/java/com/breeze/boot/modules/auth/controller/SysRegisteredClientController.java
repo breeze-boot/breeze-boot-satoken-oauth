@@ -33,6 +33,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -109,7 +110,7 @@ public class SysRegisteredClientController {
     @PutMapping("/{id}")
     @SaCheckPermission("auth:client:modify")
     @BreezeSysLog(description = "客户端信息修改", type = LogType.EDIT)
-    public Result<Boolean> modify(@Parameter(description = "客户端ID") @PathVariable Long id,
+    public Result<Boolean> modify(@Parameter(description = "客户端ID") @NotNull(message = "客户端ID不能为空") @PathVariable Long id,
                                   @Valid @RequestBody RegisteredClientForm registeredClientForm) {
         return Result.ok(this.registeredClientService.modifyRegisteredClient(id, registeredClientForm));
     }

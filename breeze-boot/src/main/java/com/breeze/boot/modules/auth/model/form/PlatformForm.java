@@ -17,6 +17,7 @@
 package com.breeze.boot.modules.auth.model.form;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.io.Serial;
@@ -43,12 +44,14 @@ public class PlatformForm implements Serializable {
      * 平台编码
      */
     @Schema(description = "平台编码")
+    @NotBlank(message = "平台编码不能为空")
     private String platformCode;
 
     /**
      * 平台名称
      */
     @Schema(description = "平台名称")
+    @NotBlank(message = "平台名称不能为空")
     private String platformName;
 
     /**

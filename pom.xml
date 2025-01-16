@@ -58,7 +58,7 @@
 
         <mybatis-plus.version>3.5.5</mybatis-plus.version>
         <mysql.version>8.0.31</mysql.version>
-        <druid.version>1.2.8</druid.version>
+        <druid.version>1.2.21</druid.version>
         <dynamic-datasource.version>4.3.1</dynamic-datasource.version>
 
         <flowable.version>7.0.0.M1</flowable.version>
@@ -267,7 +267,7 @@
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
+                <artifactId>druid-spring-boot-3-starter</artifactId>
                 <version>${druid.version}</version>
             </dependency>
             <dependency>

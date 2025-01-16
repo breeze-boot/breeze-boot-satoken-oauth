@@ -134,7 +134,7 @@ public class SysMenuController {
     @PutMapping("/{id}")
     @SaCheckPermission("auth:menu:modify")
     @BreezeSysLog(description = "菜单信息修改", type = LogType.EDIT)
-    public Result<Boolean> modify(@Parameter(description = "菜单ID") @PathVariable Long id,
+    public Result<Boolean> modify(@Parameter(description = "菜单ID") @NotNull(message = "菜单ID不能为空") @PathVariable Long id,
                                   @Valid @RequestBody MenuForm menuForm) {
         return sysMenuService.modifyMenu(id, menuForm);
     }

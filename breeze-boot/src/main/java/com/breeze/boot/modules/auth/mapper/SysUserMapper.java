@@ -16,7 +16,6 @@
 
 package com.breeze.boot.modules.auth.mapper;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.modules.auth.model.bo.UserBO;
 import com.breeze.boot.modules.auth.model.entity.SysUser;

@@ -106,7 +106,7 @@ public class SysDictItemController {
     @PutMapping("/{id}")
     @SaCheckPermission("sys:dict:modify")
     @BreezeSysLog(description = "字典项信息修改", type = LogType.EDIT)
-    public Result<Boolean> modify(@Parameter(description = "字典项ID") @NotNull(message = "字典项ID") @PathVariable Long id,
+    public Result<Boolean> modify(@Parameter(description = "字典项ID") @NotNull(message = "字典项ID不能为空") @PathVariable Long id,
                                   @Valid @RequestBody DictItemForm dictItemForm) {
         return Result.ok(this.sysDictItemService.modifyDictItem(id, dictItemForm));
     }

@@ -83,14 +83,4 @@ public class SysRegisteredClient extends BaseSysRegisteredClient {
      */
     private String scopes;
 
-    /**
-     * 客户端设置
-     */
-    private String jsonClientSettings;
-
-    /**
-     * 令牌设置
-     */
-    private String jsonTokenSettings;
-
 }

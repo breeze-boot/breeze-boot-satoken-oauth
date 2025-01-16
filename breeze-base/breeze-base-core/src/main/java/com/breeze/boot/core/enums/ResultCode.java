@@ -65,6 +65,11 @@ public enum ResultCode {
     SC_FORBIDDEN("result.sc.forbidden", "未授权资源"),
 
     /**
+     * 资源未发现
+     */
+    RESOURCE_NO_FOUND("result.resource.not.found", "资源未发现"),
+
+    /**
      * 认证失败
      */
     AUTHENTICATION_FAILURE("result.authentication.failure", "认证失败"),
@@ -168,6 +173,11 @@ public enum ResultCode {
      * 分页过大
      */
     PAGE_EXCEPTION("result.page.exception", "分页过大"),
+
+    /**
+     * 登录失败
+     */
+    LOGIN_EXCEPTION("result.login.exception", "登录失败"),
 
     /**
      * http消息转换异常

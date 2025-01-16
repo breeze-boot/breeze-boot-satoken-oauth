@@ -28,7 +28,6 @@ import com.breeze.boot.modules.bpm.model.entity.User;
 import com.breeze.boot.modules.bpm.service.IGroupService;
 import com.breeze.boot.modules.bpm.service.IMembershipService;
 import com.breeze.boot.modules.bpm.service.IUserService;
-import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -47,18 +46,19 @@ public class FlowableManager {
 
     private final IMembershipService membershipService;
 
-    public List<?> compareUsers(List<FlowUserBO> userList) {
-        return Lists.newArrayList();
-    }
-
     /**
      * 同步用户信息
      */
     public void syncUser(List<FlowUserBO> flowUserBOList, List<SysRole> roles) {
-        this.groupService.saveOrUpdateBatch(roles.stream().map(sysRole -> Group.builder().id(sysRole.getRoleCode()).name(sysRole.getRoleName()).build()).collect(Collectors.toList()));
+        this.groupService.saveOrUpdateBatch(roles.stream().map(sysRole ->
+                Group.builder()
+                        .id(sysRole.getRoleCode())
+                        .name(sysRole.getRoleName())
+                        .build())
+                .collect(Collectors.toList()));
         List<User> userList = this.userService.list();
         List<User> deleteUser = userList.stream()
-                .filter(item -> flowUserBOList.stream().noneMatch(userBO -> userBO.getUsername().equals(item.getId()))).collect(Collectors.toList());
+                .filter(item -> flowUserBOList.stream().noneMatch(userBO -> userBO.getUsername().equals(item.getId()))).toList();
         for (User user : deleteUser) {
             this.membershipService.remove(Wrappers.<Membership>lambdaQuery().eq(Membership::getUserId, user.getId()));
             this.userService.remove(Wrappers.<User>lambdaQuery().eq(User::getId, user.getId()));

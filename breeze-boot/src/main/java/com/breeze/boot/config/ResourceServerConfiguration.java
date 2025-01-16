@@ -21,10 +21,12 @@ import com.anji.captcha.model.common.ResponseModel;
 import com.anji.captcha.model.vo.CaptchaVO;
 import com.anji.captcha.service.CaptchaService;
 import com.breeze.boot.core.jackson.propertise.AesSecretProperties;
+import com.breeze.boot.log.events.PublisherSaveSysLogEvent;
 import com.breeze.boot.modules.auth.service.SysRegisteredClientService;
 import com.breeze.boot.modules.auth.service.SysUserService;
 import com.breeze.boot.satoken.SaTokenOauthConfigure;
 import com.breeze.boot.satoken.oauth2.client.SaOAuth2DataLoaderImpl;
+import com.breeze.boot.satoken.oauth2.email.EmailCodeGrantTypeHandler;
 import com.breeze.boot.satoken.oauth2.oidc.BreezeOidcScopeHandler;
 import com.breeze.boot.satoken.oauth2.phone.PhoneCodeGrantTypeHandler;
 import com.breeze.boot.satoken.oauth2.userinfo.UserinfoScopeHandler;
@@ -53,6 +55,8 @@ public class ResourceServerConfiguration {
 
     private final SysRegisteredClientService sysRegisteredClientService;
 
+    private final PublisherSaveSysLogEvent publisherSaveSysLogEvent;
+
     private final AesSecretProperties aesSecretProperties;
 
     public String getActiveProfile() {
@@ -71,7 +75,7 @@ public class ResourceServerConfiguration {
 
     @Bean
     public SaTokenOauthConfigure saTokenOauthConfigure() {
-        return new SaTokenOauthConfigure(userService, aesSecretProperties, this::checkCapture);
+        return new SaTokenOauthConfigure(userService, aesSecretProperties, publisherSaveSysLogEvent, this::checkCapture);
     }
 
     /**
@@ -85,7 +89,7 @@ public class ResourceServerConfiguration {
     }
 
     /**
-     * 用户服务
+     * 手机号验证码登录配置
      *
      * @return {@link BreezeOidcScopeHandler}
      */
@@ -95,7 +99,17 @@ public class ResourceServerConfiguration {
     }
 
     /**
-     * 用户服务
+     * 邮箱杨验证码登录配置
+     *
+     * @return {@link BreezeOidcScopeHandler}
+     */
+    @Bean
+    public EmailCodeGrantTypeHandler emailCodeGrantTypeHandler() {
+        return new EmailCodeGrantTypeHandler(() -> userService);
+    }
+
+    /**
+     * 用户登录配置
      *
      * @return {@link BreezeOidcScopeHandler}
      */
