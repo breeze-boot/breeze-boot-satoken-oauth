@@ -362,6 +362,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     /**
      * 用户列表
+     *
+     * @param deptId 部门ID
+     * @return {@link Result }<{@link List }<{@link SysUser }>>
      */
     @Override
     public Result<List<SysUser>> listDeptUser(Long deptId) {

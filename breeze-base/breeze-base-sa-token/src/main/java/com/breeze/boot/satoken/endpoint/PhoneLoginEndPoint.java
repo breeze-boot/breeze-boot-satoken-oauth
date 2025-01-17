@@ -17,11 +17,16 @@
 package com.breeze.boot.satoken.endpoint;
 
 import cn.dev33.satoken.SaManager;
+import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.util.SaFoxUtil;
 import com.breeze.boot.core.utils.Result;
 import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Objects;
 
 import static com.breeze.boot.core.constants.CacheConstants.VALIDATE_SMS_CODE;
 
@@ -35,13 +40,28 @@ import static com.breeze.boot.core.constants.CacheConstants.VALIDATE_SMS_CODE;
 @RestController
 public class PhoneLoginEndPoint {
 
+    /**
+     * 发送验证码
+     *
+     * @param phone 电话
+     * @return {@link Result }<{@link Long }>
+     */
     @GetMapping("/oauth2/sendPhoneCode")
-    @ResponseBody
-    public Result<Boolean> sendCode(@NotBlank(message = "手机号不能为空") @RequestParam String phone) {
+    public Result<Long> sendPhoneCode(@NotBlank(message = "手机号不能为空") @RequestParam String phone) {
+        SaTokenDao saTokenDao = SaManager.getSaTokenDao();
+        String cacheCode = saTokenDao.get(VALIDATE_SMS_CODE + phone);
+        if (Objects.nonNull(cacheCode)) {
+            // 验证码存在，计算剩余时间
+            long expire = saTokenDao.getTimeout(VALIDATE_SMS_CODE + phone);
+            return Result.ok(expire, "请等待 " + expire + " 秒后再试");
+        }
+
         String code = SaFoxUtil.getRandomNumber(100000, 999999) + "";
-        SaManager.getSaTokenDao().set(VALIDATE_SMS_CODE + phone, code, 60 * 5);
+        // TODO 发送验证码
+        saTokenDao.set(VALIDATE_SMS_CODE + phone, code, 60);
+
         log.info("手机号：" + phone + "，验证码：" + code + "，已发送成功");
-        return Result.ok(Boolean.TRUE,"验证码发送成功");
+        return Result.ok(60L, "验证码发送成功");
     }
 
 }
