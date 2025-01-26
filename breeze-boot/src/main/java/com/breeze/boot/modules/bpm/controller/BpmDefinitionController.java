@@ -32,6 +32,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -119,34 +120,69 @@ public class BpmDefinitionController {
     }
 
     /**
+     * 获取流程定义png
+     * <p>
+     * 查看某版本的流程定义信息
+     *
+     * @param procDefKey 流程定义Key
+     * @param version    版本
+     * @return {@link Result}<{@link ?}>
+     */
+    @Operation(summary = "获取流程定义png")
+    @GetMapping("/getBpmDefinitionPng")
+    @SaCheckPermission("bpm:definition:info")
+    public Result<?> getBpmDefinitionPng(@NotBlank(message = "流程定义Key不能为空") @Schema(description = "流程定义Key") @RequestParam String procDefKey,
+                                         @NotNull(message = "版本不能为空") @Schema(description = "版本") @RequestParam Integer version) {
+        return Result.ok(this.bpmDefinitionService.getBpmDefinitionPng(procDefKey, version));
+    }
+
+    /**
+     * 获取流程定义xml
+     * <p>
+     * 查看某版本的流程定义信息
+     *
+     * @param procDefKey 流程定义Key
+     * @param version    版本
+     * @return {@link Result}<{@link String}>
+     */
+    @Operation(summary = "获取流程定义xml")
+    @GetMapping("/getBpmDefinitionXml")
+    @SaCheckPermission("bpm:definition:info")
+    public Result<?> getBpmDefinitionXml(@NotBlank(message = "流程定义Key不能为空") @Schema(description = "流程定义Key") @RequestParam String procDefKey,
+                                         @NotNull(message = "版本不能为空") @Schema(description = "版本") @RequestParam Integer version) {
+         return Result.ok(this.bpmDefinitionService.getBpmDefinitionXml(procDefKey, version));
+    }
+
+    /**
      * 获取各个版本流程定义png
      *
-     * @param procInstId 流程实例ID
+     * @param procDefKey 流程定义Key
      * @return {@link Result}<{@link ?}>
      */
     @Operation(summary = "获取各个版本流程定义png")
-    @GetMapping("/getBpmDefinitionPng")
+    @GetMapping("/getBpmDefinitionVersionPng")
     @SaCheckPermission("bpm:definition:info")
-    public Result<?> getBpmDefinitionPng(@NotBlank(message = "流程定义Key不能为空") @Schema(description = "流程定义Key") @RequestParam String procInstId) {
-        return Result.ok(this.bpmDefinitionService.getBpmDefinitionPng(procInstId));
+    public Result<?> getBpmDefinitionVersionPng(@NotBlank(message = "流程定义Key不能为空") @Schema(description = "流程定义Key") @RequestParam String procDefKey) {
+        return Result.ok(this.bpmDefinitionService.getBpmDefinitionPng(procDefKey,null));
     }
+
 
     /**
      * 获取各个版本流程定义xml
      *
-     * @param procInstId 流程实例ID
+     * @param procDefKey 流程定义Key
      * @return {@link Result}<{@link String}>
      */
     @Operation(summary = "获取各个版本流程定义xml")
-    @GetMapping("/getBpmDefinitionXml")
+    @GetMapping("/getBpmDefinitionVersionXml")
     @SaCheckPermission("bpm:definition:info")
-    public Result<?> getBpmDefinitionXml(@NotBlank(message = "流程实例ID不能为空") @Schema(description = "流程实例ID") @RequestParam String procInstId) {
-        return Result.ok(this.bpmDefinitionService.getBpmDefinitionXml(procInstId));
+    public Result<?> getBpmDefinitionVersionXml(@NotBlank(message = "流程定义Key不能为空") @Schema(description = "流程定义Key") @RequestParam String procDefKey) {
+        return Result.ok(this.bpmDefinitionService.getBpmDefinitionXml(procDefKey, null));
     }
 
     /**
      * 挂起/激活
-     *
+     * <p>
      * 挂起和激活
      * 部署的流程默认的状态为激活，如果我们暂时不想使用该定义的流程，那么可以挂起该流程。当然该流程定义下边所有的流程实例全部暂停。
      * 流程定义为挂起状态，该流程定义将不允许启动新的流程实例，同时该流程定义下的所有的流程实例都将全部挂起暂停执行。
@@ -156,8 +192,7 @@ public class BpmDefinitionController {
      */
     @Operation(summary = "挂起/激活")
     @PutMapping("/suspendedDefinition")
-    public Result<Boolean> suspendedDefinition(@NotBlank(message = "流程定义ID不能为空") @Schema(description = "流程定义ID")
-                                               @RequestParam(name = "procDefId") String procDefId) {
+    public Result<Boolean> suspendedDefinition(@NotBlank(message = "流程定义ID不能为空") @Schema(description = "流程定义ID") @RequestParam(name = "procDefId") String procDefId) {
         return this.bpmDefinitionService.suspendedDefinition(procDefId);
     }
 

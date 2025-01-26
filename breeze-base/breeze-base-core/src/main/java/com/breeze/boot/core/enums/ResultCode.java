@@ -105,10 +105,11 @@ public enum ResultCode {
     JOB_NOT_FOUND("result.job.not.found", "任务不存在"),
 
     /**
+
      * 租户未获取到
      */
     TENANT_NOT_FOUND("result.tenant.not.found", "租户未获取到"),
-
+	
     /**
      * 文件不存在
      */

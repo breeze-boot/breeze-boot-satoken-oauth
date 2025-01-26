@@ -118,8 +118,8 @@ public class BpmTaskController {
     @GetMapping(value = "/getFlowButtonInfo")
     @ResponseBody
     public Result<BpmInfoVO> getFlowButtonInfo(@RequestParam @NotBlank(message = "流程定义KEY不能为空") String procDefKey,
-                                               @RequestParam String businessKey,
-                                               @RequestParam String procInstId) {
+                                               @RequestParam(required = false) String businessKey,
+                                               @RequestParam(required = false) String procInstId) {
         return Result.ok(bpmTaskService.getFlowButtonInfo(procDefKey, businessKey, procInstId));
     }
 

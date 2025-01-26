@@ -117,6 +117,8 @@ public class UserTaskVO {
      */
     private String tenantId;
 
+    private Integer version;
+
     /**
      * 任务定义Key
      */

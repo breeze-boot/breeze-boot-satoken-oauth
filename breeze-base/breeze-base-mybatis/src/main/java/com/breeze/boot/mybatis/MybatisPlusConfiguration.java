@@ -68,10 +68,13 @@ public class MybatisPlusConfiguration {
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(tenantLineInnerInterceptor(this.tenantProperties));
+        // 1. 数据权限拦截器提前,减少后续无权限数据的处理
         interceptor.addInnerInterceptor(new BreezeDataPermissionInterceptor());
-        // 如果用了分页插件注意先 add TenantLineInnerInterceptor 再 add PaginationInnerInterceptor
+        // 2. 租户拦截器其次
+        interceptor.addInnerInterceptor(tenantLineInnerInterceptor(this.tenantProperties));
+        // 3. 分页拦截器放最后
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        // 4. SQL日志拦截器
         interceptor.addInnerInterceptor(new BreezeSqlLogInnerInterceptor());
         return interceptor;
     }

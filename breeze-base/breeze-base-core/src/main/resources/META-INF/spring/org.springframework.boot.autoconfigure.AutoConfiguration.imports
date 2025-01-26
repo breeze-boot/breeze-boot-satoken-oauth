@@ -1,3 +1,3 @@
 com.breeze.boot.core.jackson.propertise.AesSecretProperties
-com.breeze.boot.core.jackson.JacksonConfig
 com.breeze.boot.core.config.I18NLocaleResolver
+com.breeze.boot.core.jackson.JacksonConfig

@@ -41,16 +41,6 @@ public class BpmDefinitionVO {
     private String id;
 
     /**
-     * 父部署id
-     */
-    private String parentDeploymentId;
-
-    /**
-     * 流程定义ID
-     */
-    private String procDefId;
-
-    /**
      * 流程定义Key
      */
     private String procDefKey;
@@ -78,7 +68,7 @@ public class BpmDefinitionVO {
     /**
      * 版本
      */
-    private String version;
+    private Integer version;
 
     /**
      * 暂停
@@ -94,5 +84,7 @@ public class BpmDefinitionVO {
      * 租户ID
      */
     private String tenantId;
+
+    private String description;
 
 }

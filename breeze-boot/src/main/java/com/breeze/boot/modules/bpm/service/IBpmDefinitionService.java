@@ -69,20 +69,26 @@ public interface IBpmDefinitionService {
     Result<Boolean> suspendedDefinition(String definitionId);
 
     /**
-     * 获得版本流程定义png
+     * 获取流程定义png
+     * <p>
+     *  查看某版本的流程定义信息
      *
-     * @param procInstId 流程实例ID
+     * @param procDefKey 流程定义Key
+     * @param version    版本
      * @return {@link Result}<{@link ?}>
      */
-    String getBpmDefinitionPng(String procInstId);
+    String getBpmDefinitionPng(String procDefKey, Integer version);
 
     /**
-     * 获得版本流程定义xml
+     * 获取流程定义xml
+     * <p>
+     * 查看某版本的流程定义信息
      *
-     * @param procInstId 流程实例ID
+     * @param procDefKey 流程定义Key
+     * @param version    版本
      * @return {@link XmlVO }
      */
-    XmlVO getBpmDefinitionXml(String procInstId);
+    XmlVO getBpmDefinitionXml(String procDefKey, Integer version);
 
     /**
      * 版本列表页面

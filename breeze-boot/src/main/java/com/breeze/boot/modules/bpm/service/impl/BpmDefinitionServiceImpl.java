@@ -41,10 +41,9 @@ import org.flowable.engine.HistoryService;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.history.HistoricActivityInstance;
-import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.ProcessDefinition;
-import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.engine.repository.ProcessDefinitionQuery;
 import org.flowable.image.impl.DefaultProcessDiagramGenerator;
 import org.springframework.stereotype.Service;
 
@@ -211,49 +210,61 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
     @Override
     public Page<BpmDefinitionVO> listVersionPage(BpmDefinitionQuery bpmDefinitionQuery) {
         // @formatter:off
-        List<ProcessDefinition> processDefinitionList = this.repositoryService.createProcessDefinitionQuery()
-                .listPage(bpmDefinitionQuery.getOffset(), bpmDefinitionQuery.getLimit());
+        List<ProcessDefinition> definitionList = this.repositoryService.createProcessDefinitionQuery()
+                    .processDefinitionKey(bpmDefinitionQuery.getDefinitionKey())
+                    .orderByProcessDefinitionVersion()
+                    .listPage(bpmDefinitionQuery.getOffset(), bpmDefinitionQuery.getLimit());
+        long count = this.repositoryService.createProcessDefinitionQuery()
+                    .processDefinitionKey(bpmDefinitionQuery.getDefinitionKey())
+                    .orderByProcessDefinitionVersion().count();
+        // 根据部署 ID 获取部署对象
+        List<Deployment> deploymentList = repositoryService.createDeploymentQuery()
+                .deploymentKey(bpmDefinitionQuery.getDefinitionKey())
+                .list();
+        Map<String,Date> deployMap = deploymentList.stream().collect(Collectors.toMap(Deployment::getId, Deployment::getDeploymentTime));
         // @formatter:on
-        BpmDefinitionVO flowDefinitionVO = new BpmDefinitionVO();
+        List<BpmDefinitionVO> definitionVOList = definitionList.stream().map(definition -> {
+            BpmDefinitionVO flowDefinitionVO = new BpmDefinitionVO();
+            flowDefinitionVO.setId(definition.getId());
+            flowDefinitionVO.setVersion(definition.getVersion());
+            flowDefinitionVO.setTenantId(definition.getTenantId());
+            flowDefinitionVO.setSuspended(definition.isSuspended() ? 1 : 0);
+            flowDefinitionVO.setProcDefKey(definition.getKey());
+            flowDefinitionVO.setProcDefName(definition.getName());
+            flowDefinitionVO.setDescription(definition.getDescription());
+            flowDefinitionVO.setCategoryCode(definition.getCategory());
+            Date date = deployMap.get(definition.getDeploymentId());
+            if (Objects.nonNull(date)){
+                flowDefinitionVO.setDeploymentTime(date);
+            }
+            return flowDefinitionVO;
+        }).toList();
         Page<BpmDefinitionVO> page = new Page<>();
-        page.setRecords(null);
+        page.setRecords(definitionVOList);
+        page.setTotal(count);
         return page;
     }
 
     /**
      * 获取流程定义png
      *
-     * @param procInstId 流程实例ID
+     * @param procDefKey 流程定义Key
+     * @param version    版本
      * @return {@link Result}<{@link ?}>
      */
     @Override
-    public String getBpmDefinitionPng(String procInstId) {
+    public String getBpmDefinitionPng(String procDefKey, Integer version) {
         // @formatter:off
-        String procDefId;
         try {
             // 查询流程实例
-            ProcessInstance procInst = this.runtimeService.createProcessInstanceQuery()
-                    .processInstanceId(procInstId)
-                    .singleResult();
-            if (Objects.nonNull(procInst)) {
-                procDefId = procInst.getProcessDefinitionId();
-            } else {
-                // 实例不存在就去查历史
-                HistoricProcessInstance hisProcInst = this.historyService.createHistoricProcessInstanceQuery()
-                        .processInstanceId(procInstId)
-                        .singleResult();
-                if (Objects.isNull(hisProcInst)) {
-                    // 历史也不存在就抛出异常
-                    throw new BreezeBizException(ResultCode.PROCESS_NOT_FOUND);
-                }
-                procDefId = hisProcInst.getProcessDefinitionId();
-            }
-
+            ProcessDefinition definition = this.getProcessDefinition(procDefKey, version);
             DefaultProcessDiagramGenerator defaultProcessDiagramGenerator = new DefaultProcessDiagramGenerator();
             List<String> highLightedActivityList = new ArrayList<>();
             List<String> highLightedFlows = new ArrayList<>();
-            // 历史activityId
-            List<HistoricActivityInstance> hisActiInstList = this.historyService.createHistoricActivityInstanceQuery().processInstanceId(procInstId).list();
+            // 查询流程实例的所有历史活动实例
+            List<HistoricActivityInstance> hisActiInstList = this.historyService.createHistoricActivityInstanceQuery()
+                    .processDefinitionId(definition.getId())
+                    .list();
             hisActiInstList.forEach(hisActiInst -> {
                 if ("sequenceFlow".equals(hisActiInst.getActivityType())) {
                     // 线条上色
@@ -263,7 +274,7 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
                 }
             });
             // 生成图片
-            BpmnModel bpmnModel = this.repositoryService.getBpmnModel(procDefId);
+            BpmnModel bpmnModel = this.repositoryService.getBpmnModel(definition.getId());
             try (InputStream inputStream = defaultProcessDiagramGenerator.generateDiagram(bpmnModel,
                     "png",
                     highLightedActivityList,
@@ -279,28 +290,49 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
     }
 
     /**
+     * 获取流程定义
+     *
+     * @param procDefKey 流程定义Key
+     * @param version    版本
+     * @return {@link ProcessDefinition }
+     */
+    private ProcessDefinition getProcessDefinition(String procDefKey, Integer version) {
+        ProcessDefinition definition;
+        ProcessDefinitionQuery processDefinitionQuery = this.repositoryService.createProcessDefinitionQuery()
+                .processDefinitionKey(procDefKey);
+        if (Objects.isNull(version)) {
+            definition = processDefinitionQuery
+                    .latestVersion()
+                    .singleResult();
+        } else {
+            definition = processDefinitionQuery
+                    .processDefinitionVersion(version)
+                    .singleResult();
+        }
+        if (Objects.isNull(definition)) {
+            throw new BreezeBizException(ResultCode.PROCESS_NOT_FOUND);
+        }
+        return definition;
+    }
+
+    /**
      * 获得版本流程定义xml
      *
-     * @param procInstId 流程实例ID
+     * @param procDefKey 流程实例ID
+     * @param version    版本
      * @return {@link XmlVO }
      */
     @Override
-    public XmlVO getBpmDefinitionXml(String procInstId) {
-        HistoricProcessInstance historicProcessInstance = this.historyService.createHistoricProcessInstanceQuery()
-                .processInstanceId(procInstId)
-                .singleResult();
-        if (Objects.isNull(historicProcessInstance)) {
-            throw new BreezeBizException(ResultCode.PROCESS_NOT_FOUND);
-        }
-
-        return this.getXmlVO(procInstId, historicProcessInstance);
+    public XmlVO getBpmDefinitionXml(String procDefKey, Integer version) {
+        ProcessDefinition definition = this.getProcessDefinition(procDefKey, version);
+        return this.getXmlVO(definition);
     }
 
-    private XmlVO getXmlVO(String procInstId, HistoricProcessInstance hiscProcInst) {
+    private XmlVO getXmlVO(ProcessDefinition definition) {
         // 获取流程定义的BPMN模型
         BpmnModel bpmnModel;
         try {
-            bpmnModel = this.repositoryService.getBpmnModel(hiscProcInst.getProcessDefinitionId());
+            bpmnModel = this.repositoryService.getBpmnModel(definition.getId());
             if (bpmnModel == null) {
                 throw new BreezeBizException(ResultCode.BPM_MODEL_NOT_FOUND);
             }
@@ -311,7 +343,7 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
 
         // 查询流程实例的所有历史活动实例
         List<String> activityInstTask = this.historyService.createHistoricActivityInstanceQuery()
-                .processInstanceId(procInstId)
+                .processDefinitionId(definition.getId())
                 .list()
                 .stream()
                 .filter(s -> !StrUtil.equals(s.getActivityType(), "sequenceFlow"))
@@ -320,7 +352,7 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
 
         // 查询当前活动节点
         Set<String> currentTaskIdSet = this.historyService.createHistoricActivityInstanceQuery()
-                .processInstanceId(procInstId)
+                .processDefinitionId(definition.getId())
                 .unfinished()
                 .list()
                 .stream()
@@ -330,7 +362,7 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
         XmlVO xmlVO = new XmlVO();
         xmlVO.setFinishedNode(new LinkedHashSet<>(activityInstTask));
         xmlVO.setCurrentTaskNode(currentTaskIdSet);
-        xmlVO.setXmlStr(this.getXmlStr(hiscProcInst.getProcessDefinitionKey()));
+        xmlVO.setXmlStr(this.getXmlStr(definition.getKey()));
 
         return xmlVO;
     }

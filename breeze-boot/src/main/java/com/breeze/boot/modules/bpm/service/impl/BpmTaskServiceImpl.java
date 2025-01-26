@@ -160,8 +160,8 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
         if (Objects.isNull(procInst)) {
             throw new BreezeBizException(ResultCode.PROCESS_NOT_FOUND);
         }
-        return this.getUserTaskVO(task, procInst);
         // @formatter:on
+        return this.getUserTaskVO(task, procInst);
     }
 
     /**
@@ -528,22 +528,13 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
      */
     @Override
     public BpmInfoVO getFlowButtonInfo(String procDefKey, String businessKey, String procInstId) {
-        if (StrUtil.isBlank(procInstId)) {
+        if (StrUtil.isBlank(procInstId) || StrUtil.isBlank(procInstId)) {
             // 未发起流程时 展示发起按钮
             return defaultStartButton();
         }
 
         BpmInfoVO bpmInfoVO = new BpmInfoVO();
-        // @formatter:off
-        HistoricProcessInstance historicProcessInstance = this.historyService.createHistoricProcessInstanceQuery()
-                .processDefinitionKey(procDefKey)
-                .processInstanceBusinessKey(businessKey)
-                .processInstanceId(procInstId)
-                .singleResult();
-        // @formatter:on
-        if (Objects.isNull(historicProcessInstance)) {
-            throw new BreezeBizException(ResultCode.PROCESS_NOT_FOUND);
-        }
+
 
         // @formatter:off
         TaskQuery taskAssigneeQuery = this.taskService.createTaskQuery()
@@ -556,7 +547,17 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
                 .processInstanceId(procInstId);
         // @formatter:on
         bpmInfoVO.setButtons(this.findTasksButtons(procInstId, () -> taskAssigneeQuery, () -> taskCandidateQuerySupplier));
-        bpmInfoVO.setStartUser(historicProcessInstance.getStartUserId());
+        // @formatter:off
+        HistoricProcessInstance histProcInst = this.historyService.createHistoricProcessInstanceQuery()
+                .processDefinitionKey(procDefKey)
+                .processInstanceBusinessKey(businessKey)
+                .processInstanceId(procInstId)
+                .singleResult();
+        // @formatter:on
+        if (Objects.isNull(histProcInst)) {
+            throw new BreezeBizException(ResultCode.PROCESS_NOT_FOUND);
+        }
+        bpmInfoVO.setStartUser(histProcInst.getStartUserId());
         return bpmInfoVO;
     }
 
@@ -879,6 +880,7 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
                 .applyUser(procInst.getStartUserId())
                 .applyUserName(procInst.getStartUserId())
                 .tenantId(procInst.getTenantId())
+                .version(procInst.getProcessDefinitionVersion())
                 .createTime(task.getCreateTime())
                 .build();
         // @formatter:on
