@@ -264,18 +264,6 @@ public class GlobalExceptionHandler {
      * @param ex 异常
      * @return {@link Result}<{@link ?}>
      */
-    @ExceptionHandler(SaOAuth2ClientModelException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public Result<?> saOAuth2ClientModelException(SaOAuth2ClientModelException ex) {
-        log.error("SaOAuth2ClientModelException", ex);
-        String message = MessageUtil.getMessage(ResultCode.SC_FORBIDDEN.getKey());
-        return Result.fail(message + ":" + ex.getMessage());
-    }
-
-    /**
-     * @param ex 异常
-     * @return {@link Result}<{@link ?}>
-     */
     @ExceptionHandler(SaTokenException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Result<?> saTokenException(SaTokenException ex) {
@@ -294,5 +282,17 @@ public class GlobalExceptionHandler {
         log.error("NoResourceFoundException", ex);
         String message = MessageUtil.getMessage(ResultCode.RESOURCE_NO_FOUND.getKey());
         return Result.fail(message);
+    }
+	
+    /**
+     * @param ex 异常
+     * @return {@link Result}<{@link ?}>
+     */
+    @ExceptionHandler(SaOAuth2ClientModelException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Result<?> saOAuth2ClientModelException(SaOAuth2ClientModelException ex) {
+        log.error("SaOAuth2ClientModelException", ex);
+        String message = MessageUtil.getMessage(ResultCode.SC_FORBIDDEN.getKey());
+        return Result.fail(message + ":" + ex.getMessage());
     }
 }

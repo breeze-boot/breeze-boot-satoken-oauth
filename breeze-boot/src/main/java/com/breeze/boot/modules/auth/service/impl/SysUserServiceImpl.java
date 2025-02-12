@@ -204,7 +204,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      */
     @Override
     public Boolean open(UserOpenForm userOpenForm) {
-        return this.update(Wrappers.<SysUser>lambdaUpdate().set(SysUser::getIsLock, userOpenForm.getIsLock()).eq(SysUser::getUsername, userOpenForm.getUsername()));
+        return this.update(Wrappers.<SysUser>lambdaUpdate()
+                .set(SysUser::getIsLock, userOpenForm.getIsLock())
+                .eq(SysUser::getUsername, userOpenForm.getUsername()));
     }
 
     /**

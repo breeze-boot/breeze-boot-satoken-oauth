@@ -16,7 +16,6 @@
 
 package com.breeze.boot.modules.bpm.model.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,99 +39,115 @@ import java.io.Serializable;
 @Schema(description = "流程部署资源实体")
 public class ActReProcdef implements Serializable {
 
-    @TableField(exist = false)
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
      * id
      */
+    @Schema(description = "id")
     @TableId
     private String id;
 
     /**
      * 牧师
      */
+    @Schema(description = "牧师")
     private Integer rev;
 
     /**
      * 类别
      */
+    @Schema(description = "类别")
     private String category;
 
     /**
      * 名字
      */
+    @Schema(description = "名字")
     private String name;
 
     /**
      * KEY
      */
+    @Schema(description = "KEY")
     private String key;
 
     /**
      * 版本
      */
+    @Schema(description = "版本")
     private Integer version;
 
     /**
      * 部署id
      */
+    @Schema(description = "部署id")
     private String deploymentId;
 
     /**
      * 资源名称
      */
+    @Schema(description = "资源名称")
     private String resourceName;
 
     /**
      * dgrm资源名称
      */
+    @Schema(description = "dgrm资源名称")
     private String dgrmResourceName;
 
     /**
      * 描述
      */
+    @Schema(description = "描述")
     private String description;
 
     /**
      * 开始形成关键
      */
+    @Schema(description = "开始形成关键")
     private Integer hasStartFormKey;
 
     /**
      * 有图形符号
      */
+    @Schema(description = "有图形符号")
     private Integer hasGraphicalNotation;
 
     /**
      * 暂停状态
      */
+    @Schema(description = "暂停状态")
     private Integer suspensionState;
 
     /**
      * 租户ID
      */
+    @Schema(description = "租户ID")
     private String tenantId;
 
     /**
      * 引擎版本
      */
+    @Schema(description = "引擎版本")
     private String engineVersion;
 
     /**
      * 来自
      */
+    @Schema(description = "来自")
     private String derivedFrom;
 
     /**
      * 来自根
      */
+    @Schema(description = "来自根")
     private String derivedFromRoot;
 
     /**
      * 派生版本
      */
+    @Schema(description = "派生版本")
     private Integer derivedVersion;
-
 }

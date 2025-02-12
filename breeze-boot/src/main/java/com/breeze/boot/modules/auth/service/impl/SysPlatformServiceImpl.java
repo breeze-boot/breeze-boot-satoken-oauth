@@ -20,6 +20,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.breeze.boot.core.utils.BUtils;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.auth.mapper.SysPlatformMapper;
 import com.breeze.boot.modules.auth.model.entity.SysPlatform;
@@ -57,12 +58,11 @@ public class SysPlatformServiceImpl extends ServiceImpl<SysPlatformMapper, SysPl
      */
     @Override
     public Page<PlatformVO> listPage(PlatformQuery platformQuery) {
-        Page<SysPlatform> platformEntityPage = new Page<>(platformQuery.getCurrent(), platformQuery.getSize());
-        QueryWrapper<SysPlatform> queryWrapper = new QueryWrapper<>();
-        platformQuery.getSortQueryWrapper(queryWrapper);
-        queryWrapper.like(StrUtil.isAllNotBlank(platformQuery.getPlatformName()), "platform_name", platformQuery.getPlatformName())
-                .like(StrUtil.isAllNotBlank(platformQuery.getPlatformCode()), "platform_code", platformQuery.getPlatformCode());
-        Page<SysPlatform> page = this.page(platformEntityPage, queryWrapper);
+        Page<SysPlatform> platformPage = new Page<>(platformQuery.getCurrent(), platformQuery.getSize());
+        QueryWrapper<SysPlatform> wrapper = new QueryWrapper<>();
+        wrapper.like(StrUtil.isAllNotBlank(platformQuery.getPlatformName()), BUtils.toFieldName(SysPlatform::getPlatformName), platformQuery.getPlatformName());
+        wrapper.like(StrUtil.isAllNotBlank(platformQuery.getPlatformCode()), BUtils.toFieldName(SysPlatform::getPlatformCode), platformQuery.getPlatformCode());
+        Page<SysPlatform> page = this.page(platformPage, wrapper);
         return this.sysPlatformMapStruct.page2PageVO(page);
     }
 

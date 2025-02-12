@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.mybatis.filters;
+package com.breeze.boot.core.filters;
 
 import cn.hutool.core.util.StrUtil;
 import com.breeze.boot.core.enums.ResultCode;
 import com.breeze.boot.core.exception.BreezeBizException;
-import com.breeze.boot.core.utils.BreezeThreadLocal;
+import com.breeze.boot.core.utils.BreezeTenantThreadLocal;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -44,7 +44,7 @@ import static com.breeze.boot.core.constants.CoreConstants.X_TENANT_ID;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(Ordered.HIGHEST_PRECEDENCE + 1)
 public class TenantLoadFilter extends GenericFilterBean {
 
 
@@ -56,16 +56,16 @@ public class TenantLoadFilter extends GenericFilterBean {
             String headerTenantId = request.getHeader(X_TENANT_ID);
             String paramTenantId = request.getParameter(X_TENANT_ID);
             if (StrUtil.isNotBlank(headerTenantId)) {
-                BreezeThreadLocal.set(Long.parseLong(headerTenantId));
+                BreezeTenantThreadLocal.set(Long.parseLong(headerTenantId));
             } else if (StrUtil.isAllNotBlank(paramTenantId)) {
-                BreezeThreadLocal.set(Long.parseLong(paramTenantId));
+                BreezeTenantThreadLocal.set(Long.parseLong(paramTenantId));
             } else if (StrUtil.equals("undefined",headerTenantId) || StrUtil.equals("undefined",paramTenantId)){
                 throw new BreezeBizException(ResultCode.TENANT_NOT_FOUND);
             }
             log.info("[当前进入的请求]： {}  系统租户： {}  {} ]", request.getRequestURI(), paramTenantId , headerTenantId);
             filterChain.doFilter(request, response);
         } finally {
-            BreezeThreadLocal.remove();
+            BreezeTenantThreadLocal.remove();
         }
     }
 }

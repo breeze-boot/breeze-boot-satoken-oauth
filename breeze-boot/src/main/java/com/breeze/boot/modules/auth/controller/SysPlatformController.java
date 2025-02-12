@@ -79,9 +79,9 @@ public class SysPlatformController {
      * @return {@link Result}<{@link Page}<{@link PlatformVO}>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("auth:platform:list")
-    public Result<Page<PlatformVO>> list(PlatformQuery platformQuery) {
+    public Result<Page<PlatformVO>> list(@RequestBody PlatformQuery platformQuery) {
         return Result.ok(this.sysPlatformService.listPage(platformQuery));
     }
 

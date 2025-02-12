@@ -22,12 +22,12 @@ import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import com.breeze.boot.core.enums.ResultCode;
+import com.breeze.boot.mybatis.config.TenantProperties;
 import com.breeze.boot.core.utils.AssertUtil;
-import com.breeze.boot.core.utils.BreezeThreadLocal;
+import com.breeze.boot.core.utils.BreezeTenantThreadLocal;
 import com.breeze.boot.mybatis.config.BreezeLogicSqlInjector;
-import com.breeze.boot.mybatis.filters.TenantLoadFilter;
-import com.breeze.boot.mybatis.filters.TenantProperties;
 import com.breeze.boot.mybatis.plugins.BreezeDataPermissionInterceptor;
+import com.breeze.boot.mybatis.plugins.BreezeListConditionInterceptor;
 import com.breeze.boot.mybatis.plugins.BreezeSqlLogInnerInterceptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,6 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 
 import static com.breeze.boot.core.constants.CoreConstants.TENANT_ID_COLUMN;
 
@@ -68,6 +67,8 @@ public class MybatisPlusConfiguration {
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        // 0. 自动拼装查询条件拦截器提前,减少后续无权限数据的处理
+        interceptor.addInnerInterceptor(new BreezeListConditionInterceptor());
         // 1. 数据权限拦截器提前,减少后续无权限数据的处理
         interceptor.addInnerInterceptor(new BreezeDataPermissionInterceptor());
         // 2. 租户拦截器其次
@@ -88,7 +89,7 @@ public class MybatisPlusConfiguration {
         return new TenantLineInnerInterceptor(new TenantLineHandler() {
             @Override
             public Expression getTenantId() {
-                Long tenantId = BreezeThreadLocal.get();
+                Long tenantId = BreezeTenantThreadLocal.get();
                 log.info("[当前租户]： {}", tenantId);
                 AssertUtil.isNotNull(tenantId, ResultCode.TENANT_NOT_FOUND);
                 return new LongValue(tenantId);

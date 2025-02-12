@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, gaoweixuan (breeze-cloud@foxmail.com).
+ * Copyright (c) 2025, gaoweixuan (breeze-cloud@foxmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.core.jackson.propertise;
+package com.breeze.boot.core.base;
 
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
- * aes
+ * 查询组装条件
  *
  * @author gaoweixuan
- * @since 2023/05/25
+ * @since 2025-02-01
  */
 @Data
-@Component
-@ConfigurationProperties(prefix = "breeze")
-public class AesSecretProperties {
+public class Condition {
 
-    private String aesSecret;
+    private String condition;
+    private String field;
+    private String operator;
+    private String value;
+    private List<Condition> conditions;
 
 }

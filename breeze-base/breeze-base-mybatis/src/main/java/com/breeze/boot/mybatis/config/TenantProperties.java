@@ -14,23 +14,28 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.core.jackson.propertise;
+package com.breeze.boot.mybatis.config;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
- * aes
+ * 租户白名单属性
  *
  * @author gaoweixuan
- * @since 2023/05/25
+ * @since 2023-03-06
  */
-@Data
-@Component
-@ConfigurationProperties(prefix = "breeze")
-public class AesSecretProperties {
+@Getter
+@Setter
+@ConfigurationProperties(prefix = "breeze.tenant")
+public class TenantProperties {
 
-    private String aesSecret;
+    /**
+     * 增加租户的表
+     */
+    private List<String> tables;
 
 }

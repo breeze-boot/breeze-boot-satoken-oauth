@@ -19,10 +19,7 @@ package com.breeze.boot.modules.bpm.model.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.breeze.boot.core.base.BaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
 
 /**
  * 流程分类
@@ -42,23 +39,18 @@ public class BpmCategory extends BaseModel<BpmCategory> {
     /**
      * 流程分类编码
      */
-    @Size(max = 64, message = "编码长度不能超过64")
-    @Length(max = 64, message = "编码长度不能超过64")
     @Schema(description = "流程分类编码")
     private String categoryCode;
 
     /**
      * 流程分类名称
      */
-    @Size(max = 128, message = "名称长度不能超过128")
-    @Length(max = 128, message = "名称长度不能超过128")
     @Schema(description = "流程分类名称")
     private String categoryName;
 
     /**
      * 流程分类名称
      */
-    @NotNull(message = "租户ID不可为空")
     @Schema(description = "租户ID 审批流数据源下的表手动维护此字段")
     private Long tenantId;
 

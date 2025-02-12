@@ -19,6 +19,7 @@ package com.breeze.boot.modules.bpm.model.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -39,6 +40,7 @@ import lombok.*;
 @TableName("ACT_ID_MEMBERSHIP")
 @Schema(description = "流程用户用户组关系")
 public class Membership implements Serializable {
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	@TableField(value = "USER_ID_")

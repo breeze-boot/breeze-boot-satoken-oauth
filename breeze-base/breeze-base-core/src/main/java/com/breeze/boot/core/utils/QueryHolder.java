@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, gaoweixuan (breeze-cloud@foxmail.com).
+ * Copyright (c) 2025, gaoweixuan (breeze-cloud@foxmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,25 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.mybatis.filters;
+package com.breeze.boot.core.utils;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import java.util.List;
+import java.util.LinkedHashMap;
 
 /**
- * 租户白名单属性
- *
- * @author gaoweixuan
- * @since 2023-03-06
+ * 查询条件
  */
-@Getter
-@Setter
-@ConfigurationProperties(prefix = "breeze.tenant")
-public class TenantProperties {
+public class QueryHolder {
+    private static final ThreadLocal<LinkedHashMap<String, Object>> query = new ThreadLocal<>();
 
-    /**
-     * 增加租户的表
-     */
-    private List<String> tables;
+    public static void setQuery(LinkedHashMap<String, Object> value) {
+        query.set(value);
+    }
 
+    public static LinkedHashMap<String, Object> getQuery() {
+        return query.get();
+    }
+
+    public static void clear() {
+        query.remove();
+    }
 }

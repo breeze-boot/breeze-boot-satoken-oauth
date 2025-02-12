@@ -278,12 +278,12 @@
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-extension</artifactId>
-                <version>${mybatis-plus.version}</version>
+                <version>3.5.7</version>
             </dependency>
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-annotation</artifactId>
-                <version>${mybatis-plus.version}</version>
+                <version>3.5.7</version>
             </dependency>
             <dependency>
                 <groupId>com.baomidou</groupId>
@@ -293,7 +293,7 @@
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-generator</artifactId>
-                <version>${mybatis-plus.version}</version>
+                <version>3.5.7</version>
             </dependency>
 
             <dependency>

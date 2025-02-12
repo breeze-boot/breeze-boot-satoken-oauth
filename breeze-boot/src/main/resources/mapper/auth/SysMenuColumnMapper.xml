@@ -11,11 +11,6 @@
         <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
         <result property="createName" column="create_name" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-        <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
-        <result property="updateName" column="update_name" jdbcType="VARCHAR"/>
-        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
-        <result property="deleteBy" column="delete_by" jdbcType="VARCHAR"/>
     </resultMap>
 
     <select id="listPage" resultMap="BaseResultMap">

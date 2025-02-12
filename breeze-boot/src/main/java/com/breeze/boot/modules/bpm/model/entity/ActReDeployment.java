@@ -16,7 +16,6 @@
 
 package com.breeze.boot.modules.bpm.model.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -41,59 +40,68 @@ import java.util.Date;
 @Schema(description = "流程部署实体")
 public class ActReDeployment implements Serializable {
 
-    @TableField(exist = false)
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
      * id
      */
+    @Schema(description = "id")
     @TableId
     private String id;
 
     /**
      * 名字
      */
+    @Schema(description = "名字")
     private String name;
 
     /**
      * 类别
      */
+    @Schema(description = "类别")
     private String category;
 
     /**
      * KEY
      */
+    @Schema(description = "KEY")
     private String key;
 
     /**
      * 租户ID
      */
+    @Schema(description = "租户ID")
     private String tenantId;
 
     /**
-     * 部署时
+     * 部署时间
      */
+    @Schema(description = "部署时间")
     private Date deployTime;
 
     /**
-     * 来自
+     * 来源信息
      */
+    @Schema(description = "来源信息")
     private String derivedFrom;
 
     /**
-     * 来自根
+     * 根来源信息
      */
+    @Schema(description = "根来源信息")
     private String derivedFromRoot;
 
     /**
      * 父部署id
      */
+    @Schema(description = "父部署id")
     private String parentDeploymentId;
 
     /**
      * 引擎版本
      */
+    @Schema(description = "引擎版本")
     private String engineVersion;
 
 }

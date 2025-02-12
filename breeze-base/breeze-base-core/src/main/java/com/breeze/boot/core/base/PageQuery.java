@@ -22,15 +22,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.breeze.boot.core.enums.ResultCode;
 import com.breeze.boot.core.utils.AssertUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.Maps;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 /**
  * 分页查询参数
@@ -38,7 +34,7 @@ import java.util.List;
  * @author gaoweixuan
  * @since 2022-08-31
  */
-@Setter
+@Data
 @EqualsAndHashCode(callSuper = false)
 @Schema(description = "分页查询参数", hidden = true)
 public class PageQuery {
@@ -56,20 +52,14 @@ public class PageQuery {
     private Integer size;
 
     /**
-     * 排序sql
-     * -- SETTER --
-     * 设置分页大小
-     */
-    private String sortSql;
-
-    /**
      * 排序
      * <p>
      * 按照MybatisPlus的方式，顺序排序
      * </p>
      */
-    @Getter
     private LinkedHashMap<String, String> sort;
+
+    private Condition condition;
 
     /**
      * 页面查询
@@ -90,27 +80,6 @@ public class PageQuery {
     }
 
     /**
-     * 获取排序的列
-     *
-     * @return {@link Integer}
-     */
-    public LinkedHashMap<String, List<String>> getColumns() {
-        LinkedHashMap<String, List<String>> sortMap = Maps.newLinkedHashMap();
-        if (CollUtil.isEmpty(this.sort)) {
-            return sortMap;
-        }
-
-        this.sort.forEach((sort, column) -> {
-            if (StrUtil.isNotBlank(column)) {
-                String[] columns = column.split("\\|");
-                sortMap.putIfAbsent(sort.equals("ascending") ? "asc" : "desc", Arrays.asList(columns));
-            }
-        });
-
-        return sortMap;
-    }
-
-    /**
      * 获取是否排序
      *
      * @return {@link Integer}
@@ -125,32 +94,13 @@ public class PageQuery {
      * @param queryWrapper 查询包装器
      */
     public void getSortQueryWrapper(QueryWrapper<?> queryWrapper) {
-        this.getColumns().forEach((sort, columnList) -> {
-            queryWrapper.orderBy(this.isSort(), StrUtil.equals("asc", sort), columnList);
+        if (CollUtil.isEmpty(this.sort)) {
+            return;
+        }
+        this.sort.forEach((column, sort) -> {
+            queryWrapper.orderBy(this.isSort(), StrUtil.equals("ascending", sort), column);
         });
     }
-
-    /**
-     * 构建排序SQL语句
-     *
-     * @return 排序SQL语句 {@link String}
-     */
-    public String getSortSql() {
-        if (CollUtil.isEmpty(this.sort)) {
-            return "";
-        }
-
-        StringBuilder sortSqlBuilder = new StringBuilder("order by ");
-        this.sort.forEach((sort, column) -> sortSqlBuilder.append(column).append(" ").append(sort).append(", "));
-
-        // 移除最后一个逗号和空格
-        if (sortSqlBuilder.length() > 0) {
-            sortSqlBuilder.setLength(sortSqlBuilder.length() - 2);
-        }
-
-        return sortSqlBuilder.toString();
-    }
-
 
     /**
      * 获取当前页码
@@ -184,4 +134,5 @@ public class PageQuery {
     public Integer getLimit() {
         return getSize();
     }
+
 }

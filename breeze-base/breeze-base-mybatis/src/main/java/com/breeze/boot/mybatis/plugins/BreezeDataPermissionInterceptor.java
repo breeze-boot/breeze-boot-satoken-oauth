@@ -19,10 +19,8 @@ package com.breeze.boot.mybatis.plugins;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
-import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.extension.plugins.inner.BaseMultiTableInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import com.breeze.boot.core.base.CustomizePermission;
 import com.breeze.boot.core.base.UserPrincipal;
@@ -33,11 +31,13 @@ import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.mybatis.annotation.BreezeDataPermission;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
-import org.apache.commons.compress.utils.Lists;
+import net.sf.jsqlparser.statement.select.SelectItem;
+import net.sf.jsqlparser.statement.select.SetOperationList;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -48,6 +48,7 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -63,7 +64,7 @@ import static com.breeze.boot.core.enums.DataRole.getDataRoleByType;
  * @since 2022-10-28
  */
 @Slf4j
-public class BreezeDataPermissionInterceptor extends BaseMultiTableInnerInterceptor implements InnerInterceptor {
+public class BreezeDataPermissionInterceptor implements InnerInterceptor {
 
     /**
      * 查询之前去拼装权限的sql
@@ -83,10 +84,6 @@ public class BreezeDataPermissionInterceptor extends BaseMultiTableInnerIntercep
                             RowBounds rowBounds,
                             ResultHandler resultHandler,
                             BoundSql boundSql) {
-        if (InterceptorIgnoreHelper.willIgnoreTenantLine(ms.getId())) {
-            return;
-        }
-
         PluginUtils.MPBoundSql mpBs = PluginUtils.mpBoundSql(boundSql);
         String originalSql = boundSql.getSql();
 
@@ -111,10 +108,15 @@ public class BreezeDataPermissionInterceptor extends BaseMultiTableInnerIntercep
     @SneakyThrows
     private String getSql(UserPrincipal userPrincipal, BreezeDataPermission dataPer, String originalSql) {
         CacheManager cacheManager = SpringUtil.getBean(CacheManager.class);
-        List<String> columns = Lists.newArrayList();
-        Select select = (Select) CCJSqlParserUtil.parse(originalSql);
-
-        String column = "temp.*";
+        List<String> fieldNames = SqlFieldExtractor.getFieldNames(originalSql);
+        String prefix = "temp.";
+        StringBuilder sql = new StringBuilder(" ");
+        for (int i = 0; i < fieldNames.size(); i++) {
+            sql.append(prefix).append(fieldNames.get(i));
+            if (i < fieldNames.size() - 1) {
+                sql.append(", ");
+            }
+        }
         // 获取当前用户的数据权限
         String permissionType = userPrincipal.getPermissionType();
         if (StrUtil.equals(DataPermissionType.ALL.getType(), permissionType)) {
@@ -122,16 +124,16 @@ public class BreezeDataPermissionInterceptor extends BaseMultiTableInnerIntercep
             return originalSql;
         } else if (StrUtil.equals(DataPermissionType.DEPT_LEVEL.getType(), permissionType)) {
             // 所在部门范围权限
-            originalSql = String.format("SELECT %s FROM (%s) temp WHERE temp.%s = %s", column, originalSql, dataPer.dept().getColumn(), userPrincipal.getDeptId());
+            originalSql = String.format("SELECT %s FROM (%s) temp WHERE temp.%s = %s", sql, originalSql, dataPer.dept().getColumn(), userPrincipal.getDeptId());
         } else if (StrUtil.equals(DataPermissionType.SUB_DEPT_LEVEL.getType(), permissionType)) {
             // 本级部门以及子部门
-            originalSql = String.format("SELECT %s FROM (%s) temp WHERE temp.%s IN (%s)", column, originalSql, dataPer.dept().getColumn(), StringUtil.join(",", userPrincipal.getSubDeptId().toArray()));
+            originalSql = String.format("SELECT %s FROM (%s) temp WHERE temp.%s IN (%s)", sql, originalSql, dataPer.dept().getColumn(), StringUtil.join(",", userPrincipal.getSubDeptId().toArray()));
         } else if (StrUtil.equals(DataPermissionType.OWN.getType(), permissionType)) {
             // 个人范围权限
-            originalSql = String.format("SELECT %s FROM (%s) temp WHERE temp.%s = '%s'", column, originalSql, dataPer.own().getColumn(), userPrincipal.getId());
+            originalSql = String.format("SELECT %s FROM (%s) temp WHERE temp.%s = '%s'", sql, originalSql, dataPer.own().getColumn(), userPrincipal.getId());
         } else if (StrUtil.equals(DataPermissionType.CUSTOMIZES.getType(), permissionType)) {
             // 自定义权限
-            originalSql = getSqlString(userPrincipal, originalSql, cacheManager, column);
+            originalSql = getSqlString(userPrincipal, originalSql, cacheManager, sql.toString());
         }
         return originalSql;
     }
@@ -156,8 +158,45 @@ public class BreezeDataPermissionInterceptor extends BaseMultiTableInnerIntercep
         return originalSql;
     }
 
-    @Override
-    public Expression buildTableExpression(Table table, Expression where, String whereSegment) {
-        return where;
+    private static class SqlFieldExtractor {
+
+        public static List<String> getFieldNames(String sql) throws JSQLParserException {
+            List<String> fieldNames = new ArrayList<>();
+            // 解析 SQL 语句为 Select 对象
+            Select select = (Select) CCJSqlParserUtil.parse(sql);
+            // 直接根据 Select 对象的实际类型处理
+            if (select instanceof PlainSelect) {
+                handlePlainSelect((PlainSelect) select, fieldNames);
+            } else if (select instanceof SetOperationList) {
+                handleSetOperationList((SetOperationList) select, fieldNames);
+            }
+            return fieldNames;
+        }
+
+        private static void handlePlainSelect(PlainSelect plainSelect, List<String> fieldNames) {
+            // 获取 SELECT 子句中的所有项
+            List<SelectItem<?>> selectItems = plainSelect.getSelectItems();
+            for (SelectItem<?> selectItem : selectItems) {
+                Alias alias = selectItem.getAlias();
+                if (alias != null) {
+                    fieldNames.add(alias.getName());
+                } else {
+                    String fieldName = selectItem.getExpression().toString();
+                    if (fieldName.contains(".")) {
+                        fieldName = fieldName.substring(fieldName.lastIndexOf('.') + 1);
+                    }
+                    fieldNames.add(fieldName);
+                }
+            }
+        }
+
+        private static void handleSetOperationList(SetOperationList setOperationList, List<String> fieldNames) {
+            List<Select> selectBodies = setOperationList.getSelects();
+            for (Select subSelectBody : selectBodies) {
+                if (subSelectBody instanceof PlainSelect) {
+                    handlePlainSelect((PlainSelect) subSelectBody, fieldNames);
+                }
+            }
+        }
     }
 }

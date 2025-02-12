@@ -53,21 +53,13 @@ public class XssFilterRegisterConfiguration {
     /**
      * xss过滤器登记
      *
-     * @return {@link FilterRegistrationBean}<{@link Filter}>
+     * @return {@link XssFilter }
      */
     @Bean
-    public FilterRegistrationBean<Filter> xssFilterRegistration() {
-        FilterRegistrationBean<Filter> registration = new FilterRegistrationBean<>();
-        // 过滤器要设置最先执行
-        registration.setOrder(Integer.MAX_VALUE - 1);
-        registration.setDispatcherTypes(DispatcherType.REQUEST);
-        registration.setFilter(new XssFilter(this.xssProperties,
+    public XssFilter xssFilter() {
+        return new XssFilter(this.xssProperties,
                 this.requestMappingHandlerMapping,
-                this.applicationContext
-        ));
-        registration.addUrlPatterns("/*");
-        registration.setName("xssFilter");
-        return registration;
+                this.applicationContext);
     }
 
 }

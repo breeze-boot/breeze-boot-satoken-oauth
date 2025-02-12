@@ -5,6 +5,7 @@ spring:
       host: ${BREEZE_REDIS_HOST:breeze-redis}
       port: ${BREEZE_REDIS_PORT:6379}
       password: ${BREEZE_REDIS_PASSWORD:breeze}
+      timeout: 10s
       lettuce:
         pool:
           # 连接池最大连接数 默认8 ，负数表示没有限制

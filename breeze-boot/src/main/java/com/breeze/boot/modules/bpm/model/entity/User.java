@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,6 +41,7 @@ import lombok.*;
 @TableName("ACT_ID_USER")
 @Schema(description = "流程用户")
 public class User implements Serializable {
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	@TableId(value = "ID_", type = IdType.INPUT)

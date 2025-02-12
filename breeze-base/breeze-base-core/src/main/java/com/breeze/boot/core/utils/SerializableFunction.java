@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, gaoweixuan (breeze-cloud@foxmail.com).
+ * Copyright (c) 2025, gaoweixuan (breeze-cloud@foxmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,11 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.core.jackson.propertise;
+package com.breeze.boot.core.utils;
 
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import java.io.Serializable;
+import java.util.function.Function;
 
-/**
- * aes
- *
- * @author gaoweixuan
- * @since 2023/05/25
- */
-@Data
-@Component
-@ConfigurationProperties(prefix = "breeze")
-public class AesSecretProperties {
-
-    private String aesSecret;
-
+@FunctionalInterface
+public interface SerializableFunction<T, R> extends Function<T, R>, Serializable {
 }

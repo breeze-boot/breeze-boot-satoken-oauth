@@ -20,6 +20,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.breeze.boot.core.utils.BUtils;
 import com.breeze.boot.modules.wo.mapper.WoLeaveMapper;
 import com.breeze.boot.modules.wo.model.entity.WoLeave;
 import com.breeze.boot.modules.wo.model.query.WoLeaveQuery;
@@ -48,7 +49,7 @@ public class WoLeaveServiceImpl extends ServiceImpl<WoLeaveMapper, WoLeave> impl
         Page<WoLeave> platformPage = new Page<>(woLeaveQuery.getCurrent(), woLeaveQuery.getSize());
         QueryWrapper<WoLeave> queryWrapper = new QueryWrapper<>();
         woLeaveQuery.getSortQueryWrapper(queryWrapper);
-        queryWrapper.like(StrUtil.isAllNotBlank(woLeaveQuery.getReason()), "title", woLeaveQuery.getTitle());
+        queryWrapper.like(StrUtil.isAllNotBlank(woLeaveQuery.getReason()), BUtils.toFieldName(WoLeave::getTitle), woLeaveQuery.getTitle());
         return this.page(platformPage, queryWrapper);
     }
 }

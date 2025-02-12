@@ -1,3 +1,2 @@
 com.breeze.boot.mybatis.MybatisPlusConfiguration
 com.breeze.boot.mybatis.config.MybatisMetaObjectHandler
-com.breeze.boot.mybatis.filters.TenantLoadFilter

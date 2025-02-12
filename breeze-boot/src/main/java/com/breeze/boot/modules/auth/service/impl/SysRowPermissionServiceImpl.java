@@ -26,7 +26,7 @@ import com.breeze.boot.core.base.CustomizePermission;
 import com.breeze.boot.core.enums.DataPermissionType;
 import com.breeze.boot.core.enums.ResultCode;
 import com.breeze.boot.core.utils.AssertUtil;
-import com.breeze.boot.core.utils.BreezeThreadLocal;
+import com.breeze.boot.core.utils.BreezeTenantThreadLocal;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.auth.mapper.SysRowPermissionMapper;
 import com.breeze.boot.modules.auth.model.entity.SysRoleRowPermission;
@@ -85,7 +85,7 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
         Cache cache = getCache();
 
         sysTenantList.forEach(sysTenant -> {
-            BreezeThreadLocal.set(sysTenant.getId());
+            BreezeTenantThreadLocal.set(sysTenant.getId());
             try {
                 List<SysRowPermission> sysRowPermissionList = this.list();
                 // 使用批量处理优化
@@ -108,7 +108,7 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
                 // 增加异常处理逻辑，记录日志或进行其他处理
                 log.error("Error processing tenant: " + sysTenant.getId(), e);
             } finally {
-                BreezeThreadLocal.remove();
+                BreezeTenantThreadLocal.remove();
             }
         });
     }

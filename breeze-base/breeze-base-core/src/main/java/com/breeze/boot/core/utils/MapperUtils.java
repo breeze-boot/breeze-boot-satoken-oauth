@@ -17,9 +17,13 @@
 package com.breeze.boot.core.utils;
 
 import cn.hutool.core.util.StrUtil;
+import com.breeze.boot.core.enums.ResultCode;
+import com.breeze.boot.core.exception.BreezeBizException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.Getter;
 
 /**
  * 不需要register的ObjectMapper工具类
@@ -32,7 +36,12 @@ public class MapperUtils {
     /**
      * 对象映射器
      */
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    @Getter
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    static {
+        mapper.registerModules(new JavaTimeModule());
+    }
 
     /**
      * 写
@@ -42,7 +51,7 @@ public class MapperUtils {
      */
     public static <T> String write(T data) {
         try {
-            return objectMapper.writeValueAsString(data);
+            return mapper.writeValueAsString(data);
         } catch (Exception ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
@@ -56,7 +65,7 @@ public class MapperUtils {
      */
     public static <T> T parse(String data, TypeReference<T> reference) {
         try {
-            return objectMapper.readValue(data, reference);
+            return mapper.readValue(data, reference);
         } catch (Exception ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
@@ -67,10 +76,9 @@ public class MapperUtils {
             throw new RuntimeException("参数不能为null");
         }
         try {
-            return objectMapper.readValue(json, clazz);
+            return mapper.readValue(json, clazz);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw new RuntimeException("json转化异常");
+            throw new BreezeBizException(ResultCode.JSON_ERROR);
         }
     }
 

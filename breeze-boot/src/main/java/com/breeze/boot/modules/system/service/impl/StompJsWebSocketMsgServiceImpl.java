@@ -18,7 +18,7 @@ package com.breeze.boot.modules.system.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.breeze.boot.core.utils.AssertUtil;
-import com.breeze.boot.core.utils.BreezeThreadLocal;
+import com.breeze.boot.core.utils.BreezeTenantThreadLocal;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.message.dto.UserMsgDTO;
 import com.breeze.boot.message.events.MsgSaveEvent;
@@ -110,11 +110,11 @@ public class StompJsWebSocketMsgServiceImpl extends WebSocketMsgService {
      */
     @Override
     public Result<MsgVO> asyncSendBroadcastMsg(MsgParam msgParam) {
-        BreezeThreadLocal.set(msgParam.getTenantId());
+        BreezeTenantThreadLocal.set(msgParam.getTenantId());
         SysMsg sysMsg = this.sysMsgService.getById(msgParam.getMsgId());
         AssertUtil.isNotNull(sysMsg, MSG_NOT_FOUND);
         this.sendMsgToUser(this.sysUserService.list(), msgParam.getSender(), sysMsg);
-        BreezeThreadLocal.remove();
+        BreezeTenantThreadLocal.remove();
         return Result.ok(this.buildMsgVO(sysMsg));
     }
 
@@ -127,13 +127,13 @@ public class StompJsWebSocketMsgServiceImpl extends WebSocketMsgService {
      */
     @Override
     public Result<MsgVO> asyncSendMsgToSingleUser(Principal principal, MsgParam msgParam) {
-        BreezeThreadLocal.set(msgParam.getTenantId());
+        BreezeTenantThreadLocal.set(msgParam.getTenantId());
         log.debug("[msgId]：{}, [username]： {}", msgParam.getMsgId(), principal.getName());
         SysMsg sysMsg = this.sysMsgService.getById(msgParam);
         AssertUtil.isNotNull(sysMsg, MSG_NOT_FOUND);
         List<SysUser> sysUserList = this.sysUserService.listByIds(msgParam.getUserIds());
         this.sendMsgToUser(sysUserList, msgParam.getSender(), sysMsg);
-        BreezeThreadLocal.remove();
+        BreezeTenantThreadLocal.remove();
         return Result.ok(this.buildMsgVO(sysMsg));
     }
 
@@ -156,22 +156,22 @@ public class StompJsWebSocketMsgServiceImpl extends WebSocketMsgService {
      */
     @Override
     public void asyncSendMsgToUser(Principal principal, MsgParam msgParam) {
-        BreezeThreadLocal.set(msgParam.getTenantId());
+        BreezeTenantThreadLocal.set(msgParam.getTenantId());
         log.debug("[msgId]： {}, [username]： {}", msgParam.getMsgId(), principal.getName());
         SysMsg sysMsg = this.sysMsgService.getById(msgParam.getMsgId());
         AssertUtil.isNotNull(sysMsg, MSG_NOT_FOUND);
         List<UserMsgDTO.MsgBody> sysUserMsgList = this.sendAndGetMsgBodyList(msgParam.getUserIds(), msgParam.getSender(), sysMsg);
-        BreezeThreadLocal.remove();
+        BreezeTenantThreadLocal.remove();
         this.asyncSendMsg(sysUserMsgList);
     }
 
     @Override
     public void asyncSendMsgToUser(BpmParam bpmParam) {
-        BreezeThreadLocal.set(bpmParam.getTenantId());
+        BreezeTenantThreadLocal.set(bpmParam.getTenantId());
         SysMsg sysMsg = this.sysMsgService.getOne(Wrappers.<SysMsg>lambdaQuery().eq(SysMsg::getCode, bpmParam.getMsgCode()));
         AssertUtil.isNotNull(sysMsg, MSG_NOT_FOUND);
         List<UserMsgDTO.MsgBody> sysUserMsgList = sendAndGetMsgBodyList(bpmParam.getUserIds(), bpmParam.getSender(), sysMsg);
-        BreezeThreadLocal.remove();
+        BreezeTenantThreadLocal.remove();
         this.asyncSendMsg(sysUserMsgList);
     }
 
@@ -196,12 +196,12 @@ public class StompJsWebSocketMsgServiceImpl extends WebSocketMsgService {
      */
     @Override
     public Result<MsgVO> syncSendMsgDeptUser(Principal principal, MsgParam msgParam) {
-        BreezeThreadLocal.set(msgParam.getTenantId());
+        BreezeTenantThreadLocal.set(msgParam.getTenantId());
         log.debug("[msgId]：{}, [username]： {}", msgParam, principal.getName());
         SysMsg sysMsg = this.sysMsgService.getById(msgParam.getMsgId());
         AssertUtil.isNotNull(sysMsg, MSG_NOT_FOUND);
         this.sendMsgToUser(this.sysUserService.listDeptsUser(msgParam.getDeptId()), msgParam.getSender(), sysMsg);
-        BreezeThreadLocal.remove();
+        BreezeTenantThreadLocal.remove();
         return Result.ok(this.buildMsgVO(sysMsg));
     }
 

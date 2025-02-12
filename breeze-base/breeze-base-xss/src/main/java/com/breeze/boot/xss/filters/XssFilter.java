@@ -20,10 +20,16 @@ import cn.hutool.core.text.AntPathMatcher;
 import com.breeze.boot.core.utils.LoadAnnotationUtils;
 import com.breeze.boot.xss.config.XssHttpServletRequestWrapper;
 import com.breeze.boot.xss.config.XssProperties;
-import jakarta.servlet.*;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.io.IOException;
@@ -36,7 +42,8 @@ import java.util.List;
  * @since 2022-10-21
  */
 @Slf4j
-public class XssFilter implements Filter {
+@Order(Ordered.HIGHEST_PRECEDENCE)
+public class XssFilter extends GenericFilterBean {
 
     /**
      * xss属性
@@ -71,18 +78,6 @@ public class XssFilter implements Filter {
     }
 
     /**
-     * 初始化
-     *
-     * @param config 配置
-     */
-    @Override
-    public void init(FilterConfig config) {
-        log.info("----- 初始化xss需要被过滤的路径开始 -----");
-        LoadAnnotationUtils.loadControllerMapping(xssProperties, applicationContext, requestMappingHandlerMapping);
-        log.info("----- 初始化xss需要被过滤的路径结束 -----");
-    }
-
-    /**
      * 过滤器
      *
      * @param request  请求
@@ -111,11 +106,10 @@ public class XssFilter implements Filter {
         return Boolean.FALSE;
     }
 
-    /**
-     * 销毁
-     */
     @Override
-    public void destroy() {
+    public void afterPropertiesSet() throws ServletException {
+        log.info("----- 初始化xss需要被过滤的路径开始 -----");
+        LoadAnnotationUtils.loadControllerMapping(xssProperties, applicationContext, requestMappingHandlerMapping);
+        log.info("----- 初始化xss需要被过滤的路径结束 -----");
     }
-
 }
