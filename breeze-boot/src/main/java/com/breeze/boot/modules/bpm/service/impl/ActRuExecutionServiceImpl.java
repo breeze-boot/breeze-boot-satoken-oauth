@@ -46,7 +46,8 @@ public class ActRuExecutionServiceImpl extends ServiceImpl<ActRuExecutionMapper,
      */
     @Override
     public Page<BpmInstanceVO> listPage(BpmInstanceQuery bpmInstanceQuery) {
-        return this.baseMapper.listPage(new Page<>(bpmInstanceQuery.getCurrent(), bpmInstanceQuery.getSize()), bpmInstanceQuery);
+        Page<BpmInstanceVO> page = new Page<>(bpmInstanceQuery.getCurrent(), bpmInstanceQuery.getSize());
+        return this.baseMapper.listPage(page, bpmInstanceQuery);
     }
 
 }

@@ -17,7 +17,7 @@
 package com.breeze.boot.modules.auth.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.breeze.boot.core.base.BaseModel;
+import com.breeze.boot.core.base.IdBaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -37,7 +37,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @TableName(value = "sys_post")
 @Schema(description = "系统岗位实体")
-public class SysPost extends BaseModel<SysPost> implements Serializable {
+public class SysPost extends IdBaseModel<SysPost> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

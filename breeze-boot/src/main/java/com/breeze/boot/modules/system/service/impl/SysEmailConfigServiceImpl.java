@@ -33,6 +33,8 @@ import com.breeze.boot.modules.system.model.mappers.SysEmailMapStruct;
 import com.breeze.boot.modules.system.model.query.EmailConfigQuery;
 import com.breeze.boot.modules.system.model.vo.EmailConfigVO;
 import com.breeze.boot.modules.system.service.SysEmailConfigService;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
@@ -66,7 +68,8 @@ public class SysEmailConfigServiceImpl extends ServiceImpl<SysEmailConfigMapper,
      * @return {@link Page }<{@link EmailConfigVO }>
      */
     @Override
-    public Page<EmailConfigVO> listPage(EmailConfigQuery emailConfigQuery) {
+    @DymicSql
+    public Page<EmailConfigVO> listPage(@ConditionParam EmailConfigQuery emailConfigQuery) {
         Page<SysEmailConfig> emailPage = new Page<>(emailConfigQuery.getCurrent(), emailConfigQuery.getSize());
         QueryWrapper<SysEmailConfig> queryWrapper = new QueryWrapper<>();
         emailConfigQuery.getSortQueryWrapper(queryWrapper);

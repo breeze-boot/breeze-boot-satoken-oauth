@@ -38,7 +38,7 @@ import static com.breeze.boot.log.enums.LogEnum.Result.FAIL;
 import static com.breeze.boot.log.enums.LogEnum.Result.SUCCESS;
 
 /**
- * 系统日志方面
+ * 系统日志切面
  *
  * @author gaoweixuan
  * @since 2023/05/07
@@ -79,13 +79,13 @@ public class SysLogAspect {
         // 入参
         Object[] param = point.getArgs();
         String className = point.getTarget().getClass().getName();
-        log.debug("[类名]: {} , [方法]: {}", className, methodName);
+        log.debug("类名: {} , 方法: {}", className, methodName);
         SysLogBO sysLogBO = this.buildLog(sysLog, request, param);
         Object obj;
         try {
             obj = point.proceed();
         } catch (Exception e) {
-            log.error("[业务异常信息]", e);
+            log.error("业务异常信息", e);
             sysLogBO.setResultMsg(e.getMessage());
             sysLogBO.setResult(FAIL.getCode());
             throw e;
@@ -128,8 +128,8 @@ public class SysLogAspect {
      * @param stopWatch 时间监听
      */
     private void printLog(String methodName, String jsonString, StopWatch stopWatch) {
-        log.info("[传入参数]：\n {}", jsonString);
-        log.trace("[方法名称]: {} [执行时间]: {}", methodName, stopWatch.getTotalTimeMillis());
+        log.info("传入参数：\n {}", jsonString);
+        log.trace("方法名称: {} 执行时间: {}", methodName, stopWatch.getTotalTimeMillis());
     }
 
     /**

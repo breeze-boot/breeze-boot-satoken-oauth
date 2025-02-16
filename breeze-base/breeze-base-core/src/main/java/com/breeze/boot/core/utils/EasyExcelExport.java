@@ -52,7 +52,7 @@ public class EasyExcelExport {
             fileName = URLEncoder.encode(excelName, "UTF-8").replaceAll("\\+", "%20");
             response.setHeader("original-file-name", fileName);
         } catch (UnsupportedEncodingException e) {
-            log.error("[文件下载失败]", e);
+            log.error("文件下载失败", e);
         }
 
         response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
@@ -62,7 +62,7 @@ public class EasyExcelExport {
                     .sheet(sheetName)
                     .doWrite(dataList);
         } catch (IOException e) {
-            log.error("[文件下载失败]", e);
+            log.error("文件下载失败", e);
         }
     }
 }

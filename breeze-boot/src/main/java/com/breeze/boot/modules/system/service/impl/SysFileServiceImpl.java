@@ -159,7 +159,7 @@ public class SysFileServiceImpl extends ServiceImpl<SysFileMapper, SysFile> impl
             resultMap.put("fileId", sysFile.getId());
 
         } catch (Exception ex) {
-            log.error("[文件上传至Minio失败]", ex);
+            log.error("[文件上传至Minio失败", ex);
             throw new BreezeBizException(ResultCode.FAIL);
         }
         return Result.ok(resultMap);

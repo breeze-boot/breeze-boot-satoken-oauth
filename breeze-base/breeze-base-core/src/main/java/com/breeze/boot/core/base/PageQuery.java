@@ -57,7 +57,7 @@ public class PageQuery {
      * 按照MybatisPlus的方式，顺序排序
      * </p>
      */
-    private LinkedHashMap<String, String> sort;
+    private LinkedHashMap<String, Object> sort;
 
     private Condition condition;
 
@@ -98,7 +98,7 @@ public class PageQuery {
             return;
         }
         this.sort.forEach((column, sort) -> {
-            queryWrapper.orderBy(this.isSort(), StrUtil.equals("ascending", sort), column);
+            queryWrapper.orderBy(this.isSort(), StrUtil.equals("ascending", sort.toString()), column);
         });
     }
 

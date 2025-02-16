@@ -32,22 +32,22 @@ import java.time.LocalDateTime;
 public class BreezeJobs {
 
     public void demoJob(String s) {
-        log.info("[String类型的值] {}", s);
+        log.info("String类型的值 {}", s);
         log.info("Job当前执行时间: " + LocalDateTime.now());
     }
 
     public void demoExceptionJob(String s) {
-        log.info("[String类型的值] {}", s);
+        log.info("String类型的值 {}", s);
         int i = 1 / 0;
         log.info("Job当前执行时间: " + LocalDateTime.now());
     }
 
     public void demoJob(String s, Integer integer, Double aDouble, Long aLong, Boolean aBoolean, Boolean aBoolean1) {
-        log.info("[String类型的值]: {}", s);
-        log.info("[Integer类型的值]: {}", integer);
-        log.info("[Double类型的值]: {}", aDouble);
-        log.info("[Long类型的值]:{}", aLong);
-        log.info("[Boolean类型的值]{} {}", aBoolean, aBoolean1);
+        log.info("String类型的值: {}", s);
+        log.info("Integer类型的值: {}", integer);
+        log.info("Double类型的值: {}", aDouble);
+        log.info("Long类型的值:{}", aLong);
+        log.info("Boolean类型的值{} {}", aBoolean, aBoolean1);
         log.info("Job当前执行时间: " + LocalDateTime.now());
     }
 }

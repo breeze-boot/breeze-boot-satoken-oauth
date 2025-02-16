@@ -29,6 +29,8 @@ import com.breeze.boot.modules.auth.model.mappers.SysPostMapStruct;
 import com.breeze.boot.modules.auth.model.query.PostQuery;
 import com.breeze.boot.modules.auth.model.vo.PostVO;
 import com.breeze.boot.modules.auth.service.SysPostService;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -56,7 +58,8 @@ public class SysPostServiceImpl extends ServiceImpl<SysPostMapper, SysPost> impl
      * @return {@link IPage}<{@link PostVO}>
      */
     @Override
-    public IPage<PostVO> listPage(PostQuery postQuery) {
+    @DymicSql
+    public IPage<PostVO> listPage(@ConditionParam PostQuery postQuery) {
         Page<SysPost> page = new LambdaQueryChainWrapper<>(this.getBaseMapper())
                 .like(StrUtil.isAllNotBlank(postQuery.getPostCode()), SysPost::getPostCode, postQuery.getPostCode())
                 .like(StrUtil.isAllNotBlank(postQuery.getPostName()), SysPost::getPostName, postQuery.getPostName())

@@ -21,6 +21,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.modules.auth.model.entity.SysRegisteredClient;
 import com.breeze.boot.modules.auth.model.query.RegisteredClientQuery;
 import com.breeze.boot.modules.auth.model.vo.RegisteredClientVO;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -41,7 +43,8 @@ public interface SysRegisteredClientMapper extends BreezeBaseMapper<SysRegistere
      * @param registeredClientQuery 注册客户端查询
      * @return {@link Page}<{@link SysRegisteredClient}>
      */
-    Page<RegisteredClientVO> listPage(@Param("page") Page<SysRegisteredClient> page, @Param("registeredClientQuery") RegisteredClientQuery registeredClientQuery);
+    @DymicSql
+    Page<RegisteredClientVO> listPage(@Param("page") Page<SysRegisteredClient> page, @ConditionParam @Param("registeredClientQuery") RegisteredClientQuery registeredClientQuery);
 
     /**
      * 获取注册客户端

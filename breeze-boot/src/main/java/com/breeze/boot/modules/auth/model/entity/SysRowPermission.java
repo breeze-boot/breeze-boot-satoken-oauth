@@ -20,7 +20,7 @@ import cn.hutool.json.JSONArray;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
-import com.breeze.boot.core.base.BaseModel;
+import com.breeze.boot.core.base.IdBaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -40,7 +40,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @TableName(value = "sys_row_permission", autoResultMap = true)
 @Schema(description = "系统行数据权限规则实体")
-public class SysRowPermission extends BaseModel<SysRowPermission> implements Serializable {
+public class SysRowPermission extends IdBaseModel<SysRowPermission> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

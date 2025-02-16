@@ -48,7 +48,7 @@ public class LocalSysLogSaveEventListener {
     @Async
     @EventListener(SysLogSaveEvent.class)
     public void onApplicationEvent(SysLogSaveEvent sysLogSaveEvent) {
-        log.info("[本地日志消息投递保存]");
+        log.debug("本地日志消息投递保存");
         consumer.accept(sysLogSaveEvent);
     }
 

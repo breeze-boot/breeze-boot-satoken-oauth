@@ -33,6 +33,8 @@ import com.breeze.boot.modules.auth.model.query.TenantQuery;
 import com.breeze.boot.modules.auth.model.vo.TenantVO;
 import com.breeze.boot.modules.auth.service.SysTenantService;
 import com.breeze.boot.modules.auth.service.SysUserService;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -68,7 +70,8 @@ public class SysTenantServiceImpl extends ServiceImpl<SysTenantMapper, SysTenant
      * @return {@link Page}<{@link TenantVO}>
      */
     @Override
-    public Page<TenantVO> listPage(TenantQuery tenantQuery) {
+    @DymicSql
+    public Page<TenantVO> listPage(@ConditionParam TenantQuery tenantQuery) {
         Page<SysTenant> page = new LambdaQueryChainWrapper<>(this.getBaseMapper())
                 .like(StrUtil.isAllNotBlank(tenantQuery.getTenantName()), SysTenant::getTenantName, tenantQuery.getTenantName())
                 .orderByDesc(SysTenant::getCreateTime)

@@ -20,6 +20,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.modules.system.model.entity.SysLog;
 import com.breeze.boot.modules.system.model.query.LogQuery;
 import com.breeze.boot.modules.system.model.vo.StatisticLoginUser;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -48,7 +50,8 @@ public interface SysLogMapper extends BreezeBaseMapper<SysLog> {
      * @param logType 日志类型
      * @return {@link Page}<{@link SysLog}>
      */
-    Page<SysLog> listPage(Page<SysLog> page, @Param("logQuery") LogQuery logQuery, @Param("logType") Integer logType);
+    @DymicSql
+    Page<SysLog> listPage(Page<SysLog> page, @ConditionParam @Param("logQuery") LogQuery logQuery, @Param("logType") Integer logType);
 
     /**
      * 统计登录用户饼图

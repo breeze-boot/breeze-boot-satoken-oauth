@@ -37,12 +37,17 @@ import com.breeze.boot.modules.system.model.vo.EmailConfigVO;
 import com.breeze.boot.modules.system.model.vo.MSubjectEmailVO;
 import com.breeze.boot.modules.system.model.vo.MSubjectVO;
 import com.breeze.boot.modules.system.service.SysMSubjectService;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.breeze.boot.core.enums.ResultCode.EMAIL_NOT_FOUND;
@@ -68,7 +73,8 @@ public class SysMSubjectServiceImpl extends ServiceImpl<SysEmailSubjectMapper, S
      * @return {@link Page }<{@link MSubjectVO }>
      */
     @Override
-    public Page<MSubjectVO> listPage(MSubjectQuery mSubjectQuery) {
+    @DymicSql
+    public Page<MSubjectVO> listPage(@ConditionParam MSubjectQuery mSubjectQuery) {
         Page<SysEmailSubject> emailPage = new Page<>(mSubjectQuery.getCurrent(), mSubjectQuery.getSize());
         QueryWrapper<SysEmailSubject> queryWrapper = new QueryWrapper<>();
         mSubjectQuery.getSortQueryWrapper(queryWrapper);

@@ -72,14 +72,14 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     public void handleSessionDisconnectEvent(SessionDisconnectEvent event) {
         String sessionId = event.getSessionId();
         if (log.isDebugEnabled()) {
-            log.debug("[客户端断开连接] sessionId: {}", sessionId);
+            log.debug("客户端断开连接 sessionId: {}", sessionId);
         }
         boolean deleted = rabbitAdmin.deleteQueue("userMsg-user" + sessionId);
         if (deleted) {
-            log.info("[删除队列成功] userMsg-user{}", sessionId);
+            log.info("删除队列成功 userMsg-user{}", sessionId);
             return;
         }
-        log.info("[删除队列失败] userMsg-user{}", sessionId);
+        log.info("删除队列失败 userMsg-user{}", sessionId);
     }
 
     /**

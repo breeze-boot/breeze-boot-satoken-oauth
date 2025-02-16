@@ -20,6 +20,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.modules.bpm.model.entity.BpmCategory;
 import com.breeze.boot.modules.bpm.model.query.BpmCategoryQuery;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -40,6 +42,7 @@ public interface BpmCategoryMapper extends BreezeBaseMapper<BpmCategory> {
      * @param category 类别
      * @return {@link IPage}<{@link BpmCategory}>
      */
-    Page<BpmCategory> listPage(Page<BpmCategory> page, @Param("category") BpmCategoryQuery category);
+    @DymicSql
+    Page<BpmCategory> listPage(Page<BpmCategory> page, @ConditionParam @Param("category") BpmCategoryQuery category);
 
 }

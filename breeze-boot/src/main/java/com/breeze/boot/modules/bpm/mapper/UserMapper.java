@@ -19,6 +19,8 @@ package com.breeze.boot.modules.bpm.mapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.modules.bpm.model.entity.User;
 import com.breeze.boot.modules.bpm.model.query.BpmUserQuery;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -33,6 +35,7 @@ public interface UserMapper extends BreezeBaseMapper<User> {
      * @param userQuery 用户查询
      * @return {@link Page }<{@link User }>
      */
-    Page<User> listPage(@Param("objectPage") Page<User> page, @Param("userQuery") BpmUserQuery userQuery);
+    @DymicSql
+    Page<User> listPage(@Param("page") Page<User> page, @ConditionParam @Param("userQuery") BpmUserQuery userQuery);
 
 }

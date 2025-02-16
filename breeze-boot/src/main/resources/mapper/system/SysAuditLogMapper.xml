@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.breeze.boot.modules.system.mapper.SysAuditLogMapper">
+
+    <select id="listPage" resultType="com.breeze.boot.modules.system.model.entity.SysAuditLog">
+        SELECT a.id,
+               a.log_id,
+               a.field,
+               a.previous,
+               a.now,
+               a.time,
+               a.status,
+               a.batch
+        FROM sys_audit_log a
+        GROUP BY batch
+    </select>
+
+    <update id="truncate">
+        TRUNCATE TABLE sys_audit_log;
+    </update>
+
+</mapper>

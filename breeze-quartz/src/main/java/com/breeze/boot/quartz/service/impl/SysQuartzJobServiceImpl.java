@@ -185,7 +185,7 @@ public class SysQuartzJobServiceImpl extends ServiceImpl<SysQuartzJobMapper, Sys
         try {
             return Objects.equals(1, jobOpenForm.getStatus()) ? this.resumeJob(jobOpenForm.getId()) : this.pauseJob(jobOpenForm.getId());
         } catch (Exception e) {
-            log.error("[任务状态修改失败]", e);
+            log.error("任务状态修改失败", e);
         }
         throw new BreezeBizException(ResultCode.FAIL);
     }

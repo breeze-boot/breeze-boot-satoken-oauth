@@ -61,9 +61,10 @@ public class SysLogController {
      * @param logQuery 日志查询
      * @return {@link Result}<{@link Page}<{@link LogVO}>>
      */
-    @GetMapping
+    @Operation(summary = "列表")
+    @PostMapping("/page")
     @SaCheckPermission("sys:sysLog:list")
-    public Result<Page<LogVO>> list(LogQuery logQuery) {
+    public Result<Page<LogVO>> list(@RequestBody LogQuery logQuery) {
         return Result.ok(this.sysLogService.listPage(logQuery, SYSTEM.getCode()));
     }
 

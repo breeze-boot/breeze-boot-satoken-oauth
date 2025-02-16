@@ -57,6 +57,19 @@ public class SysMenuColumnController {
     private final SysMenuColumnService sysMenuColumnService;
 
     /**
+     * 列表
+     *
+     * @param permissionQuery 数据权限查询
+     * @return {@link Result }<{@link Page }<{@link MenuColumnVO }>>
+     */
+    @Operation(summary = "列表")
+    @PostMapping("/page")
+    @SaCheckPermission("auth:menuColumn:list")
+    public Result<Page<MenuColumnVO>> list(@RequestBody MenuColumnQuery permissionQuery) {
+        return Result.ok(this.sysMenuColumnService.listPage(permissionQuery));
+    }
+
+    /**
      * 获取当前用户角色下菜单列  初始化使用
      *
      * @return {@link Result }<{@link List }<{@link RolesMenuColumnVO }>>
@@ -65,19 +78,6 @@ public class SysMenuColumnController {
     @GetMapping("/getRolesMenuColumns")
     public Result<List<RolesMenuColumnVO>> getRolesMenuColumns() {
         return Result.ok(this.sysMenuColumnService.getRolesMenuColumns());
-    }
-
-    /**
-     * 列表
-     *
-     * @param permissionQuery 数据权限查询
-     * @return {@link Result }<{@link Page }<{@link MenuColumnVO }>>
-     */
-    @Operation(summary = "列表")
-    @GetMapping
-    @SaCheckPermission("auth:menuColumn:list")
-    public Result<Page<MenuColumnVO>> list(MenuColumnQuery permissionQuery) {
-        return Result.ok(this.sysMenuColumnService.listPage(permissionQuery));
     }
 
     /**

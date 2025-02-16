@@ -53,9 +53,9 @@ public class WoLeaveController {
      * @return {@link Result }<{@link Page }<{@link WoLeave }>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("wo:leave:list")
-    public Result<Page<WoLeave>> list(WoLeaveQuery woLeaveQuery) {
+    public Result<Page<WoLeave>> list(@RequestBody WoLeaveQuery woLeaveQuery) {
         return Result.ok(this.woLeaveService.listPage(woLeaveQuery));
     }
 

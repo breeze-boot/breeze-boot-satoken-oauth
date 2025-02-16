@@ -17,7 +17,8 @@
 package com.breeze.boot.modules.auth.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.breeze.boot.core.base.BaseModel;
+import com.breeze.boot.core.base.IdBaseModel;
+import com.breeze.boot.mybatis.annotation.Audit;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -32,13 +33,14 @@ import java.io.Serializable;
  * @since 2021-12-06 22:03:39
  */
 @Data
+@Audit
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @TableName("sys_platform")
 @Schema(description = "系统平台实体")
-public class SysPlatform extends BaseModel<SysPlatform> implements Serializable {
+public class SysPlatform extends IdBaseModel<SysPlatform> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

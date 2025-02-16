@@ -18,13 +18,17 @@ package com.breeze.boot.config;
 
 import com.breeze.boot.log.bo.SysLogBO;
 import com.breeze.boot.log.events.LocalSysLogSaveEventListener;
+import com.breeze.boot.modules.system.service.SysAuditLogService;
 import com.breeze.boot.modules.system.service.SysMsgUserService;
 import com.breeze.boot.modules.system.service.SysLogService;
 import com.breeze.boot.message.dto.UserMsgDTO;
 import com.breeze.boot.message.events.MsgSaveEventListener;
+import com.breeze.boot.mybatis.events.LocalSysAuditLogSaveEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Map;
 
 /**
  * 系统日志收集的配置
@@ -35,6 +39,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class ListenerConfig {
+
+    /**
+     * 系统日志服务
+     */
+    private final SysAuditLogService sysAuditLogService;
 
     /**
      * 系统日志服务
@@ -64,6 +73,17 @@ public class ListenerConfig {
     @Bean
     public MsgSaveEventListener msgSaveMsgSnappedEventListener() {
         return new MsgSaveEventListener((source) -> this.sysMsgUserService.saveUserMsg((UserMsgDTO) source.getSource()));
+    }
+
+
+    /**
+     * 审计日志消息快照保存侦听器
+     *
+     * @return {@link MsgSaveEventListener}
+     */
+    @Bean
+    public LocalSysAuditLogSaveEventListener localSysAuditLogSaveEventListener() {
+        return new LocalSysAuditLogSaveEventListener((source) -> this.sysAuditLogService.saveAuditLog((Map<String,Map<String,Object>>) source.getSource()));
     }
 
 }

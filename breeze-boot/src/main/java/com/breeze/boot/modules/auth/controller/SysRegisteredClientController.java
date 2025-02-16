@@ -67,9 +67,9 @@ public class SysRegisteredClientController {
      * @return {@link Result}<{@link Page}<{@link RegisteredClientVO}>>
      */
     @Operation(summary = "列表", description = "分页")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("auth:client:list")
-    public Result<Page<RegisteredClientVO>> list(RegisteredClientQuery registeredClientQuery) {
+    public Result<Page<RegisteredClientVO>> list(@RequestBody RegisteredClientQuery registeredClientQuery) {
         return Result.ok(this.registeredClientService.listPage(registeredClientQuery));
     }
 

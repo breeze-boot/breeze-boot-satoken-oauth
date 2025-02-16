@@ -19,6 +19,8 @@ package com.breeze.boot.modules.auth.mapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.modules.auth.model.entity.SysMenuColumn;
 import com.breeze.boot.modules.auth.model.query.MenuColumnQuery;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -42,7 +44,8 @@ public interface SysMenuColumnMapper extends BreezeBaseMapper<SysMenuColumn> {
      * @param page            页面
      * @return {@link Page}<{@link SysMenuColumn}>
      */
-    Page<SysMenuColumn> listPage(Page<SysMenuColumn> page, @Param("permissionQuery") MenuColumnQuery permissionQuery);
+    @DymicSql
+    Page<SysMenuColumn> listPage(Page<SysMenuColumn> page,@ConditionParam @Param("permissionQuery") MenuColumnQuery permissionQuery);
 
     /**
      * 获取角色的菜单列

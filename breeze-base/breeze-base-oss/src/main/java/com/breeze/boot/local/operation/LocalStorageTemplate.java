@@ -96,11 +96,11 @@ public class LocalStorageTemplate {
         newFilePath.mkdirs();
         try {
             if (log.isInfoEnabled()) {
-                log.info("[文件名]： {}， [类型]: {}，[文件大小]：{}", originalFilename, file.getContentType(), file.getSize());
+                log.info("文件名： {}， 类型: {}，文件大小：{}", originalFilename, file.getContentType(), file.getSize());
             }
             FileCopyUtils.copy(file.getInputStream(), Files.newOutputStream(new File(newFilePath, fileName).toPath()));
         } catch (IOException e) {
-            log.error("[上传失败] {}", e.getMessage());
+            log.error("上传失败 {}", e.getMessage());
         }
         return path + "/" + fileName;
     }
@@ -132,7 +132,7 @@ public class LocalStorageTemplate {
             IoUtil.copy(fis, os);
         } catch (Exception e) {
             // 记录下载过程中出现的异常信息
-            log.error("[文件下载失败]", e);
+            log.error("文件下载失败", e);
         }
     }
 
@@ -166,7 +166,7 @@ public class LocalStorageTemplate {
     public boolean remove(String path) {
         File file = getFile(path);
         if (!file.exists()) {
-            log.error("[文件不存在]");
+            log.error("文件不存在");
             return false;
         }
         return file.delete();

@@ -68,9 +68,9 @@ public class SysTenantController {
      * @return {@link Result}<{@link Page}<{@link TenantVO}>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("auth:tenant:list")
-    public Result<Page<TenantVO>> list(TenantQuery tenantQuery) {
+    public Result<Page<TenantVO>> list(@RequestBody TenantQuery tenantQuery) {
         return Result.ok(this.sysTenantService.listPage(tenantQuery));
     }
 

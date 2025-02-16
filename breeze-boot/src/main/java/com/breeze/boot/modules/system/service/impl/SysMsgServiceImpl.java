@@ -27,6 +27,8 @@ import com.breeze.boot.modules.system.model.mappers.SysMsgMapStruct;
 import com.breeze.boot.modules.system.model.query.MsgQuery;
 import com.breeze.boot.modules.system.service.SysMsgService;
 import com.breeze.boot.message.vo.MsgVO;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +51,8 @@ public class SysMsgServiceImpl extends ServiceImpl<SysMsgMapper, SysMsg> impleme
      * @return {@link Page}<{@link MsgVO}>
      */
     @Override
-    public Page<MsgVO> listPage(MsgQuery msgQuery) {
+    @DymicSql
+    public Page<MsgVO> listPage(@ConditionParam MsgQuery msgQuery) {
         Page<SysMsg> msgPage = new Page<>(msgQuery.getCurrent(), msgQuery.getSize());
         Page<SysMsg> page = new LambdaQueryChainWrapper<>(this.getBaseMapper())
                 .like(StrUtil.isAllNotBlank(msgQuery.getTitle()), SysMsg::getTitle, msgQuery.getTitle())

@@ -23,6 +23,8 @@ import com.breeze.boot.modules.system.model.entity.SysMsgUser;
 import com.breeze.boot.modules.system.model.query.UserMsgQuery;
 import com.breeze.boot.modules.system.model.vo.MsgUserVO;
 import com.breeze.boot.mybatis.annotation.BreezeDataPermission;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -45,7 +47,8 @@ public interface SysMsgUserMapper extends BreezeBaseMapper<SysMsgUser> {
      * @return {@link IPage}<{@link MsgUserVO}>
      */
     @BreezeDataPermission(dept = DataRole.DEPT_ID)
-    IPage<MsgUserVO> listPage(Page<SysMsgUser> page, @Param("userMsgQuery") UserMsgQuery userMsgQuery);
+    @DymicSql
+    IPage<MsgUserVO> listPage(Page<SysMsgUser> page,@ConditionParam @Param("userMsgQuery") UserMsgQuery userMsgQuery);
 
     /**
      * 获取消息列表通过用户名

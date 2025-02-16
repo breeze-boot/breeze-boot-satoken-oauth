@@ -61,7 +61,8 @@ public class SysDictServiceImpl extends ServiceImpl<SysDictMapper, SysDict> impl
      */
     @Override
     public Page<DictVO> listPage(DictQuery dictQuery) {
-        Page<SysDict> sysDictPage = this.baseMapper.listPage(new Page<>(dictQuery.getCurrent(), dictQuery.getSize()), dictQuery);
+        Page<SysDict> page = new Page<>(dictQuery.getCurrent(), dictQuery.getSize());
+        Page<SysDict> sysDictPage = this.baseMapper.listPage(page, dictQuery);
         return this.sysDictMapStruct.entityPage2VOPage(sysDictPage);
     }
 

@@ -76,9 +76,9 @@ public class SysRoleController {
      * @return {@link Result}<{@link Page}<{@link RoleVO}>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("auth:role:list")
-    public Result<Page<RoleVO>> list(RoleQuery roleQuery) {
+    public Result<Page<RoleVO>> list(@RequestBody RoleQuery roleQuery) {
         return Result.ok(this.sysRoleService.listPage(roleQuery));
     }
 

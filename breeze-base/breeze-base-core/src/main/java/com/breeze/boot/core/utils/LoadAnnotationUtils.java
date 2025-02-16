@@ -39,7 +39,7 @@ public class LoadAnnotationUtils {
     public static void loadControllerMapping(BaseProperties properties,
                                              ApplicationContext applicationContext,
                                              RequestMappingHandlerMapping requestMappingHandlerMapping) {
-        log.info("[配置的过滤的地址]：{}", properties.getIgnoreUrls());
+        log.info("配置的过滤的地址：{}", properties.getIgnoreUrls());
         // 获取全部的请求方法
         Map<RequestMappingInfo, HandlerMethod> methodMap = requestMappingHandlerMapping.getHandlerMethods();
         methodMap.forEach((requestMappingInfo, method) -> {
@@ -70,7 +70,7 @@ public class LoadAnnotationUtils {
 
     private static void setURl(BaseProperties properties, String patternUrl) {
         String url = ReUtil.replaceAll(patternUrl, PATTERN, "*");
-        log.info("[过滤的URL]： {}", url);
+        log.info("过滤的URL： {}", url);
         properties.getIgnoreUrls().add(url);
     }
 

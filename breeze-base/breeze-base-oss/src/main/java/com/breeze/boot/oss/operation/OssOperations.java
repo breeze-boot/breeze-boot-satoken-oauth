@@ -72,7 +72,6 @@ public interface OssOperations {
      * @param bucketName bucket名称
      * @param objectName 对象名称
      * @param file       文件
-     * @throws Exception 异常
      */
     void putObject(String bucketName, String objectName, File file);
 
@@ -88,31 +87,28 @@ public interface OssOperations {
     /**
      * 获取对象的url
      *
-     * @param bucketName
-     * @param objectName
-     * @param expires
-     * @return
+     * @param bucketName 存储桶名称
+     * @param objectName 对象名称
+     * @param expires    到期
+     * @return {@link String }
      */
     String getObjectURL(String bucketName, String objectName, Integer expires);
 
     /**
      * 使用bucketName objectName删除对象
      *
-     * @param bucketName
-     * @param objectName
-     * @throws Exception
+     * @param bucketName 存储桶名称
+     * @param objectName 对象名称
      */
     void removeObject(String bucketName, String objectName);
 
     /**
      * 下载
      *
-     * @param bucketName
-     * @param objectName
-     * @param response
-     * @param originalFilename
-     * @return
-     * @throws Exception
+     * @param bucketName       存储桶名称
+     * @param objectName       对象名称
+     * @param response         响应
+     * @param originalFilename 原始文件名
      */
     void downloadObject(String bucketName, String objectName, String response, HttpServletResponse originalFilename);
 
@@ -122,10 +118,11 @@ public interface OssOperations {
      * @param bucketName bucket名称
      * @param objectName 对象名称
      * @param stream     流
+     * @return {@link PutObjectResult }
      */
     @SneakyThrows
-    default void putObject(String bucketName, String objectName, InputStream stream) {
-        this.putObject(bucketName, objectName, stream, "application/octet-stream");
+    default PutObjectResult putObject(String bucketName, String objectName, InputStream stream) {
+        return this.putObject(bucketName, objectName, stream, "application/octet-stream");
     }
 
 }

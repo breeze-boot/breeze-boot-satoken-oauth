@@ -21,6 +21,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.modules.bpm.model.entity.ActRuExecution;
 import com.breeze.boot.modules.bpm.model.query.BpmInstanceQuery;
 import com.breeze.boot.modules.bpm.model.vo.BpmInstanceVO;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -36,10 +38,11 @@ public interface ActRuExecutionMapper extends BaseMapper<ActRuExecution> {
     /**
      * 列表页面
      *
-     * @param page                 页面
+     * @param page             页面
      * @param bpmInstanceQuery 流程实例查询
      * @return {@link Page}<{@link BpmInstanceVO}>
      */
-    Page<BpmInstanceVO> listPage(Page<BpmInstanceVO> page, @Param("processInstanceQuery") BpmInstanceQuery bpmInstanceQuery);
+    @DymicSql
+    Page<BpmInstanceVO> listPage(Page<BpmInstanceVO> page, @ConditionParam @Param("processInstanceQuery") BpmInstanceQuery bpmInstanceQuery);
 
 }

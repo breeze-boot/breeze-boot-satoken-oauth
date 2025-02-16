@@ -26,9 +26,7 @@ import com.breeze.boot.modules.bpm.service.IGroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 流程用户组管理模块
@@ -51,9 +49,9 @@ public class BpmGroupController {
      * @return {@link Result }<{@link Page }<{@link BpmUserVO }>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("bpm:group:list")
-    public Result<Page<BpmGroupVO>> list(BpmGroupQuery groupQuery) {
+    public Result<Page<BpmGroupVO>> list(@RequestBody BpmGroupQuery groupQuery) {
         return Result.ok(this.groupService.listPage(groupQuery));
     }
 

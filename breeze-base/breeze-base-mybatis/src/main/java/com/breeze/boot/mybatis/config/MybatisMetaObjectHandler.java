@@ -50,6 +50,7 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
 
     @Override
     public void updateFill(MetaObject metaObject) {
+        // 普通更新操作
         if (metaObject.hasGetter("updateBy")) {
             this.strictUpdateFill(metaObject, "updateBy", this::getUserCode, String.class);
         }
@@ -76,6 +77,4 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
         }
         return null;
     }
-
 }
-

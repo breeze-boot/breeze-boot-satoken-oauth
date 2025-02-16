@@ -74,9 +74,9 @@ public class SysDictController {
      * @return {@link Result}<{@link Page}<{@link DictVO}>>
      */
     @Operation(summary = "列表", description = "分页")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("sys:dict:list")
-    public Result<Page<DictVO>> list(DictQuery dictQuery) {
+    public Result<Page<DictVO>> list(@RequestBody DictQuery dictQuery) {
         return Result.ok(this.sysDictService.listPage(dictQuery));
     }
 

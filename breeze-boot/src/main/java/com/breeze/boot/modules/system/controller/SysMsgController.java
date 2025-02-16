@@ -63,9 +63,9 @@ public class SysMsgController {
      * @return {@link Result}<{@link IPage}<{@link MsgVO}>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("sys:msg:list")
-    public Result<IPage<MsgVO>> list(MsgQuery msgQuery) {
+    public Result<IPage<MsgVO>> list(@RequestBody MsgQuery msgQuery) {
         return Result.ok(this.sysMsgService.listPage(msgQuery));
     }
 

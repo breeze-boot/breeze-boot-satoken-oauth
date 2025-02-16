@@ -18,8 +18,12 @@ package com.breeze.boot.modules.system.mapper;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.modules.system.model.entity.SysDbResource;
+import com.breeze.boot.modules.system.model.query.DbResourceQuery;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 系统数据源映射器
@@ -30,6 +34,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface SysDbMapper extends BreezeBaseMapper<SysDbResource> {
 
-    Page<SysDbResource> listPage(Page<SysDbResource> sysDbPage);
+    @DymicSql
+    Page<SysDbResource> listPage(@Param("page") Page<SysDbResource> page,@ConditionParam @Param("dbResourceQuery") DbResourceQuery dbResourceQuery);
 
 }

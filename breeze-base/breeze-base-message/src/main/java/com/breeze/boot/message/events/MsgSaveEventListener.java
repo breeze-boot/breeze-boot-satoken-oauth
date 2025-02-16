@@ -48,7 +48,7 @@ public class MsgSaveEventListener {
     @Async
     @EventListener(MsgSaveEvent.class)
     public void onApplicationEvent(MsgSaveEvent msgSaveEvent) {
-        log.debug("[消息投递]");
+        log.debug("消息投递");
         consumer.accept(msgSaveEvent);
     }
 

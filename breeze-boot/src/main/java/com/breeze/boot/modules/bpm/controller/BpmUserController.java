@@ -25,9 +25,7 @@ import com.breeze.boot.modules.bpm.service.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 流程用户管理模块
@@ -50,9 +48,9 @@ public class BpmUserController {
      * @return {@link Result }<{@link Page }<{@link BpmUserVO }>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("bpm:user:list")
-    public Result<Page<BpmUserVO>> list(BpmUserQuery userQuery) {
+    public Result<Page<BpmUserVO>> list(@RequestBody BpmUserQuery userQuery) {
         return Result.ok(this.userService.listPage(userQuery));
     }
 

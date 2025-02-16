@@ -61,9 +61,9 @@ public class BpmInstanceController {
      * @return {@link Result}<{@link Page}<{@link BpmInstanceVO}>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("bpm:instance:list")
-    public Result<Page<BpmInstanceVO>> list(@ParameterObject BpmInstanceQuery bpmInstanceQuery) {
+    public Result<Page<BpmInstanceVO>> list(@RequestBody @ParameterObject BpmInstanceQuery bpmInstanceQuery) {
         return Result.ok(this.bpmInstanceService.listPage(bpmInstanceQuery));
     }
 

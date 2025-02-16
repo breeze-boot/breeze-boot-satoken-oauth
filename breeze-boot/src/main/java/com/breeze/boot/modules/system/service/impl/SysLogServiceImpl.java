@@ -52,7 +52,8 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
      */
     @Override
     public Page<LogVO> listPage(LogQuery logQuery, Integer logType) {
-        Page<SysLog> sysLogPage = this.baseMapper.listPage(new Page<>(logQuery.getCurrent(), logQuery.getLimit()), logQuery, logType);
+        Page<SysLog> page = new Page<>(logQuery.getCurrent(), logQuery.getLimit());
+        Page<SysLog> sysLogPage = this.baseMapper.listPage(page, logQuery, logType);
         return this.sysLogMapStruct.entityPage2VOPage(sysLogPage);
     }
 

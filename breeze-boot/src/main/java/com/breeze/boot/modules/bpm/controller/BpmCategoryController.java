@@ -66,9 +66,9 @@ public class BpmCategoryController {
      * @return {@link Result}<{@link IPage}<{@link BpmCategoryVO}>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("bpm:category:list")
-    public Result<IPage<BpmCategoryVO>> list(BpmCategoryQuery processCategory) {
+    public Result<IPage<BpmCategoryVO>> list(@RequestBody BpmCategoryQuery processCategory) {
         return Result.ok(this.bpmCategoryService.listPage(processCategory));
     }
 

@@ -67,9 +67,9 @@ public class SysPostController {
      * @return {@link Result}<{@link IPage}<{@link PostVO}>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("auth:post:list")
-    public Result<IPage<PostVO>> list(PostQuery postQuery) {
+    public Result<IPage<PostVO>> list(@RequestBody PostQuery postQuery) {
         return Result.ok(this.sysPostService.listPage(postQuery));
     }
 

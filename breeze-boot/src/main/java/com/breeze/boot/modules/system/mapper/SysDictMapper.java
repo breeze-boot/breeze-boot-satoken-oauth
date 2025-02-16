@@ -19,6 +19,8 @@ package com.breeze.boot.modules.system.mapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.modules.system.model.entity.SysDict;
 import com.breeze.boot.modules.system.model.query.DictQuery;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -39,6 +41,7 @@ public interface SysDictMapper extends BreezeBaseMapper<SysDict> {
      * @param dictQuery 字典查询
      * @return {@link Page}<{@link SysDict}>
      */
-    Page<SysDict> listPage(Page<SysDict> page, @Param("dictQuery") DictQuery dictQuery);
+    @DymicSql
+    Page<SysDict> listPage(Page<SysDict> page, @ConditionParam @Param("dictQuery") DictQuery dictQuery);
 
 }

@@ -48,7 +48,7 @@ public class RemoteSysLogSaveEventListener {
     @Async
     @EventListener(SysLogSaveEvent.class)
     public void onApplicationEvent(SysLogSaveEvent sysLogSaveEvent) {
-        log.info("[远程接口日志消息投递保存]");
+        log.debug("远程接口日志消息投递保存");
         consumer.accept(sysLogSaveEvent);
     }
 

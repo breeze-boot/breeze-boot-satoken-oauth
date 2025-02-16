@@ -124,7 +124,7 @@ public class BpmInstanceServiceImpl implements IBpmInstanceService {
                 bpmApprovalForm.setPass(Boolean.TRUE);
                 bpmApprovalForm.setComment("自动完成第一个节点");
                 this.flowTaskService.complete(bpmApprovalForm);
-                log.info("[自动完成第一个节点]");
+                log.info("自动完成第一个节点");
             }
             return Result.ok(processInstance.getId());
         } catch (FlowableException ex) {

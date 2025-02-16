@@ -17,7 +17,7 @@
 package com.breeze.boot.modules.bpm.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.breeze.boot.core.base.BaseModel;
+import com.breeze.boot.core.base.IdBaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -34,7 +34,7 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = false)
 @TableName("bpm_category")
 @Schema(description = "流程分类实体")
-public class BpmCategory extends BaseModel<BpmCategory> {
+public class BpmCategory extends IdBaseModel<BpmCategory> {
 
     /**
      * 流程分类编码

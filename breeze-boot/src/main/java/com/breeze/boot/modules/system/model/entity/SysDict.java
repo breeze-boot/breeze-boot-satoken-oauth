@@ -18,7 +18,7 @@ package com.breeze.boot.modules.system.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.breeze.boot.core.base.BaseModel;
+import com.breeze.boot.core.base.IdBaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -41,7 +41,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 @TableName("sys_dict")
 @Schema(description = "系统字典实体")
-public class SysDict extends BaseModel<SysDict> implements Serializable {
+public class SysDict extends IdBaseModel<SysDict> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

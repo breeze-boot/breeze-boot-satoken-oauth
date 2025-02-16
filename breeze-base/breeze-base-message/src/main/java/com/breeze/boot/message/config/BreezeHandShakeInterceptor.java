@@ -45,7 +45,7 @@ public class BreezeHandShakeInterceptor implements HandshakeInterceptor {
      */
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, @NotNull ServerHttpResponse response, @NotNull WebSocketHandler wsHandler, @NotNull Map<String, Object> attributes) {
-        log.info("[握手前]：{}", request.getURI());
+        log.info("握手前：{}", request.getURI());
         return true;
     }
 
@@ -59,7 +59,7 @@ public class BreezeHandShakeInterceptor implements HandshakeInterceptor {
      */
     @Override
     public void afterHandshake(ServerHttpRequest request, @NotNull ServerHttpResponse response, @NotNull WebSocketHandler wsHandler, Exception ex) {
-        log.info("[握手后]：{}", request.getURI());
+        log.info("握手后：{}", request.getURI());
     }
 
 }

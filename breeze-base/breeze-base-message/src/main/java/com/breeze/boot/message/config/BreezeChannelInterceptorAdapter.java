@@ -66,13 +66,13 @@ public class BreezeChannelInterceptorAdapter implements ChannelInterceptor {
         assert accessor != null;
         StompCommand command = accessor.getCommand();
         //2、判断token
-        log.info("[发送后拦截, 状态: {} 心跳： {}]", command, accessor.getHeartbeat());
+        log.info("发送后拦截, 状态: {} 心跳： {}", command, accessor.getHeartbeat());
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             List<String> nativeHeader = accessor.getNativeHeader("Authorization");
             this.checkUserPermission(nativeHeader);
             List<String> usernameHeader = accessor.getNativeHeader("username");
             String username = usernameHeader.get(0);
-            log.info("[发送前拦截{}请求]", username);
+            log.info("发送前拦截{}请求", username);
             Principal principal = () -> username;
             accessor.setUser(principal);
             return message;
@@ -80,7 +80,7 @@ public class BreezeChannelInterceptorAdapter implements ChannelInterceptor {
 
         // 检测用户订阅内容（防止用户订阅不合法频道）
         if (StompCommand.SUBSCRIBE.equals(command)) {
-            log.debug("[订阅内容]");
+            log.debug("订阅内容");
         }
 
         // 检测用户发送内容
@@ -89,7 +89,7 @@ public class BreezeChannelInterceptorAdapter implements ChannelInterceptor {
             this.checkUserPermission(nativeHeader);
             List<String> usernameHeader = accessor.getNativeHeader("username");
             String username = usernameHeader.get(0);
-            log.info("[发送前拦截{}请求]", username);
+            log.info("发送前拦截{}请求", username);
             Principal principal = () -> username;
             accessor.setUser(principal);
             return message;
@@ -114,7 +114,7 @@ public class BreezeChannelInterceptorAdapter implements ChannelInterceptor {
     public void afterSendCompletion(Message<?> message, MessageChannel channel, boolean sent, Exception ex) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         StompCommand command = accessor.getCommand();
-        log.info("[发送后拦截, 状态: {} 心跳： {}]", command, accessor.getHeartbeat());
+        log.info("发送后拦截, 状态: {} 心跳： {}", command, accessor.getHeartbeat());
     }
 
 }

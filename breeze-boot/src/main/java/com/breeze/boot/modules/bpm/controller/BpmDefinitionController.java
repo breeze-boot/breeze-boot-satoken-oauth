@@ -87,9 +87,9 @@ public class BpmDefinitionController {
      * @return {@link Result}<{@link IPage}<{@link BpmDefinitionVO}>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("bpm:definition:list")
-    public Result<Page<BpmDefinitionVO>> list(BpmDefinitionQuery bpmDefinitionQuery) {
+    public Result<Page<BpmDefinitionVO>> list(@RequestBody BpmDefinitionQuery bpmDefinitionQuery) {
         return Result.ok(this.bpmDefinitionService.listPage(bpmDefinitionQuery));
     }
 

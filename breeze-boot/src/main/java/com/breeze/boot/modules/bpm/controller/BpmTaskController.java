@@ -53,9 +53,9 @@ public class BpmTaskController {
      * @param userTaskQuery 用户任务查询
      * @return {@link Result }<{@link List }<{@link UserTaskVO }>>
      */
-    @GetMapping(value = "/listUserTodoTask")
+    @PostMapping(value = "/listUserTodoTask")
     @ResponseBody
-    public Result<Page<UserTaskVO>> listUserTodoTask(UserTaskQuery userTaskQuery) {
+    public Result<Page<UserTaskVO>> listUserTodoTask(@RequestBody UserTaskQuery userTaskQuery) {
         return Result.ok(bpmTaskService.listUserTodoTask(userTaskQuery));
     }
 
@@ -77,9 +77,9 @@ public class BpmTaskController {
      * @param userTaskQuery 用户任务查询对象
      * @return {@link Result }<{@link Page }<{@link UserTaskVO }>>
      */
-    @GetMapping("/listCompletedTask")
+    @PostMapping("/listCompletedTask")
     @ResponseBody
-    public Result<Page<UserTaskVO>> listCompletedTask(@ParameterObject UserTaskQuery userTaskQuery) {
+    public Result<Page<UserTaskVO>> listCompletedTask(@RequestBody @ParameterObject UserTaskQuery userTaskQuery) {
         return Result.ok(bpmTaskService.listCompletedTask(userTaskQuery));
     }
 
@@ -89,9 +89,9 @@ public class BpmTaskController {
      * @param userTaskQuery 用户任务查询对象
      * @return {@link Result }<{@link Page }<{@link UserTaskVO }>>
      */
-    @GetMapping("/listApplyUserTask")
+    @PostMapping("/listApplyUserTask")
     @ResponseBody
-    public Result<Page<UserTaskVO>> listApplyUserTask(@ParameterObject UserTaskQuery userTaskQuery) {
+    public Result<Page<UserTaskVO>> listApplyUserTask(@RequestBody @ParameterObject UserTaskQuery userTaskQuery) {
         return Result.ok(bpmTaskService.listApplyUserTask(userTaskQuery));
     }
 

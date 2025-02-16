@@ -18,7 +18,7 @@ package com.breeze.boot.modules.system.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.breeze.boot.core.base.BaseModel;
+import com.breeze.boot.core.base.IdBaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -38,7 +38,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @TableName("sys_email_subject")
 @Schema(description = "系统邮箱实体")
-public class SysEmailSubject extends BaseModel<SysEmailSubject> implements Serializable {
+public class SysEmailSubject extends IdBaseModel<SysEmailSubject> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

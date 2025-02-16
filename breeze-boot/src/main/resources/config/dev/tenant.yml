@@ -14,4 +14,5 @@ breeze:
       - "sys_log"
       - "sys_menu"
       - "sys_msg"
+      - "sys_audit"
       - "sys_row_permission"

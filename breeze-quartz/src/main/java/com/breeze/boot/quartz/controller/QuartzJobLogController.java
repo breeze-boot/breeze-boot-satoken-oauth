@@ -55,9 +55,9 @@ public class QuartzJobLogController {
      * @return {@link Result}<{@link Page}<{@link SysQuartzJobLog}>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("sys:jLog:list")
-    public Result<Page<SysQuartzJobLog>> listPage(JobQuery jobQuery) {
+    public Result<Page<SysQuartzJobLog>> listPage(@RequestBody JobQuery jobQuery) {
         return Result.ok(this.quartzJobLogService.listPage(jobQuery));
     }
 

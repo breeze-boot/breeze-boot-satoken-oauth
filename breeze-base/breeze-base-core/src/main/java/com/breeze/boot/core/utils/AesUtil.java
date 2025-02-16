@@ -64,7 +64,7 @@ public class AesUtil {
             AES aes = SecureUtil.aes(key.getBytes(StandardCharsets.UTF_8));
             return aes.decryptStr(content);
         } catch (CryptoException ex) {
-            log.error("[密码解密失败]", ex);
+            log.error("密码解密失败", ex);
         }
         return "";
     }
@@ -91,7 +91,7 @@ public class AesUtil {
             cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(keyBytes, "AES"));
             return Base64.encodeBase64String(cipher.doFinal(content.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception e) {
-            log.error("[解密失败]", e);
+            log.error("解密失败", e);
             return null;
         }
     }
@@ -116,7 +116,7 @@ public class AesUtil {
             cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(keyBytes, "AES"));
             return new String(cipher.doFinal(Base64.decodeBase64(content)), StandardCharsets.UTF_8);
         } catch (Exception e) {
-            log.error("[加密失败]", e);
+            log.error("加密失败", e);
             return null;
         }
     }

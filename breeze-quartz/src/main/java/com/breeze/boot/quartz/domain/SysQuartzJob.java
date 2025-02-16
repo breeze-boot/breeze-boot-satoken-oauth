@@ -17,7 +17,7 @@
 package com.breeze.boot.quartz.domain;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.breeze.boot.core.base.BaseModel;
+import com.breeze.boot.core.base.IdBaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -37,7 +37,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @TableName(value = "sys_quartz_job")
 @Schema(description = "quartz的任务实体")
-public class SysQuartzJob extends BaseModel<SysQuartzJob> implements Serializable {
+public class SysQuartzJob extends IdBaseModel<SysQuartzJob> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

@@ -74,9 +74,9 @@ public class SysRowPermissionController {
      * @return {@link Result}<{@link Page}<{@link RowPermissionVO}>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("auth:rowPermission:list")
-    public Result<Page<RowPermissionVO>> list(RowPermissionQuery rowPermissionQuery) {
+    public Result<Page<RowPermissionVO>> list(@RequestBody RowPermissionQuery rowPermissionQuery) {
         return Result.ok(this.sysRowPermissionService.listPage(rowPermissionQuery));
     }
 

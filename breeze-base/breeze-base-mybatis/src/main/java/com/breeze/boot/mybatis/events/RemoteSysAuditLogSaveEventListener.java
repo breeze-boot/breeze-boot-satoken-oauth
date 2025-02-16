@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, gaoweixuan (breeze-cloud@foxmail.com).
+ * Copyright (c) 2025, gaoweixuan (breeze-cloud@foxmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.log.events;
+package com.breeze.boot.mybatis.events;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,21 +24,21 @@ import org.springframework.scheduling.annotation.Async;
 import java.util.function.Consumer;
 
 /**
- * 系统日志保存事件监听器
+ * 调用接口保存系统日志保存事件监听器
  *
  * @author gaoweixuan
- * @since 2022-10-19
+ * @since 2025-02-15
  */
 @Slf4j
 @RequiredArgsConstructor
-public class SysLogSaveEventListener {
+public class RemoteSysAuditLogSaveEventListener {
 
     /**
      * 消费者
      * <p>
      * 去执行保存逻辑
      */
-    private Consumer<SysLogSaveEvent> consumer;
+    private Consumer<SysAuditLogSaveEvent> consumer;
 
     /**
      * 应用程序事件
@@ -46,9 +46,9 @@ public class SysLogSaveEventListener {
      * @param sysLogSaveEvent 事件
      */
     @Async
-    @EventListener(SysLogSaveEvent.class)
-    public void onApplicationEvent(SysLogSaveEvent sysLogSaveEvent) {
-        log.info("消息投递");
+    @EventListener(SysAuditLogSaveEvent.class)
+    public void onApplicationEvent(SysAuditLogSaveEvent sysLogSaveEvent) {
+        log.info("远程接口审计日志消息投递保存");
         consumer.accept(sysLogSaveEvent);
     }
 

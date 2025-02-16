@@ -94,7 +94,7 @@ public class MinioOssTemplate extends OssTemplate implements InitializingBean, E
      * @param environment 应用的环境配置，不可为null，用于获取应用的配置属性。
      */
     @Override
-    public void setEnvironment(@NotNull Environment environment) {
+    public void setEnvironment(Environment environment) {
         // 从OssProperties类上获取ConfigurationProperties注解，用于定义绑定的前缀
         ConfigurationProperties annotation = OssProperties.class.getAnnotation(ConfigurationProperties.class);
         // 使用Binder将环境变量中的配置绑定到OssProperties类上，并根据注解的前缀进行匹配
@@ -106,7 +106,7 @@ public class MinioOssTemplate extends OssTemplate implements InitializingBean, E
     /**
      * 预览图片的函数。
      *
-     * @param path 图片在存储桶中的相对路径。
+     * @param path   图片在存储桶中的相对路径。
      * @param bucket 存储桶的名称。
      * @return 返回图片的预览URL。
      */

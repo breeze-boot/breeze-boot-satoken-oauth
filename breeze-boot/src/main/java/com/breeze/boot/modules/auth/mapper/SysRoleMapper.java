@@ -22,6 +22,8 @@ import com.breeze.boot.modules.auth.model.bo.UserRoleBO;
 import com.breeze.boot.modules.auth.model.entity.SysRole;
 import com.breeze.boot.modules.auth.model.query.RoleQuery;
 import com.breeze.boot.modules.auth.model.vo.RoleVO;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -44,7 +46,8 @@ public interface SysRoleMapper extends BreezeBaseMapper<SysRole> {
      * @param roleQuery 角色查询
      * @return {@link Page}<{@link SysRole}>
      */
-    Page<RoleBO> listPage(Page<SysRole> page, @Param("roleQuery") RoleQuery roleQuery);
+    @DymicSql
+    Page<RoleBO> listPage(Page<SysRole> page, @ConditionParam @Param("roleQuery") RoleQuery roleQuery);
 
     /**
      * 用户角色列表

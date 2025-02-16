@@ -20,6 +20,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.modules.auth.model.entity.SysRowPermission;
 import com.breeze.boot.modules.auth.model.query.MenuColumnQuery;
 import com.breeze.boot.modules.auth.model.query.RowPermissionQuery;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -40,6 +42,7 @@ public interface SysRowPermissionMapper extends BreezeBaseMapper<SysRowPermissio
      * @param page            页面
      * @return {@link Page}<{@link SysRowPermission}>
      */
-    Page<SysRowPermission> listPage(Page<SysRowPermission> page, @Param("rowPermissionQuery") RowPermissionQuery rowPermissionQuery);
+    @DymicSql
+    Page<SysRowPermission> listPage(Page<SysRowPermission> page, @ConditionParam @Param("rowPermissionQuery") RowPermissionQuery rowPermissionQuery);
 
 }

@@ -44,7 +44,7 @@ import static com.breeze.boot.core.constants.CoreConstants.X_TENANT_ID;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Order(Ordered.HIGHEST_PRECEDENCE + 1)
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class TenantLoadFilter extends GenericFilterBean {
 
 
@@ -62,7 +62,7 @@ public class TenantLoadFilter extends GenericFilterBean {
             } else if (StrUtil.equals("undefined",headerTenantId) || StrUtil.equals("undefined",paramTenantId)){
                 throw new BreezeBizException(ResultCode.TENANT_NOT_FOUND);
             }
-            log.info("[当前进入的请求]： {}  系统租户： {}  {} ]", request.getRequestURI(), paramTenantId , headerTenantId);
+            log.info("当前进入的请求： {}  系统租户： {}  {} ", request.getRequestURI(), paramTenantId , headerTenantId);
             filterChain.doFilter(request, response);
         } finally {
             BreezeTenantThreadLocal.remove();

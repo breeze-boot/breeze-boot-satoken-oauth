@@ -70,7 +70,7 @@ public class BreezeQuartzJobListener implements JobListener {
             try {
                 stream.close();
             } catch (IOException e) {
-                log.error("[任务日志异常信息装换异常]",e);
+                log.error("任务日志异常信息装换异常",e);
             }
         }
         return stream.toString();
@@ -92,7 +92,7 @@ public class BreezeQuartzJobListener implements JobListener {
     @Override
     public void jobToBeExecuted(JobExecutionContext context) {
         JobDetail jobDetail = context.getJobDetail();
-        log.info("[BreezeQuartzJobListener says] :  {} [Job Is about to be executed.]", jobDetail.getKey());
+        log.info("BreezeQuartzJobListener says :  {} Job Is about to be executed.", jobDetail.getKey());
         SysQuartzJobLog quartzRunningLog = SysQuartzJobLog
                 .builder()
                 .createTime(LocalDateTime.now())
@@ -110,7 +110,7 @@ public class BreezeQuartzJobListener implements JobListener {
     public void jobExecutionVetoed(JobExecutionContext context) {
         try {
             JobDetail jobDetail = context.getJobDetail();
-            log.info("[BreezeQuartzJobListener says] :  {} [Job Execution was vetoed.]", jobDetail.getKey());
+            log.info("BreezeQuartzJobListener says :  {} Job Execution was vetoed.", jobDetail.getKey());
         } finally {
             logThreadLocal.remove();
         }
@@ -127,12 +127,12 @@ public class BreezeQuartzJobListener implements JobListener {
 
         try {
             JobDetail jobDetail = context.getJobDetail();
-            log.info("[BreezeQuartzJobListener says]: {} Job was executed.", jobDetail.getKey());
+            log.info("BreezeQuartzJobListener says: {} Job was executed.", jobDetail.getKey());
             JobKey jobKey = jobDetail.getKey();
             TriggerKey triggerKey = context.getTrigger().getKey();
             Date fireTime = context.getFireTime();
             Class<? extends Job> jobClass = jobDetail.getJobClass();
-            log.info("[JobClass]:{}, [Job]:{}, [Trigger]:{}, [FireTime]:{}", jobClass, jobKey, triggerKey, DateUtil.formatDateTime(fireTime));
+            log.info("JobClass:{}, Job:{}, Trigger:{}, FireTime:{}", jobClass, jobKey, triggerKey, DateUtil.formatDateTime(fireTime));
             SysQuartzJob quartzJob = (SysQuartzJob) context.getMergedJobDataMap().get(QuartzConstants.JOB_DATA_KEY);
             SysQuartzJobLog quartzJobLog = logThreadLocal.get();
             quartzJobLog.setJobId(quartzJob.getId());
@@ -146,7 +146,7 @@ public class BreezeQuartzJobListener implements JobListener {
                 quartzJobLog.setEndTime(LocalDateTime.now());
                 quartzJobLog.setExceptionInfo(exception(jobException));
                 long millis = quartzJobLog.getCreateTime().until(quartzJobLog.getEndTime(), ChronoUnit.MILLIS);
-                log.info("[花费时间]: {} - {} = {}", quartzJobLog.getCreateTime(), quartzJobLog.getEndTime(), millis);
+                log.info("花费时间: {} - {} = {}", quartzJobLog.getCreateTime(), quartzJobLog.getEndTime(), millis);
                 quartzJobLog.setJobMessage("运行时间 " + millis + " 毫秒 ");
                 this.quartzJobLogService.save(quartzJobLog);
                 return;
@@ -155,11 +155,11 @@ public class BreezeQuartzJobListener implements JobListener {
             quartzJobLog.setJobResult(1);
             quartzJobLog.setEndTime(LocalDateTime.now());
             long millis = quartzJobLog.getCreateTime().until(quartzJobLog.getEndTime(), ChronoUnit.MILLIS);
-            log.info("[花费时间]: {} - {} = {}", quartzJobLog.getCreateTime(), quartzJobLog.getEndTime(), millis);
+            log.info("花费时间: {} - {} = {}", quartzJobLog.getCreateTime(), quartzJobLog.getEndTime(), millis);
             quartzJobLog.setJobMessage("运行时间 " + millis + " 毫秒 ");
             this.quartzJobLogService.save(quartzJobLog);
         } finally {
-            log.info("[释放 => logThreadLocal]");
+            log.info("释放 => logThreadLocal");
             logThreadLocal.remove();
         }
     }

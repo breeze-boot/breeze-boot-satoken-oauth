@@ -67,9 +67,9 @@ public class SysMSubjectController {
      * @return {@link Result}<{@link Page}<{@link EmailConfigVO}>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("sys:mSubject:list")
-    public Result<Page<MSubjectVO>> list(MSubjectQuery mSubjectQuery) {
+    public Result<Page<MSubjectVO>> list(@RequestBody MSubjectQuery mSubjectQuery) {
         return Result.ok(this.sysMSubjectService.listPage(mSubjectQuery));
     }
 

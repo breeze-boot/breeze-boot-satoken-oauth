@@ -60,9 +60,9 @@ public class SysMsgUserController {
      * @return {@link Result}<{@link IPage}<{@link MsgUserVO}>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("sys:msgUser:list")
-    public Result<IPage<MsgUserVO>> list(UserMsgQuery userMsgQuery) {
+    public Result<IPage<MsgUserVO>> list(@RequestBody UserMsgQuery userMsgQuery) {
         return Result.ok(this.sysMsgUserService.listPage(userMsgQuery));
     }
 

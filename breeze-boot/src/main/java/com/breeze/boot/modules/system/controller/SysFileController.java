@@ -66,9 +66,9 @@ public class SysFileController {
      * @return {@link Result}<{@link Page}<{@link SysFile}>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("sys:file:list")
-    public Result<Page<SysFile>> list(FileQuery fileQuery) {
+    public Result<Page<SysFile>> list(@RequestBody FileQuery fileQuery) {
         return Result.ok(this.sysFileService.listPage(fileQuery));
     }
 

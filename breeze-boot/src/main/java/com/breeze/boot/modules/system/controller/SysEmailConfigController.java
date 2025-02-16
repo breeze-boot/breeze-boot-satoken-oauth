@@ -63,9 +63,9 @@ public class SysEmailConfigController {
      * @return {@link Result}<{@link Page}<{@link EmailConfigVO}>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("sys:emailConfig:list")
-    public Result<Page<EmailConfigVO>> list(EmailConfigQuery emailConfigQuery) {
+    public Result<Page<EmailConfigVO>> list(@RequestBody EmailConfigQuery emailConfigQuery) {
         return Result.ok(this.sysEmailConfigService.listPage(emailConfigQuery));
     }
 

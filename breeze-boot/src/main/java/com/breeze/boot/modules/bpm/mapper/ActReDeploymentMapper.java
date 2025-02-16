@@ -21,6 +21,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.modules.bpm.model.entity.ActReDeployment;
 import com.breeze.boot.modules.bpm.model.query.BpmDefinitionQuery;
 import com.breeze.boot.modules.bpm.model.vo.BpmDefinitionVO;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -36,11 +38,12 @@ public interface ActReDeploymentMapper extends BaseMapper<ActReDeployment> {
     /**
      * 列表页面
      *
-     * @param page                   页面
+     * @param page               页面
      * @param bpmDefinitionQuery 流程定义查询
      * @return {@link Page}<{@link BpmDefinitionVO}>
      */
-    Page<BpmDefinitionVO> listPage(Page<BpmDefinitionVO> page, @Param("processDeploymentQuery") BpmDefinitionQuery bpmDefinitionQuery);
+    @DymicSql
+    Page<BpmDefinitionVO> listPage(Page<BpmDefinitionVO> page, @ConditionParam @Param("processDeploymentQuery") BpmDefinitionQuery bpmDefinitionQuery);
 
     /**
      * 详情

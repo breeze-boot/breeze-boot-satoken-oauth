@@ -62,9 +62,9 @@ public class SysDictItemController {
      * @return {@link Result}<{@link List}<{@link DictItemVO}>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/list")
     @SaCheckPermission("sys:dict:list")
-    public Result<List<DictItemVO>> list(DictItemQuery dictItemQuery) {
+    public Result<List<DictItemVO>> list(@RequestBody DictItemQuery dictItemQuery) {
         return Result.ok(this.sysDictItemService.listDictItem(dictItemQuery));
     }
 

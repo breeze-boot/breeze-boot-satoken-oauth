@@ -128,7 +128,7 @@ public class StompJsWebSocketMsgServiceImpl extends WebSocketMsgService {
     @Override
     public Result<MsgVO> asyncSendMsgToSingleUser(Principal principal, MsgParam msgParam) {
         BreezeTenantThreadLocal.set(msgParam.getTenantId());
-        log.debug("[msgId]：{}, [username]： {}", msgParam.getMsgId(), principal.getName());
+        log.debug("[msgId：{}, [username]： {}", msgParam.getMsgId(), principal.getName());
         SysMsg sysMsg = this.sysMsgService.getById(msgParam);
         AssertUtil.isNotNull(sysMsg, MSG_NOT_FOUND);
         List<SysUser> sysUserList = this.sysUserService.listByIds(msgParam.getUserIds());

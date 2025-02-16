@@ -63,9 +63,9 @@ public class SysDbResourceController {
      * @return {@link Result}<{@link Page}<{@link DbResourceVO}>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("sys:dbResource:list")
-    public Result<Page<DbResourceVO>> list(DbResourceQuery dbResourceQuery) {
+    public Result<Page<DbResourceVO>> list(@RequestBody DbResourceQuery dbResourceQuery) {
         return Result.ok(this.sysDbResourceService.listPage(dbResourceQuery));
     }
 

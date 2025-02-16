@@ -29,6 +29,8 @@ import com.breeze.boot.modules.auth.model.mappers.SysPlatformMapStruct;
 import com.breeze.boot.modules.auth.model.query.PlatformQuery;
 import com.breeze.boot.modules.auth.model.vo.PlatformVO;
 import com.breeze.boot.modules.auth.service.SysPlatformService;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -57,7 +59,8 @@ public class SysPlatformServiceImpl extends ServiceImpl<SysPlatformMapper, SysPl
      * @return {@link Page}<{@link PlatformVO}>
      */
     @Override
-    public Page<PlatformVO> listPage(PlatformQuery platformQuery) {
+    @DymicSql
+    public Page<PlatformVO> listPage(@ConditionParam PlatformQuery platformQuery) {
         Page<SysPlatform> platformPage = new Page<>(platformQuery.getCurrent(), platformQuery.getSize());
         QueryWrapper<SysPlatform> wrapper = new QueryWrapper<>();
         wrapper.like(StrUtil.isAllNotBlank(platformQuery.getPlatformName()), BUtils.toFieldName(SysPlatform::getPlatformName), platformQuery.getPlatformName());

@@ -16,7 +16,7 @@
 
 package com.breeze.boot.satoken.model;
 
-import com.breeze.boot.core.base.BaseModel;
+import com.breeze.boot.core.base.IdBaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,7 +32,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Schema(description = "注册客户端实体")
-public class BaseSysRegisteredClient extends BaseModel<BaseSysRegisteredClient> {
+public class BaseSysRegisteredClient extends IdBaseModel<BaseSysRegisteredClient> {
 
     /**
      * 客户端ID

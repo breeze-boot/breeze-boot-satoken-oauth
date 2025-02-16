@@ -69,9 +69,9 @@ public class SysUserController {
      * @return {@link Result}<{@link Page}<{@link UserVO}>>
      */
     @Operation(summary = "列表")
-    @GetMapping
+    @PostMapping("/page")
     @SaCheckPermission("auth:user:list")
-    public Result<Page<UserVO>> list(UserQuery userQuery) {
+    public Result<Page<UserVO>> list(@RequestBody UserQuery userQuery) {
         return Result.ok(this.sysUserService.listPage(userQuery));
     }
 

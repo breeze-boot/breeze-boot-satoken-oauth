@@ -60,7 +60,8 @@ public class SysDbResourceServiceImpl extends ServiceImpl<SysDbMapper, SysDbReso
      */
     @Override
     public Page<DbResourceVO> listPage(DbResourceQuery dbResourceQuery) {
-        Page<SysDbResource> sysDbPage = this.baseMapper.listPage(new Page<>(dbResourceQuery.getCurrent(), dbResourceQuery.getSize()));
+        Page<SysDbResource> page = new Page<>(dbResourceQuery.getCurrent(), dbResourceQuery.getSize());
+        Page<SysDbResource> sysDbPage = this.baseMapper.listPage(page, dbResourceQuery);
         return sysDbMapStruct.entityPage2VOPage(sysDbPage);
     }
 
@@ -104,14 +105,14 @@ public class SysDbResourceServiceImpl extends ServiceImpl<SysDbMapper, SysDbReso
             DataSource creatorDataSource = defaultDataSourceCreator.createDataSource(sourceProperty);
             dynamicRoutingDataSource.addDataSource(sourceProperty.getPoolName(), creatorDataSource);
         } catch (Exception e) {
-            log.error("[数据源注入失败]", e);
+            log.error("[数据源注入失败", e);
         }
     }
 
     /**
      * 更新数据源
      *
-     * @param id   ID
+     * @param id             ID
      * @param dbResourceForm 数据源表单
      * @return {@link Boolean}
      */

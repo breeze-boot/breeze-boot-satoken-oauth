@@ -4,10 +4,13 @@ mybatis-plus:
   global-config:
     banner: true
     db-config:
+      logic-delete-field: is_delete # 全局逻辑删除字段名
+      logic-delete-value: 1 # 逻辑已删除值
+      logic-not-delete-value: 0 # 逻辑未删除值
       id-type: auto
       insert-strategy: not_empty
       where-strategy: not_empty
-      update-strategy: not_empty
+      update-strategy: ignored
   configuration:
     jdbc-type-for-null: null
     call-setters-on-nulls: true

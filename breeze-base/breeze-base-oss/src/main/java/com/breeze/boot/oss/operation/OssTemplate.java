@@ -22,7 +22,6 @@ import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.util.IOUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -61,10 +60,11 @@ public class OssTemplate implements OssOperations {
     @Override
     public void createBucket(String bucketName) {
         if (this.amazonS3.doesBucketExistV2(bucketName)) {
-            log.debug("[桶已存在无需创建]：{}", bucketName);
+            log.debug("桶已存在无需创建：{}", bucketName);
             return;
         }
         this.amazonS3.createBucket(bucketName);
+        log.info("成功创建桶：{}", bucketName);
     }
 
     /**
@@ -75,10 +75,11 @@ public class OssTemplate implements OssOperations {
     @Override
     public void removeBucket(String bucketName) {
         if (!this.amazonS3.doesBucketExistV2(bucketName)) {
-            log.debug("[桶不存在无需删除]：{}", bucketName);
+            log.debug("桶不存在无需删除：{}", bucketName);
             return;
         }
         this.amazonS3.deleteBucket(bucketName);
+        log.info("成功删除桶：{}", bucketName);
     }
 
     /**
@@ -103,7 +104,8 @@ public class OssTemplate implements OssOperations {
     @Override
     @SneakyThrows
     public PutObjectResult putObject(String bucketName, String objectName, InputStream stream, String contentType) {
-        return this.putObject(bucketName, objectName, stream, stream.available(), contentType);
+        long size = stream.available();
+        return this.putObjectInternal(bucketName, objectName, stream, size, contentType);
     }
 
     /**
@@ -115,32 +117,35 @@ public class OssTemplate implements OssOperations {
      */
     @Override
     public void putObject(String bucketName, String objectName, File file) {
-        this.amazonS3.putObject(bucketName, objectName, file);
+        try (InputStream stream = new FileInputStream(file)) {
+            long size = file.length();
+            putObjectInternal(bucketName, objectName, stream, size, "application/octet-stream");
+        } catch (IOException e) {
+            log.error("上传文件时发生IO异常：{}", e.getMessage(), e);
+        }
     }
 
     /**
-     * 上传文件
+     * 内部上传文件方法
      *
      * @param bucketName  bucket名称
      * @param objectName  对象名称
      * @param stream      流
-     * @param contextType 上下文类型
+     * @param size        文件大小
+     * @param contentType 内容类型
      * @return {@link PutObjectResult}
      */
-    protected PutObjectResult putObject(String bucketName, String objectName, InputStream stream, long size, String contextType) {
-        byte[] bytes;
+    private PutObjectResult putObjectInternal(String bucketName, String objectName, InputStream stream, long size, String contentType) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
-        ByteArrayInputStream bs = null;
+        objectMetadata.setContentLength(size);
+        objectMetadata.setContentType(contentType);
+
         try {
-            bytes = IOUtils.toByteArray(stream);
-            objectMetadata.setContentLength(size);
-            objectMetadata.setContentType(contextType);
-            bs = new ByteArrayInputStream(bytes);
-        } catch (IOException e) {
-            log.error("上传失败", e);
+            return this.amazonS3.putObject(bucketName, objectName, stream, objectMetadata);
+        } catch (Exception e) {
+            log.error("上传文件失败，桶名：{}，对象名：{}，错误信息：{}", bucketName, objectName, e.getMessage(), e);
+            throw new RuntimeException("上传文件失败", e);
         }
-        // 上传
-        return this.amazonS3.putObject(bucketName, objectName, bs, objectMetadata);
     }
 
     /**
@@ -152,7 +157,12 @@ public class OssTemplate implements OssOperations {
      */
     @Override
     public S3Object getObject(String bucketName, String objectName) {
-        return amazonS3.getObject(bucketName, objectName);
+        try {
+            return this.amazonS3.getObject(bucketName, objectName);
+        } catch (Exception e) {
+            log.error("获取对象失败，桶名：{}，对象名：{}，错误信息：{}", bucketName, objectName, e.getMessage(), e);
+            throw new RuntimeException("获取对象失败", e);
+        }
     }
 
     /**
@@ -160,7 +170,7 @@ public class OssTemplate implements OssOperations {
      *
      * @param bucketName bucket名称
      * @param objectName 对象名称
-     * @param expires    到期
+     * @param expires    到期时间（天）
      * @return {@link String}
      */
     @Override
@@ -168,22 +178,31 @@ public class OssTemplate implements OssOperations {
         LocalDateTime now = LocalDateTime.now().plusDays(expires);
         ZonedDateTime zdt = now.atZone(ZoneId.systemDefault());
         Date expirationDate = Date.from(zdt.toInstant());
-        URL url = amazonS3.generatePresignedUrl(bucketName, objectName, expirationDate);
-        return url.toString();
+        try {
+            URL url = amazonS3.generatePresignedUrl(bucketName, objectName, expirationDate);
+            return url.toString();
+        } catch (Exception e) {
+            log.error("获取对象URL失败，桶名：{}，对象名：{}，错误信息：{}", bucketName, objectName, e.getMessage(), e);
+            throw new RuntimeException("获取对象URL失败", e);
+        }
     }
 
     /**
      * 删除指定存储桶中的对象
-     * <p>
-     *  本方法通过调用Amazon S3的deleteObject方法，实现对指定存储桶中对象的删除操作
+     *
      * @param bucketName 指定要从中删除对象的存储桶的名称
      * @param objectName 指定要删除的对象的名称
      */
     @Override
     public void removeObject(String bucketName, String objectName) {
-        this.amazonS3.deleteObject(bucketName, objectName); // 直接调用Amazon S3服务的客户端实例，执行删除操作
+        try {
+            this.amazonS3.deleteObject(bucketName, objectName);
+            log.info("成功删除对象，桶名：{}，对象名：{}", bucketName, objectName);
+        } catch (Exception e) {
+            log.error("删除对象失败，桶名：{}，对象名：{}，错误信息：{}", bucketName, objectName, e.getMessage(), e);
+            throw new RuntimeException("删除对象失败", e);
+        }
     }
-
 
     /**
      * 从指定存储桶下载对象，并将其作为附件发送到客户端
@@ -195,25 +214,27 @@ public class OssTemplate implements OssOperations {
      */
     @Override
     public void downloadObject(String bucketName, String objectName, String fileName, HttpServletResponse response) {
-        try (S3Object object = amazonS3.getObject(bucketName, objectName)) {
-            // 设置响应的字符编码和内容类型为UTF-8字节流
-            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-            response.setContentType("application/octet-stream; charset=UTF-8");
-
-            // 对文件名进行URL编码并确保安全，替换掉非字母、数字、点、破折号及下划线的字符
-            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.name());
-            String safeFileName = encodeSafeFileName(encodedFileName);
-
-            // 设置Content-disposition头信息以触发浏览器下载，使用安全文件名为下载后的文件名
-            response.setHeader("Content-disposition", "attachment;filename=" + safeFileName);
-
-            // 将对象内容写入HTTP响应的输出流，实现文件下载
-            OutputStream os = response.getOutputStream();
-            IoUtil.copy(object.getObjectContent(), os);
+        try (S3Object s3Object = this.amazonS3.getObject(bucketName, objectName)) {
+            setResponseHeaders(response, fileName);
+            IoUtil.copy(s3Object.getObjectContent(), response.getOutputStream());
+            log.info("成功下载对象，桶名：{}，对象名：{}", bucketName, objectName);
         } catch (Exception e) {
-            // 记录无法下载文件时的异常情况
-            log.error("无法获取到要下载的文件资源: {}", e.getMessage());
+            log.error("下载对象失败，桶名：{}，对象名：{}，错误信息：{}", bucketName, objectName, e.getMessage(), e);
         }
+    }
+
+    /**
+     * 设置响应头信息
+     *
+     * @param response HTTP响应对象
+     * @param fileName 文件名
+     */
+    private void setResponseHeaders(HttpServletResponse response, String fileName) {
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setContentType("application/octet-stream; charset=UTF-8");
+        String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+        String safeFileName = encodeSafeFileName(encodedFileName);
+        response.setHeader("Content-disposition", "attachment;filename=" + safeFileName);
     }
 
     /**
@@ -223,7 +244,6 @@ public class OssTemplate implements OssOperations {
      * @return 安全的、经过编码处理的文件名
      */
     private String encodeSafeFileName(String fileName) {
-        return fileName.replaceAll("[^a-zA-Z0-9.\\-\\_]", "_");
+        return fileName.replaceAll("[^a-zA-Z0-9.\\-_]", "_");
     }
-
 }

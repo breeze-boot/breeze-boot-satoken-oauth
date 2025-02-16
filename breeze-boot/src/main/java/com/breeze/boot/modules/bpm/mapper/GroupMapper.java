@@ -19,12 +19,16 @@ package com.breeze.boot.modules.bpm.mapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.modules.bpm.model.entity.Group;
 import com.breeze.boot.modules.bpm.model.query.BpmGroupQuery;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface GroupMapper extends BreezeBaseMapper<Group> {
 
-    Page<Group> listPage(Page<Object> objectPage, BpmGroupQuery groupQuery);
+    @DymicSql
+    Page<Group> listPage(@Param("page") Page<Group> page, @ConditionParam @Param("groupQuery") BpmGroupQuery groupQuery);
 
 }

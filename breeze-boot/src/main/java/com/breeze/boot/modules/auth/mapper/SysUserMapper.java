@@ -20,6 +20,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.modules.auth.model.bo.UserBO;
 import com.breeze.boot.modules.auth.model.entity.SysUser;
 import com.breeze.boot.modules.auth.model.query.UserQuery;
+import com.breeze.boot.mybatis.annotation.ConditionParam;
+import com.breeze.boot.mybatis.annotation.DymicSql;
 import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -42,7 +44,8 @@ public interface SysUserMapper extends BreezeBaseMapper<SysUser> {
      * @param userQuery 用户查询
      * @return {@link Page}<{@link UserBO}>
      */
-    Page<UserBO> listPage(Page<SysUser> page, @Param("userQuery") UserQuery userQuery);
+    @DymicSql
+    Page<UserBO> listPage(Page<SysUser> page, @ConditionParam @Param("userQuery") UserQuery userQuery);
 
     /**
      * 用户通过部门id列表

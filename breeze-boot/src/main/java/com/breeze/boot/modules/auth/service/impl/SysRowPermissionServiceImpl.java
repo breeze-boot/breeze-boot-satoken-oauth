@@ -121,7 +121,8 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
      */
     @Override
     public Page<RowPermissionVO> listPage(RowPermissionQuery rowPermissionQuery) {
-        Page<SysRowPermission> rowPermissionPage = this.baseMapper.listPage(new Page<>(rowPermissionQuery.getCurrent(), rowPermissionQuery.getSize()), rowPermissionQuery);
+        Page<SysRowPermission> page = new Page<>(rowPermissionQuery.getCurrent(), rowPermissionQuery.getSize());
+        Page<SysRowPermission> rowPermissionPage = this.baseMapper.listPage(page, rowPermissionQuery);
         return this.sysRowPermissionMapStruct.page2VOPage(rowPermissionPage);
     }
 
