@@ -16,6 +16,7 @@
 
 package com.breeze.boot.core.utils;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,6 +35,7 @@ import static com.breeze.boot.core.constants.CoreConstants.SUCCESS;
  */
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Result<T> implements Serializable {
 
     @Serial

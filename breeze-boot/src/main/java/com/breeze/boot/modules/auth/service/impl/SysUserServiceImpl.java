@@ -16,6 +16,7 @@
 
 package com.breeze.boot.modules.auth.service.impl;
 
+import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.secure.BCrypt;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
@@ -60,6 +61,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.breeze.boot.core.constants.CacheConstants.ROLE_PERMISSION;
 import static com.breeze.boot.core.enums.ResultCode.*;
 
 /**
@@ -171,9 +173,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public Boolean modifyUser(Long id, UserForm userForm) {
         SysUser sysUser = sysUserMapStruct.form2Entity(userForm);
+        sysUser.setId(id);
+        sysUser.setPassword(null);
         boolean update = this.updateById(sysUser);
-        this.sysUserRoleService.remove(Wrappers.<SysUserRole>lambdaQuery().eq(SysUserRole::getUserId, sysUser.getId()));
         if (update) {
+            this.sysUserRoleService.remove(Wrappers.<SysUserRole>lambdaQuery().eq(SysUserRole::getUserId, sysUser.getId()));
             this.saveUserRole(userForm, id);
         }
         return update;
@@ -193,7 +197,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             sysUserRole.setRoleId(roleId);
             return sysUserRole;
         }).collect(Collectors.toList());
-        return this.sysUserRoleService.saveBatch(userRoleList);
+        boolean saveBatch = this.sysUserRoleService.saveBatch(userRoleList);
+        if (saveBatch) {
+            @SuppressWarnings("unchecked") List<String> userRoleCodeList = (List<String>) SaManager.getSaTokenDao().getObject(ROLE_PERMISSION + id);
+            if (userRoleCodeList != null) {
+                List<UserRoleBO> userRoleBOList = Optional.ofNullable(sysRoleService.listRoleByUserId(id))
+                        .orElse(Collections.emptyList());
+                userRoleCodeList = userRoleBOList.stream().map(UserRoleBO::getRoleCode).collect(Collectors.toList());
+                SaManager.getSaTokenDao().updateObject(ROLE_PERMISSION + id, userRoleCodeList);
+            }
+        }
+        return saveBatch;
     }
 
     /**
@@ -509,18 +523,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     /**
-     * 按用户id查询用户权限
+     * 按角色编码列出用户权限
      *
-     * @param userId 用户id
+     * @param roleCode 角色编码
      * @return {@link List }<{@link String }>
      */
     @Override
-    public List<String> loadUserPermissionByUserId(String userId) {
-        // 查询用户的角色
-        List<UserRoleBO> userRoleBOList = sysRoleService.listRoleByUserId(Long.valueOf(userId));
-        AssertUtil.isTrue(CollUtil.isNotEmpty(userRoleBOList), USERS_ROLE_IS_NULL);
+    public List<String> loadUserPermissionByRoleCode(String roleCode) {
         // 权限
-        return this.sysMenuService.listUserMenuPermission(userRoleBOList).stream().toList();
+        return this.sysMenuService.listUserPermissionByRoleCode(roleCode);
     }
 
     /**

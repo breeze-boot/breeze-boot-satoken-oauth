@@ -16,11 +16,17 @@
 
 package com.breeze.boot.satoken.spt;
 
+import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.stp.StpInterface;
 import com.breeze.boot.satoken.oauth2.IUserDetailService;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static com.breeze.boot.core.constants.CacheConstants.PERMISSIONS;
+import static com.breeze.boot.core.constants.CacheConstants.ROLE_PERMISSION;
 
 /**
  * 自定义权限加载接口实现类
@@ -39,15 +45,32 @@ public class StpInterfaceImpl implements StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        return userDetailService.loadUserPermissionByUserId(loginId.toString());
+        List<String> permissions = new ArrayList<>();
+        for (String roleCode : getRoleList(loginId, loginType)) {
+            @SuppressWarnings("unchecked")
+            List<String> permissionList = (List<String>) SaManager.getSaTokenDao().getObject(PERMISSIONS + roleCode);
+            if (permissionList == null) {
+                permissionList = userDetailService.loadUserPermissionByRoleCode(roleCode);
+                SaManager.getSaTokenDao().setObject(PERMISSIONS + roleCode, permissionList, 60 * 60 * 24 * 30);
+            }
+            permissions.addAll(permissionList);
+        }
+        return permissions;
     }
+
 
     /**
      * 返回一个账号所拥有的角色标识集合 (权限与角色可分开校验)
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        return userDetailService.loadUserRoleByUserId(loginId.toString());
+        @SuppressWarnings("unchecked")
+        List<String> roleList = (List<String>) SaManager.getSaTokenDao().getObject(ROLE_PERMISSION + loginId);
+        if (roleList == null) {
+            roleList = userDetailService.loadUserRoleByUserId(loginId.toString());
+            SaManager.getSaTokenDao().setObject(ROLE_PERMISSION + loginId, roleList, 60 * 60 * 24 * 30);
+        }
+        return roleList;
     }
 
 }

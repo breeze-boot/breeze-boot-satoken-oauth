@@ -16,19 +16,24 @@
 
 package com.breeze.boot.modules.auth.service.impl;
 
+import cn.dev33.satoken.SaManager;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.breeze.boot.core.utils.Result;
+import com.breeze.boot.modules.auth.mapper.SysRoleMenuMapper;
+import com.breeze.boot.modules.auth.model.entity.SysRole;
 import com.breeze.boot.modules.auth.model.entity.SysRoleMenu;
 import com.breeze.boot.modules.auth.model.form.MenuPermissionForm;
-import com.breeze.boot.modules.auth.mapper.SysRoleMenuMapper;
 import com.breeze.boot.modules.auth.service.SysRoleMenuService;
+import com.breeze.boot.modules.auth.service.SysRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.breeze.boot.core.constants.CacheConstants.PERMISSIONS;
 
 /**
  * 系统菜单角色服务impl
@@ -40,24 +45,5 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SysRoleMenuServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRoleMenu> implements SysRoleMenuService {
 
-    /**
-     * 编辑权限
-     *
-     * @param menuPermissionForm 菜单权限表单
-     * @return {@link Result}<{@link Boolean}>
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Result<Boolean> modifyMenuPermission(MenuPermissionForm menuPermissionForm) {
-        this.remove(Wrappers.<SysRoleMenu>lambdaQuery().eq(SysRoleMenu::getRoleId, menuPermissionForm.getRoleId()));
-        List<SysRoleMenu> sysRoleMenuList = menuPermissionForm.getPermissionIds().stream().map(menuId -> {
-            SysRoleMenu sysRoleMenu = new SysRoleMenu();
-            sysRoleMenu.setMenuId(menuId);
-            sysRoleMenu.setRoleId(menuPermissionForm.getRoleId());
-            return sysRoleMenu;
-        }).collect(Collectors.toList());
-        boolean batch = this.saveBatch(sysRoleMenuList);
-        return Result.ok(batch);
-    }
 
 }

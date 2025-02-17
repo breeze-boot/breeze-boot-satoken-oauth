@@ -104,4 +104,14 @@
         ORDER BY b.sort
     </select>
 
+    <select id="listUserPermissionByRoleCode" resultType="java.lang.String">
+        SELECT DISTINCT menu.permission
+        FROM sys_menu AS menu
+        INNER JOIN sys_role_menu AS mr ON menu.id = mr.menu_id
+        INNER JOIN sys_role AS ro ON ro.id = mr.role_id
+        WHERE menu.is_delete = 0
+        AND menu.permission != ''
+        AND ro.role_code  = #{roleCode}
+    </select>
+
 </mapper>

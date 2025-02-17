@@ -29,13 +29,5 @@ import com.breeze.boot.modules.auth.model.form.MenuPermissionForm;
  */
 public interface SysRoleMenuService extends IService<SysRoleMenu> {
 
-    /**
-     * 编辑权限
-     *
-     * @param menuPermissionForm 菜单权限参数
-     * @return {@link Result}<{@link Boolean}>
-     */
-    Result<Boolean> modifyMenuPermission(MenuPermissionForm menuPermissionForm);
-
 }
 

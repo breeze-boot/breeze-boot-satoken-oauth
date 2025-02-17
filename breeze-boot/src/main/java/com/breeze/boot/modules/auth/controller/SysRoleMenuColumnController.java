@@ -68,6 +68,7 @@ public class SysRoleMenuColumnController {
     public Result<Boolean> save(@Valid @RequestBody RoleMenuColumnForm roleMenuColumnForm) {
         return this.sysRoleMenuColumnService.saveRoleMenuColumn(roleMenuColumnForm);
     }
+
     /**
      * 获取角色菜单列权限列表回显
      * <p>

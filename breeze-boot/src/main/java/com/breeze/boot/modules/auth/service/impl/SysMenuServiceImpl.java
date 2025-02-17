@@ -218,6 +218,17 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     }
 
     /**
+     * 按角色编码列出用户权限
+     *
+     * @param roleCode 角色代码
+     * @return {@link List }<{@link String }>
+     */
+    @Override
+    public List<String> listUserPermissionByRoleCode(String roleCode) {
+        return this.baseMapper.listUserPermissionByRoleCode(roleCode);
+    }
+
+    /**
      * 获取树形数据
      *
      * @param menuEntityList 菜单实体列表

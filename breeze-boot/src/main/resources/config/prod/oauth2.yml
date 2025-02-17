@@ -3,6 +3,11 @@ breeze:
 
 # sa-token配置
 sa-token:
+  # token 有效期（单位：秒），默认30天，-1代表永不过期
+  timeout: 259200
+  # token 最低活跃频率（单位：秒），如果 token 超过此时间没有访问系统就会被冻结，默认-1 代表不限制，永不冻结
+  active-timeout: 86400
+
   ignore-urls:
     # Monitor
     - "/actuator/**"
@@ -16,7 +21,7 @@ sa-token:
   # 是否打印操作日志
   is-log: true
   # jwt 秘钥
-  jwt-secret-key: saxsaxsaxsax
+  jwt-secret-key: abcabcdefgaabcdefgabcdefgefgabcdefgabcdefgabcdefg
   # OAuth2.0 配置
   oauth2-server:
     # 是否全局开启授权码模式

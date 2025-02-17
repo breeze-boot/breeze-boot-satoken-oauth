@@ -16,6 +16,7 @@
 
 package com.breeze.boot.modules.auth.service.impl;
 
+import cn.dev33.satoken.SaManager;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -28,10 +29,12 @@ import com.breeze.boot.modules.auth.model.bo.UserRoleBO;
 import com.breeze.boot.modules.auth.model.entity.SysRole;
 import com.breeze.boot.modules.auth.model.entity.SysRoleMenu;
 import com.breeze.boot.modules.auth.model.entity.SysRoleRowPermission;
+import com.breeze.boot.modules.auth.model.form.MenuPermissionForm;
 import com.breeze.boot.modules.auth.model.form.RoleForm;
 import com.breeze.boot.modules.auth.model.mappers.SysRoleMapStruct;
 import com.breeze.boot.modules.auth.model.query.RoleQuery;
 import com.breeze.boot.modules.auth.model.vo.RoleVO;
+import com.breeze.boot.modules.auth.service.SysMenuService;
 import com.breeze.boot.modules.auth.service.SysRoleMenuService;
 import com.breeze.boot.modules.auth.service.SysRoleRowPermissionService;
 import com.breeze.boot.modules.auth.service.SysRoleService;
@@ -47,6 +50,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.breeze.boot.core.constants.CacheConstants.PERMISSIONS;
 import static com.breeze.boot.core.enums.ResultCode.ROLE_NOT_FOUND;
 
 /**
@@ -65,6 +69,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      * 系统角色菜单服务
      */
     private final SysRoleMenuService sysRoleMenuService;
+    private final SysMenuService sysMenuService;
 
     /**
      * 行数据权限服务系统作用
@@ -152,15 +157,21 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result<Boolean> deleteByIds(List<Long> ids) {
-        List<SysRole> roleEntityList = this.listByIds(ids);
-        AssertUtil.isTrue(CollUtil.isNotEmpty(roleEntityList), ROLE_NOT_FOUND);
+        List<SysRole> roleList = this.listByIds(ids);
+        AssertUtil.isTrue(CollUtil.isNotEmpty(roleList), ROLE_NOT_FOUND);
         boolean remove = this.removeByIds(ids);
         if (remove) {
-            List<Long> collect = roleEntityList.stream().map(SysRole::getId).collect(Collectors.toList());
+            List<Long> roleIdList = roleList.stream().map(SysRole::getId).collect(Collectors.toList());
             // 删除用户角色关系
-            this.sysRoleMenuService.remove(Wrappers.<SysRoleMenu>lambdaQuery().in(SysRoleMenu::getRoleId, collect));
+            this.sysRoleMenuService.remove(Wrappers.<SysRoleMenu>lambdaQuery().in(SysRoleMenu::getRoleId, roleIdList));
             // 删除角色数据权限关系
-            this.sysRoleRowPermissionService.remove(Wrappers.<SysRoleRowPermission>lambdaQuery().in(SysRoleRowPermission::getRoleId, collect));
+            this.sysRoleRowPermissionService.remove(Wrappers.<SysRoleRowPermission>lambdaQuery().in(SysRoleRowPermission::getRoleId, roleIdList));
+            for (SysRole sysRole : roleList) {
+                @SuppressWarnings("unchecked") List<String> permissionList = (List<String>) SaManager.getSaTokenDao().getObject(PERMISSIONS + sysRole.getRoleCode());
+                if (permissionList != null) {
+                    SaManager.getSaTokenDao().delete(PERMISSIONS + sysRole.getRoleCode());
+                }
+            }
         }
         return Result.ok(Boolean.TRUE, "删除成功");
     }
@@ -189,5 +200,33 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
             roleMap.put("label", sysRole.getRoleName());
             return roleMap;
         }).collect(Collectors.toList()));
+    }
+
+    /**
+     * 编辑权限
+     *
+     * @param menuPermissionForm 菜单权限表单
+     * @return {@link Result}<{@link Boolean}>
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Boolean> modifyMenuPermission(MenuPermissionForm menuPermissionForm) {
+        this.sysRoleMenuService.remove(Wrappers.<SysRoleMenu>lambdaQuery().eq(SysRoleMenu::getRoleId, menuPermissionForm.getRoleId()));
+        List<SysRoleMenu> sysRoleMenuList = menuPermissionForm.getPermissionIds().stream().map(menuId -> {
+            SysRoleMenu sysRoleMenu = new SysRoleMenu();
+            sysRoleMenu.setMenuId(menuId);
+            sysRoleMenu.setRoleId(menuPermissionForm.getRoleId());
+            return sysRoleMenu;
+        }).collect(Collectors.toList());
+        boolean batch = this.sysRoleMenuService.saveBatch(sysRoleMenuList);
+        if (batch) {
+            SysRole sysRole = this.getById(menuPermissionForm.getRoleId());
+            @SuppressWarnings("unchecked") List<String> permissionList = (List<String>) SaManager.getSaTokenDao().getObject(PERMISSIONS + sysRole.getRoleCode());
+            if (permissionList != null) {
+                permissionList = this.sysMenuService.listUserPermissionByRoleCode(sysRole.getRoleCode());
+                SaManager.getSaTokenDao().updateObject(PERMISSIONS + sysRole.getRoleCode(), permissionList);
+            }
+        }
+        return Result.ok(batch);
     }
 }

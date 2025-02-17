@@ -17,6 +17,8 @@
 
 package com.breeze.boot.modules.auth.service.impl;
 
+import cn.dev33.satoken.SaManager;
+import cn.dev33.satoken.dao.SaTokenDao;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -41,10 +43,8 @@ import com.breeze.boot.modules.auth.service.SysRowPermissionService;
 import com.breeze.boot.modules.auth.service.SysTenantService;
 import com.google.common.collect.Maps;
 import jakarta.annotation.PostConstruct;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,13 +76,12 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
 
     private final SysTenantService sysTenantService;
 
-    private final CacheManager cacheManager;
+    private final RedisTemplate<String,Object> redisTemplate;
 
     @Override
     @PostConstruct
     public void init() {
         List<SysTenant> sysTenantList = sysTenantService.list();
-        Cache cache = getCache();
 
         sysTenantList.forEach(sysTenant -> {
             BreezeTenantThreadLocal.set(sysTenant.getId());
@@ -102,7 +101,7 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
                 // 批量添加到缓存中
                 customizePermissionList.forEach(customizePermission -> {
                     String permissionCode = customizePermission.getPermissionCode();
-                    cache.put(permissionCode, customizePermission);
+                    this.redisTemplate.opsForValue().set(ROW_PERMISSION + permissionCode, customizePermission);
                 });
             } catch (Exception e) {
                 // 增加异常处理逻辑，记录日志或进行其他处理
@@ -135,8 +134,6 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
     @Override
     public RowPermissionVO getInfoById(Long permissionId) {
         SysRowPermission sysRowPermission = this.getById(permissionId);
-        Cache cache = getCache();
-        cache.put(sysRowPermission.getPermissionCode(), sysRowPermission);
         CustomizePermission customizePermission = sysRowPermissionMapStruct.entity2Cache(sysRowPermission);
         String permissionsString = sysRowPermission.getPermissions().stream()
                 .map(Object::toString)
@@ -145,7 +142,7 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
 
         // 批量添加到缓存中
         String permissionCode = customizePermission.getPermissionCode();
-        cache.put(permissionCode, customizePermission);
+        this.redisTemplate.opsForValue().set(ROW_PERMISSION + permissionCode, customizePermission);
         return this.sysRowPermissionMapStruct.entity2VO(sysRowPermission);
     }
 
@@ -161,8 +158,6 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
         AssertUtil.isFalse(DataPermissionType.checkInEnum(rowPermissionForm.getPermissionCode()), ResultCode.NO_ACTION_IS_ALLOWED);
         boolean save = this.save(sysRowPermission);
         AssertUtil.isTrue(save, ResultCode.FAIL);
-        Cache cache = getCache();
-        cache.put(sysRowPermission.getPermissionCode(), sysRowPermission);
         CustomizePermission customizePermission = sysRowPermissionMapStruct.entity2Cache(sysRowPermission);
         String permissionsString = sysRowPermission.getPermissions().stream()
                 .map(Object::toString)
@@ -171,18 +166,8 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
 
         // 批量添加到缓存中
         String permissionCode = customizePermission.getPermissionCode();
-        cache.put(permissionCode, customizePermission);
+        this.redisTemplate.opsForValue().set(ROW_PERMISSION + permissionCode, customizePermission);
         return Result.ok();
-    }
-
-    @NotNull
-    private Cache getCache() {
-        Cache cache = cacheManager.getCache(ROW_PERMISSION);
-        // 检查cache是否为null
-        if (cache == null) {
-            throw new IllegalStateException("Cache is null.");
-        }
-        return cache;
     }
 
     /**
@@ -199,8 +184,6 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
         AssertUtil.isFalse(DataPermissionType.checkInEnum(rowPermissionForm.getPermissionCode()), ResultCode.NO_ACTION_IS_ALLOWED);
         boolean update = sysRowPermission.updateById();
         AssertUtil.isTrue(update, ResultCode.FAIL);
-        Cache cache = getCache();
-        cache.put(sysRowPermission.getPermissionCode(), sysRowPermission);
         CustomizePermission customizePermission = sysRowPermissionMapStruct.entity2Cache(sysRowPermission);
         String permissionsString = sysRowPermission.getPermissions().stream()
                 .map(Object::toString)
@@ -209,7 +192,7 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
 
         // 批量添加到缓存中
         String permissionCode = customizePermission.getPermissionCode();
-        cache.put(permissionCode, customizePermission);
+        this.redisTemplate.opsForValue().set(ROW_PERMISSION + permissionCode, customizePermission);
         return Result.ok();
     }
 
@@ -222,13 +205,11 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result<Boolean> removeRowPermissionByIds(List<Long> ids) {
-        Cache cache = cacheManager.getCache(ROW_PERMISSION);
         List<SysRoleRowPermission> rolePermissionList = this.sysRoleRowPermissionService.list(Wrappers.<SysRoleRowPermission>lambdaQuery().in(SysRoleRowPermission::getPermissionId, ids));
         AssertUtil.isTrue(CollUtil.isEmpty(rolePermissionList), IS_USED);
         List<SysRowPermission> rowPermissionList = this.listByIds(ids);
         for (SysRowPermission rowPermission : rowPermissionList) {
-            assert cache != null;
-            cache.evict(rowPermission.getPermissionCode());
+            this.redisTemplate.delete(ROW_PERMISSION + rowPermission.getPermissionCode());
         }
 
         return Result.ok(this.removeBatchByIds(ids));

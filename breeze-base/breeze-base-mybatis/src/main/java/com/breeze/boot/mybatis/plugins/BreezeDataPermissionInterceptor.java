@@ -43,7 +43,6 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
-import org.apache.poi.util.StringUtil;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
@@ -107,7 +106,6 @@ public class BreezeDataPermissionInterceptor implements InnerInterceptor {
 
     @SneakyThrows
     private String getSql(UserPrincipal userPrincipal, BreezeDataPermission dataPer, String originalSql) {
-        CacheManager cacheManager = SpringUtil.getBean(CacheManager.class);
         List<String> fieldNames = SqlFieldExtractor.getFieldNames(originalSql);
         String prefix = "temp.";
         StringBuilder sql = new StringBuilder(" ");
@@ -127,18 +125,19 @@ public class BreezeDataPermissionInterceptor implements InnerInterceptor {
             originalSql = String.format("SELECT %s FROM (%s) temp WHERE temp.%s = %s", sql, originalSql, dataPer.dept().getColumn(), userPrincipal.getDeptId());
         } else if (StrUtil.equals(DataPermissionType.SUB_DEPT_LEVEL.getType(), permissionType)) {
             // 本级部门以及子部门
-            originalSql = String.format("SELECT %s FROM (%s) temp WHERE temp.%s IN (%s)", sql, originalSql, dataPer.dept().getColumn(), StringUtil.join(",", userPrincipal.getSubDeptId().toArray()));
+            originalSql = String.format("SELECT %s FROM (%s) temp WHERE temp.%s IN (%s)", sql, originalSql, dataPer.dept().getColumn(), StrUtil.join(",", userPrincipal.getSubDeptId().toArray()));
         } else if (StrUtil.equals(DataPermissionType.OWN.getType(), permissionType)) {
             // 个人范围权限
             originalSql = String.format("SELECT %s FROM (%s) temp WHERE temp.%s = '%s'", sql, originalSql, dataPer.own().getColumn(), userPrincipal.getId());
         } else if (StrUtil.equals(DataPermissionType.CUSTOMIZES.getType(), permissionType)) {
             // 自定义权限
-            originalSql = getSqlString(userPrincipal, originalSql, cacheManager, sql.toString());
+            originalSql = getSqlString(userPrincipal, originalSql, sql.toString());
         }
         return originalSql;
     }
 
-    private static String getSqlString(UserPrincipal userPrincipal, String originalSql, CacheManager cacheManager, String column) {
+    private static String getSqlString(UserPrincipal userPrincipal, String originalSql, String column) {
+        CacheManager cacheManager = SpringUtil.getBean(CacheManager.class);
         Cache cache = cacheManager.getCache(ROW_PERMISSION);
         Set<String> rowPermissionCodeSet = userPrincipal.getRowPermissionCode();
 

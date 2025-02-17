@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.auth.model.bo.UserRoleBO;
 import com.breeze.boot.modules.auth.model.entity.SysRole;
+import com.breeze.boot.modules.auth.model.form.MenuPermissionForm;
 import com.breeze.boot.modules.auth.model.form.RoleForm;
 import com.breeze.boot.modules.auth.model.query.RoleQuery;
 import com.breeze.boot.modules.auth.model.vo.RoleVO;
@@ -99,6 +100,14 @@ public interface SysRoleService extends IService<SysRole> {
      * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
      */
     Result<List<Map<String, Object>>> selectRole();
+
+    /**
+     * 编辑权限
+     *
+     * @param menuPermissionForm 菜单权限参数
+     * @return {@link Result}<{@link Boolean}>
+     */
+    Result<Boolean> modifyMenuPermission(MenuPermissionForm menuPermissionForm);
 
 }
 

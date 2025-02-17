@@ -70,6 +70,6 @@ public class PhoneCodeGrantTypeHandler implements SaOAuth2GrantTypeHandlerInterf
         ra.loginId = userPrincipal.getId();
         ra.scopes = scopes;
         // 生成 Access-Token
-        return SaOAuth2Manager.getDataGenerate().generateAccessToken(ra, true);
+        return SaOAuth2Manager.getDataGenerate().generateAccessToken(ra, true, atm -> atm.grantType = "sms_code");
     }
 }

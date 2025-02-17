@@ -15,7 +15,7 @@ spring:
     name: ${project.artifactId}
   profiles:
     active: ${profiles.active}
-    preview: true
+    preview: false
   config:
     import:
       - classpath:config/${spring.profiles.active}/captcha.yml

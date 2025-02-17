@@ -200,7 +200,7 @@ public class SysRoleController {
     @SaCheckPermission(value = "auth:menu:permission:modify", orRole = "ROLE_ADMIN")
     @BreezeSysLog(description = "编辑菜单权限", type = LogType.EDIT)
     public Result<Boolean> modifyMenuPermission(@Valid @RequestBody MenuPermissionForm menuPermissionForm) {
-        return this.sysRoleMenuService.modifyMenuPermission(menuPermissionForm);
+        return this.sysRoleService.modifyMenuPermission(menuPermissionForm);
     }
 
     /**

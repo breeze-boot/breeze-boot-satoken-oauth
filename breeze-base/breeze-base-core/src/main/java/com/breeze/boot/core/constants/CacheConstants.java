@@ -28,16 +28,26 @@ public class CacheConstants {
     /**
      * 验证电话号码
      */
-    public static final String VALIDATE_SMS_CODE = "satoken:validate_sms_code:";
+    public static final String VALIDATE_SMS_CODE = "breeze:login:validate_sms_code:";
 
     /**
      * 验证电子邮件代码
      */
-    public static final String VALIDATE_EMAIL_CODE = "satoken:validate_email_code:";
+    public static final String VALIDATE_EMAIL_CODE = "breeze:login:validate_email_code:";
 
     /**
      * 行权限缓存
      */
-    public static final String ROW_PERMISSION = "satoken:row:permission:";
+    public static final String ROW_PERMISSION = "Authorization:row:permission:";
+
+    /**
+     * 角色权限缓存
+     */
+    public static final String ROLE_PERMISSION = "Authorization:loginid-role:permission:";
+
+    /**
+     * 权限缓存
+     */
+    public static final String PERMISSIONS = "Authorization:user-permissions:permission:";
 
 }

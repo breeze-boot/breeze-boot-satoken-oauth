@@ -41,12 +41,12 @@ public interface IUserDetailService {
     UserPrincipal loadUserByUserId(String userId);
 
     /**
-     * 加载用户通过用户ID
+     * 加载用户通过角色编码
      *
-     * @param userId 用户Id
+     * @param roleCode 角色编码
      * @return {@link UserPrincipal}
      */
-    List<String> loadUserPermissionByUserId(String userId);
+    List<String> loadUserPermissionByRoleCode(String roleCode);
 
     /**
      * 加载用户通过电话

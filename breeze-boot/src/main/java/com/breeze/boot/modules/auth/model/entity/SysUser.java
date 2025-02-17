@@ -16,6 +16,7 @@
 
 package com.breeze.boot.modules.auth.model.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.breeze.boot.core.base.IdBaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -76,6 +77,7 @@ public class SysUser extends IdBaseModel<SysUser> implements Serializable {
      * 用户密码
      */
     @Schema(description = "用户密码")
+    @TableField("`password`")
     private String password;
 
     /**

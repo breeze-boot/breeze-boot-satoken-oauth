@@ -101,5 +101,14 @@ public interface SysMenuService extends IService<SysMenu> {
      * @return {@link Result}<{@link List}<{@link Tree}<{@link Long}>>>
      */
     Result<List<Tree<Long>>> selectMenu(Long id);
+
+    /**
+     * 按角色编码列出用户菜单权限
+     *
+     * @param roleCode 角色代码
+     * @return {@link List }<{@link String }>
+     */
+    List<String> listUserPermissionByRoleCode(String roleCode);
+
 }
 
