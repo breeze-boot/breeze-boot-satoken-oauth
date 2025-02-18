@@ -26,8 +26,6 @@ import lombok.Data;
  */
 @Data
 public class MailDTO {
-
-    private Long id;
     private String smtpSocketFactoryClass;
     private String protocol;
     private String ssl;
@@ -38,8 +36,4 @@ public class MailDTO {
     private String username;
     private String password;
     private String encoding;
-    private String content;
-    private String to;
-    private String cc;
-    private Integer status;
 }

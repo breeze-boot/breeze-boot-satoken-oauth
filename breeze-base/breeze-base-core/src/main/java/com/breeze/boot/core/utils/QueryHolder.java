@@ -16,13 +16,15 @@
 
 package com.breeze.boot.core.utils;
 
+import com.alibaba.ttl.TransmittableThreadLocal;
+
 import java.util.LinkedHashMap;
 
 /**
  * 查询条件
  */
 public class QueryHolder {
-    private static final ThreadLocal<LinkedHashMap<String, Object>> query = new ThreadLocal<>();
+    private static final TransmittableThreadLocal<LinkedHashMap<String, Object>> query = new TransmittableThreadLocal<>();
 
     public static void setQuery(LinkedHashMap<String, Object> value) {
         query.set(value);

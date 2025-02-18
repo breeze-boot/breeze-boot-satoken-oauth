@@ -20,13 +20,16 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.breeze.boot.core.utils.AssertUtil;
+import com.breeze.boot.mail.dto.MailDTO;
 import com.breeze.boot.mail.service.CustomJavaMailSender;
 import com.breeze.boot.modules.auth.model.entity.SysUser;
 import com.breeze.boot.modules.auth.service.SysUserService;
 import com.breeze.boot.modules.system.mapper.SysEmailSubjectMapper;
+import com.breeze.boot.modules.system.model.entity.SysEmailConfig;
 import com.breeze.boot.modules.system.model.entity.SysEmailSubject;
 import com.breeze.boot.modules.system.model.form.MSubjectForm;
 import com.breeze.boot.modules.system.model.form.MSubjectOpenForm;
@@ -36,6 +39,7 @@ import com.breeze.boot.modules.system.model.query.MSubjectQuery;
 import com.breeze.boot.modules.system.model.vo.EmailConfigVO;
 import com.breeze.boot.modules.system.model.vo.MSubjectEmailVO;
 import com.breeze.boot.modules.system.model.vo.MSubjectVO;
+import com.breeze.boot.modules.system.service.SysEmailConfigService;
 import com.breeze.boot.modules.system.service.SysMSubjectService;
 import com.breeze.boot.mybatis.annotation.ConditionParam;
 import com.breeze.boot.mybatis.annotation.DymicSql;
@@ -65,6 +69,8 @@ public class SysMSubjectServiceImpl extends ServiceImpl<SysEmailSubjectMapper, S
     private final SysMSubjectMapStruct sysMSubjectMapStruct;
 
     private final SysUserService sysUserService;
+
+    private final SysEmailConfigService sysEmailConfigService;
 
     /**
      * 列表页
@@ -134,9 +140,26 @@ public class SysMSubjectServiceImpl extends ServiceImpl<SysEmailSubjectMapper, S
     @Override
     public Boolean send(Long id) {
         CustomJavaMailSender customJavaMailSender = SpringUtil.getBean(CustomJavaMailSender.class);
-        SysEmailSubject sysEmailSubject = getSysEmailSubject(id);
-        customJavaMailSender.sendMessage(sysEmailSubject.getSubject(), sysEmailSubject.getContent(), sysEmailSubject.getTo().split(","), sysEmailSubject.getCc().split(","));
+        SysEmailSubject sysEmailSubject = this.getSysEmailSubject(id);
+        SysEmailConfig sysEmailConfig = sysEmailConfigService.getOne(Wrappers.<SysEmailConfig>lambdaQuery().eq(SysEmailConfig::getStatus, 1));
+        MailDTO mailDTO = getMailDTO(sysEmailConfig);
+        customJavaMailSender.sendMessage(mailDTO, sysEmailSubject.getSubject(), sysEmailSubject.getContent(), sysEmailSubject.getTo().split(","), sysEmailSubject.getCc().split(","));
         return Boolean.TRUE;
+    }
+
+    private static MailDTO getMailDTO(SysEmailConfig sysEmailConfig) {
+        MailDTO mailDTO = new MailDTO();
+        mailDTO.setSmtpHost(sysEmailConfig.getSmtpHost());
+        mailDTO.setSmtpSocketFactoryClass(sysEmailConfig.getSmtpSocketFactoryClass());
+        mailDTO.setPort(sysEmailConfig.getPort());
+        mailDTO.setUsername(sysEmailConfig.getUsername());
+        mailDTO.setPassword(sysEmailConfig.getPassword());
+        mailDTO.setEncoding(sysEmailConfig.getEncoding());
+        mailDTO.setProtocol(sysEmailConfig.getProtocol());
+        mailDTO.setSsl(sysEmailConfig.getSsl());
+        mailDTO.setAuth(sysEmailConfig.getAuth());
+        mailDTO.setSmtpSocketFactoryClass(sysEmailConfig.getSmtpSocketFactoryClass());
+        return mailDTO;
     }
 
     /**

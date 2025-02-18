@@ -35,7 +35,7 @@ public interface SysRoleMapStruct {
 
     SysRole form2Entity(RoleForm roleForm);
 
-    RoleVO entity2VO(SysRole byId);
+    RoleVO entity2VO(SysRole sysRole);
 
     Page<RoleVO> bo2VOPage(Page<RoleBO> sysRolePage);
 

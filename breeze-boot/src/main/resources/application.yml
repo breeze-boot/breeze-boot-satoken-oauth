@@ -15,7 +15,7 @@ spring:
     name: ${project.artifactId}
   profiles:
     active: ${profiles.active}
-    preview: false
+    preview: true
   config:
     import:
       - classpath:config/${spring.profiles.active}/captcha.yml
@@ -48,6 +48,8 @@ spring:
       client:
         # Admin 服务端地址
         url: ${BREEZE_MONITOR_HOST:http://127.0.0.1:8000}
+        instance:
+          prefer-ip: true
         # server 用户名
         username: admin
         # server 密码
@@ -59,19 +61,22 @@ management:
     #health必须开
     health:
       show-details: always
-      enabled: true
+      access: read_only
     #其他
     beans:
-      enabled: true
+      access: read_only
     info:
-      enabled: true
+      access: read_only
     metrics:
-      enabled: true
+      access: read_only
     env:
-      enabled: false
+      access: read_only
     # 上报日志到监控 客户端上报日志文件位置
     logfile:
       external-file: ./logs/${spring.application.name}/${spring.application.name}.log
+  health:
+    mail:
+      enabled: false
 
   endpoints:
     #对web开启的监控点
@@ -79,7 +84,9 @@ management:
       exposure:
         include: "*"
     #对外开放所有监控点
-    enabled-by-default: true
+    access:
+      default: read_only
+
 
 flowable:
   async-executor-activate: false # 关闭定时任务JOB

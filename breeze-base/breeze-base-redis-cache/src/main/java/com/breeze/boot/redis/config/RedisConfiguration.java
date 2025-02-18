@@ -34,24 +34,24 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.*;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 
 /**
  * redis 配置
@@ -61,7 +61,7 @@ import java.util.ArrayList;
  */
 @Slf4j
 @EnableCaching
-@Configuration(proxyBeanMethods = false)
+@Configuration
 public class RedisConfiguration {
 
 
@@ -78,14 +78,14 @@ public class RedisConfiguration {
     /**
      * redis 配置
      *
-     * @param lettuceConnectionFactory redis 连接工厂
+     * @param redisConnectionFactory redis 连接工厂
      * @return {@link RedisTemplate}<{@link String}, {@link Object}>
      */
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory lettuceConnectionFactory) {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         try {
-            redisTemplate.setConnectionFactory(lettuceConnectionFactory);
+            redisTemplate.setConnectionFactory(redisConnectionFactory);
 
             // 设置hashKey和hashValue的序列化规则
             redisTemplate.setHashKeySerializer(StringRedisSerializer.UTF_8);
@@ -101,20 +101,17 @@ public class RedisConfiguration {
         } catch (Exception e) {
             log.error("RedisTemplate 初始化失败", e);
         }
-        ArrayList<Object> objects = Lists.newArrayList();
-        objects.add("1");
-        redisTemplate.opsForValue().set("test", objects);
         return redisTemplate;
     }
 
     /**
      * 自定义缓存管理器
      *
-     * @param lettuceConnectionFactory redis 连接工厂
+     * @param redisConnectionFactory redis 连接工厂
      * @return {@link RedisCacheManager}
      */
     @Bean
-    public CacheManager cacheManager(LettuceConnectionFactory lettuceConnectionFactory) {
+    public CacheManager cacheManager(RedisConnectionFactory  redisConnectionFactory) {
         RedisSerializer<String> strSerializer = new StringRedisSerializer();
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
                 // 前缀
@@ -123,10 +120,10 @@ public class RedisConfiguration {
                 .entryTtl(DEFAULT_CACHE_TTL)
                 // 使用 strSerializer 对key进行数据类型转换
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(strSerializer))
-                // 使用 jacksonSeial 对value的数据类型进行转换
+                // 使用 jacksonSerial 对value的数据类型进行转换
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(getJsonRedisSerializer()));
         // 自定义缓存数据序列化方式和有效期限
-        return RedisCacheManager.builder(lettuceConnectionFactory).cacheDefaults(redisCacheConfiguration).build();
+        return RedisCacheManager.builder(redisConnectionFactory).cacheDefaults(redisCacheConfiguration).build();
     }
 
     /**

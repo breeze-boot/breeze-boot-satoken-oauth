@@ -43,7 +43,7 @@ public class RabbitConfiguration {
     @Bean
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory();
-        cachingConnectionFactory.setHost(rabbitProperties.getAddresses());
+        cachingConnectionFactory.setHost(rabbitProperties.getAddresses().get(0));
         cachingConnectionFactory.setPort(rabbitProperties.getPort());
         cachingConnectionFactory.setUsername(rabbitProperties.getUsername());
         cachingConnectionFactory.setPassword(rabbitProperties.getPassword());
@@ -60,7 +60,6 @@ public class RabbitConfiguration {
 
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        return rabbitTemplate;
+        return new RabbitTemplate(connectionFactory);
     }
 }

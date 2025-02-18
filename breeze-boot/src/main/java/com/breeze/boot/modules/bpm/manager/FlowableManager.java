@@ -18,7 +18,7 @@ package com.breeze.boot.modules.bpm.manager;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.breeze.boot.core.utils.BreezeTenantThreadLocal;
+import com.breeze.boot.core.utils.BreezeTenantHolder;
 import com.breeze.boot.modules.auth.model.bo.FlowUserBO;
 import com.breeze.boot.modules.auth.model.entity.SysRole;
 import com.breeze.boot.modules.auth.model.entity.SysUser;
@@ -120,7 +120,7 @@ public class FlowableManager {
                 .last(sysUser.getUsername())
                 .rev(1)
                 .pwd(password)
-                .tenantId(BreezeTenantThreadLocal.get().toString())
+                .tenantId(BreezeTenantHolder.getTenant().toString())
                 .email(sysUser.getEmail()).build());
         this.membershipService.saveBatch(
                 sysRoles.stream()

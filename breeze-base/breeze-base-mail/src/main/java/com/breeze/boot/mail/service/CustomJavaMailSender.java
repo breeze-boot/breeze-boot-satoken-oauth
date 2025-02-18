@@ -26,10 +26,7 @@ import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.core.annotation.Order;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -37,10 +34,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.File;
-import java.util.Date;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 自定义java邮件发件人
@@ -49,29 +43,10 @@ import java.util.Set;
  * @since 2024/07/14
  */
 @Slf4j
-@Setter
-@Order(-1)
 @RequiredArgsConstructor
-@ConfigurationProperties("spring.mail")
-public class CustomJavaMailSender extends JavaMailSenderImpl {
+public class CustomJavaMailSender {
 
     private final TemplateEngine templateEngine;
-
-    public void initMailConfig(MailDTO emailDTO) {
-        this.setHost(emailDTO.getSmtpHost());
-        this.setPort(emailDTO.getPort());
-        this.setUsername(emailDTO.getUsername());
-        this.setPassword(emailDTO.getPassword());
-        this.setDefaultEncoding(emailDTO.getEncoding());
-        this.setProtocol(emailDTO.getProtocol());
-        Properties prop = new Properties();
-        //需要验证用户名密码
-        prop.setProperty("mail.smtp.auth", emailDTO.getAuth());
-        prop.setProperty("mail.smtp.timeout", "5000");
-        //邮件发送协议
-        prop.setProperty("mail.smtp.starttls.enable", emailDTO.getSsl());
-        this.setJavaMailProperties(prop);
-    }
 
     /**
      * 发送纯文本邮件信息
@@ -81,11 +56,11 @@ public class CustomJavaMailSender extends JavaMailSenderImpl {
      * @param subject 邮件主题
      * @param content 邮件内容
      */
-    public void sendMessage(String subject, String content, String[] to, String[] cc) {
-        // 创建一个邮件对象
+    public void sendMessage(MailDTO mailDTO, String subject, String content, String[] to, String[] cc) {
         SimpleMailMessage msg = new SimpleMailMessage();
+        JavaMailSenderImpl javaMailSender = getJavaMailSender(mailDTO);
         // 设置发送方
-        msg.setFrom(this.getUsername());
+        msg.setFrom(mailDTO.getUsername());
         // 设置接收方
         msg.setTo(to);
         // 设置接收方
@@ -95,7 +70,7 @@ public class CustomJavaMailSender extends JavaMailSenderImpl {
         // 设置邮件内容
         msg.setText(content);
         // 发送邮件
-        this.send(msg);
+        javaMailSender.send(msg);
     }
 
     /**
@@ -106,12 +81,14 @@ public class CustomJavaMailSender extends JavaMailSenderImpl {
      * @param content 邮件内容
      * @param files   文件可变数组
      */
-    public void sendMessageCarryFile(String to, String subject, String content, File... files) {
-        MimeMessage mimeMessage = this.createMimeMessage();
+    public void sendMessageCarryFile(MailDTO mailDTO, String to, String subject, String content, File... files) {
+        JavaMailSenderImpl javaMailSender = getJavaMailSender(mailDTO);
+
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
             // 设置发送方
-            mimeMessageHelper.setFrom(this.getUsername());
+            mimeMessageHelper.setFrom(Objects.requireNonNull(javaMailSender.getUsername()));
             // 设置接收方
             mimeMessageHelper.setTo(to);
             // 设置邮件主题
@@ -130,7 +107,7 @@ public class CustomJavaMailSender extends JavaMailSenderImpl {
             log.error("邮件消息发送失败", e);
         }
         // 发送邮件
-        this.send(mimeMessage);
+        javaMailSender.send(mimeMessage);
     }
 
     /**
@@ -142,12 +119,13 @@ public class CustomJavaMailSender extends JavaMailSenderImpl {
      * @param content 邮件内容
      * @param files   文件可变数组
      */
-    public void sendMessageCarryFile(String to, String cc, String subject, String content, Map<String, File> imageMap, File... files) {
-        MimeMessage mimeMessage = this.createMimeMessage();
+    public void sendMessageCarryFile(MailDTO mailDTO, String to, String cc, String subject, String content, Map<String, File> imageMap, File... files) {
+        JavaMailSenderImpl javaMailSender = getJavaMailSender(mailDTO);
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
             // 设置发送方
-            mimeMessageHelper.setFrom(this.getUsername());
+            mimeMessageHelper.setFrom(Objects.requireNonNull(javaMailSender.getUsername()));
             // 设置接收方
             mimeMessageHelper.setTo(to);
             // 设置抄送
@@ -176,7 +154,7 @@ public class CustomJavaMailSender extends JavaMailSenderImpl {
             log.error("邮件消息发送失败", e);
         }
         // 发送邮件
-        this.send(mimeMessage);
+        javaMailSender.send(mimeMessage);
     }
 
     /**
@@ -241,13 +219,13 @@ public class CustomJavaMailSender extends JavaMailSenderImpl {
     /**
      * 发送模板邮件
      */
-    public void sendThymeleafMail(String subject, String from, Map<String, Object> valueMap, String... toMails) {
-        MimeMessage mimeMessage;
+    public void sendThymeleafMail(MailDTO mailDTO, String subject, String from, Map<String, Object> valueMap, String... toMails) {
+        JavaMailSenderImpl javaMailSender = getJavaMailSender(mailDTO);
         if (ArrayUtils.isEmpty(toMails)) {
             return;
         }
         try {
-            mimeMessage = this.createMimeMessage();
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
             // 设置发件人邮箱
             helper.setFrom(from);
@@ -263,9 +241,27 @@ public class CustomJavaMailSender extends JavaMailSenderImpl {
             String content = this.templateEngine.process("mail", context);
             helper.setText(content, true);
             // 发送邮件
-            this.send(mimeMessage);
+            javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
             log.error("发送失败");
         }
+    }
+
+    private static JavaMailSenderImpl getJavaMailSender(MailDTO mailDTO) {
+        JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
+        // 创建 JavaMailSender 实例
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost(mailDTO.getSmtpHost());
+        mailSender.setPort(mailDTO.getPort());
+        mailSender.setUsername(mailDTO.getUsername());
+        mailSender.setPassword(mailDTO.getPassword());
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.transport.protocol", mailDTO.getProtocol());
+        props.put("mail.smtp.auth", mailDTO.getAuth());
+        props.put("mail.smtp.ssl.enable", mailDTO.getSsl());
+        props.put("mail.debug", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        return javaMailSender;
     }
 }

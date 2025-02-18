@@ -17,14 +17,9 @@
 package com.breeze.boot.modules.system.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.breeze.boot.core.utils.AssertUtil;
-import com.breeze.boot.mail.dto.MailDTO;
-import com.breeze.boot.mail.service.CustomJavaMailSender;
 import com.breeze.boot.modules.system.mapper.SysEmailConfigMapper;
 import com.breeze.boot.modules.system.model.entity.SysEmailConfig;
 import com.breeze.boot.modules.system.model.form.EmailConfigForm;
@@ -36,16 +31,12 @@ import com.breeze.boot.modules.system.service.SysEmailConfigService;
 import com.breeze.boot.mybatis.annotation.ConditionParam;
 import com.breeze.boot.mybatis.annotation.DymicSql;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.thymeleaf.TemplateEngine;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static com.breeze.boot.core.enums.ResultCode.EMAIL_CONFIG_NOT_FOUND;
 
 /**
  * 系统邮箱服务impl
@@ -55,9 +46,7 @@ import static com.breeze.boot.core.enums.ResultCode.EMAIL_CONFIG_NOT_FOUND;
  */
 @Service
 @RequiredArgsConstructor
-public class SysEmailConfigServiceImpl extends ServiceImpl<SysEmailConfigMapper, SysEmailConfig> implements SysEmailConfigService, InitializingBean {
-
-    private final TemplateEngine templateEngine;
+public class SysEmailConfigServiceImpl extends ServiceImpl<SysEmailConfigMapper, SysEmailConfig> implements SysEmailConfigService {
 
     private final SysEmailMapStruct sysEmailMapStruct;
 
@@ -123,9 +112,6 @@ public class SysEmailConfigServiceImpl extends ServiceImpl<SysEmailConfigMapper,
             if (emailConfigOpenForm.getStatus() == 1) {
                 if (Objects.equals(item.getId(), emailConfigOpenForm.getId())) {
                     item.setStatus(1);
-                    CustomJavaMailSender customJavaMailSender = SpringUtil.getBean(CustomJavaMailSender.class);
-                    MailDTO mailDTO = this.sysEmailMapStruct.entity2DTO(item);
-                    customJavaMailSender.initMailConfig(mailDTO);
                 } else {
                     item.setStatus(0);
                 }
@@ -134,14 +120,4 @@ public class SysEmailConfigServiceImpl extends ServiceImpl<SysEmailConfigMapper,
         return this.updateBatchById(sysEmailConfigList);
     }
 
-    @Override
-    public void afterPropertiesSet() {
-        SysEmailConfig sysEmailConfig = this.getOne(Wrappers.<SysEmailConfig>lambdaQuery().eq(SysEmailConfig::getStatus, 1));
-        AssertUtil.isNotNull(sysEmailConfig, EMAIL_CONFIG_NOT_FOUND);
-        MailDTO mailDTO = this.sysEmailMapStruct.entity2DTO(sysEmailConfig);
-        CustomJavaMailSender customJavaMailSender = new CustomJavaMailSender(templateEngine);
-        customJavaMailSender.initMailConfig(mailDTO);
-        SpringUtil.unregisterBean("com.breeze.boot.mail.service.CustomJavaMailSender");
-        SpringUtil.registerBean("com.breeze.boot.mail.service.CustomJavaMailSender", customJavaMailSender);
-    }
 }

@@ -25,7 +25,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import com.breeze.boot.core.enums.ResultCode;
 import com.breeze.boot.core.utils.AssertUtil;
-import com.breeze.boot.core.utils.BreezeTenantThreadLocal;
+import com.breeze.boot.core.utils.BreezeTenantHolder;
 import com.breeze.boot.mybatis.aspect.DymicSqlAspect;
 import com.breeze.boot.mybatis.config.BreezeLogicSqlInjector;
 import com.breeze.boot.mybatis.config.TenantProperties;
@@ -38,7 +38,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -109,7 +108,7 @@ public class MybatisPlusConfiguration {
         return new TenantLineInnerInterceptor(new TenantLineHandler() {
             @Override
             public Expression getTenantId() {
-                Long tenantId = BreezeTenantThreadLocal.get();
+                Long tenantId = BreezeTenantHolder.getTenant();
                 log.info("当前租户： {}", tenantId);
                 AssertUtil.isNotNull(tenantId, ResultCode.TENANT_NOT_FOUND);
                 return new LongValue(tenantId);
