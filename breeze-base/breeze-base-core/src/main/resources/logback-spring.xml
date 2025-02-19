@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-
     <springProperty scope="context" name="spring.application.name" source="spring.application.name"
                     defaultValue="spring-boot"/>
     <!-- 日志名称 -->
@@ -16,20 +15,20 @@
     <!-- 日志打印格式 -->
     <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} -%5level ---[%15.15thread] %-40.40logger{39} :: %msg%n"/>
 
-    <!-- 格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
-    <property name="CONSOLE_COLOR_FILE_LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss} -%5level ---[%15.15thread] %-40.40logger{39} :: %cyan(%msg) %n"/>
-
     <!-- 日志文件大小 30MB -->
     <property name="MAX_FILE_SIZE" value="30MB"/>
 
     <!-- 保留最近 10 天的日志 -->
     <property name="MAX_HISTORY" value="10"/>
 
+    <!-- 格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+    <property name="CONSOLE_COLOR_FILE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss} %-5level --- [%15.15thread] %-40.40logger{39} :: %msg%n"/>
+
     <!-- 控制台输出 -->
     <appender name="CONSOLE_LOG" class="ch.qos.logback.core.ConsoleAppender">
         <!-- 彩色日志 -->
-        <layout class="ch.qos.logback.classic.PatternLayout">
+        <layout class="com.breeze.boot.core.logback.LogBackColoredLayout">
             <pattern>${CONSOLE_COLOR_FILE_LOG_PATTERN}</pattern>
         </layout>
     </appender>

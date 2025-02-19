@@ -16,6 +16,7 @@
 
 package com.breeze.boot.satoken;
 
+import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.oauth2.config.SaOAuth2ServerConfig;
 import cn.dev33.satoken.oauth2.strategy.SaOAuth2Strategy;
 import cn.dev33.satoken.secure.BCrypt;
@@ -45,6 +46,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import static com.breeze.boot.core.constants.CacheConstants.PERMISSIONS;
+import static com.breeze.boot.core.constants.CacheConstants.ROLE_PERMISSION;
 import static com.breeze.boot.core.enums.ResultCode.VERIFY_UN_PASS;
 import static com.breeze.boot.log.enums.LogEnum.LogType.LOGIN;
 import static com.breeze.boot.log.enums.LogEnum.Result.FAIL;
@@ -93,6 +96,7 @@ public class SaTokenOauthConfigure {
             if (BCrypt.checkpw(decodePwd, userPrincipal.getPassword().replace(BCRYPT, ""))) {
                 SysLogBO sysLogBO = this.buildLog(requestAttributes.getRequest(), SUCCESS.getCode(), name);
                 this.publisherSaveSysLogEvent.publisherEvent(new SysLogSaveEvent(sysLogBO));
+                SaManager.getSaTokenDao().delete(ROLE_PERMISSION + userPrincipal.getId());
                 StpUtil.login(userPrincipal.getId());
                 return Result.ok();
             }
