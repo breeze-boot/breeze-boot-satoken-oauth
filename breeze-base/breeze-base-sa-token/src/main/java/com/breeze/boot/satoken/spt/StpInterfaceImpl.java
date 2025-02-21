@@ -22,7 +22,6 @@ import com.breeze.boot.satoken.oauth2.IUserDetailService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.breeze.boot.core.constants.CacheConstants.PERMISSIONS;

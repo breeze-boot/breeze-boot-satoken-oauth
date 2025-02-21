@@ -163,9 +163,9 @@ public class UserInfoDTO implements Serializable {
     private String permissionType;
 
     /**
-     * 数据权限规则
+     * 子部门
      */
-    @Schema(description = "b")
+    @Schema(description = "子部门")
     private Set<Long> subDeptId;
 
     /**

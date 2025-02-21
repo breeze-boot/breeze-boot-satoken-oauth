@@ -63,7 +63,6 @@ public class BreezeChannelInterceptorAdapter implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-        assert accessor != null;
         StompCommand command = accessor.getCommand();
         //2、判断token
         log.info("发送后拦截, 状态: {} 心跳： {}", command, accessor.getHeartbeat());

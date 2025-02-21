@@ -95,18 +95,18 @@ services:
     networks:
       - breeze-net
 
-  breeze-boot-satoken-oauth:
+  breeze-boot-satoken-oauth-server:
     build:
       context: ./breeze-boot
     restart: always
-    container_name: breeze-boot-satoken-oauth
+    container_name: breeze-boot-satoken-oauth-server
     ports:
       - "9000:9000"
     volumes:
       - ./docker/logs:/usr/local/boot/logs
       - /etc/localtime:/etc/localtime:ro
     hostname: breeze-boot
-    image: breeze-boot
+    image: breeze-boot-satoken-auth-server
     depends_on:
       - breeze-minio
       - breeze-mysql

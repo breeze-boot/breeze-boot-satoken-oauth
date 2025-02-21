@@ -16,10 +16,13 @@
 
 package com.breeze.boot.satoken.utils;
 
+import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpUtil;
 import com.breeze.boot.core.base.UserPrincipal;
+import com.breeze.boot.core.utils.AssertUtil;
 
 import static com.breeze.boot.core.constants.CoreConstants.USER_TYPE;
+import static com.breeze.boot.core.enums.ResultCode.NOT_LOGIN;
 
 /**
  * stp-util
@@ -30,11 +33,29 @@ import static com.breeze.boot.core.constants.CoreConstants.USER_TYPE;
 public class BreezeStpUtil {
 
     public static UserPrincipal getUser() {
-        return (UserPrincipal) StpUtil.getSession().get(USER_TYPE);
+        SaSession saSession = getSession();
+        return (UserPrincipal) saSession.get(USER_TYPE);
+    }
+
+    public static String getUsername() {
+        SaSession saSession = getSession();
+        return ((UserPrincipal) saSession.get(USER_TYPE)).getUsername();
+    }
+
+    public static String getUserCode() {
+        SaSession saSession = getSession();
+        return ((UserPrincipal) saSession.get(USER_TYPE)).getUserCode();
     }
 
     public static boolean isAdmin() {
-        return ((UserPrincipal) StpUtil.getSession().get(USER_TYPE)).getUserRoleCodes().contains("admin");
+        SaSession saSession = getSession();
+        return ((UserPrincipal) saSession.get(USER_TYPE)).getUserRoleCodes().contains("admin");
+    }
+
+    private static SaSession getSession() {
+        SaSession saSession = StpUtil.getSession();
+        AssertUtil.isNotNull(StpUtil.getSession(), NOT_LOGIN);
+        return saSession;
     }
 
 }
