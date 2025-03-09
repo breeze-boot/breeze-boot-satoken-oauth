@@ -26,7 +26,18 @@ services:
     privileged: true
     networks:
       - breeze-net
-
+  # 向量数据库
+  breeze-qdrant:
+    image: qdrant/qdrant
+    container_name: breeze-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - ./qdrant-data:/qdrant/storage
+    restart: always
+    networks:
+      - breeze-net
   # redis
   breeze-redis:
     image: redis:7.2.5

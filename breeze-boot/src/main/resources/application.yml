@@ -25,6 +25,7 @@ spring:
       - classpath:config/${spring.profiles.active}/oauth2.yml
       - classpath:config/${spring.profiles.active}/tenant.yml
       - classpath:config/${spring.profiles.active}/wx.yml
+      - classpath:config/${spring.profiles.active}/ai.yml
       - classpath:config/${spring.profiles.active}/xss.yml
       - classpath:config/${spring.profiles.active}/mybatis-plus.yml
   #thymeleaf模板配置

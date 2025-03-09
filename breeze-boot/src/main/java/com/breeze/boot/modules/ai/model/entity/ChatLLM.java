@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.xss.config;
+package com.breeze.boot.modules.ai.model.entity;
 
-import com.breeze.boot.core.base.BaseProperties;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import lombok.Data;
 
 /**
- * xss白名单属性
+ * 聊天大模型
  *
  * @author gaoweixuan
- * @since 2023-03-06
+ * @since 2025/03/09
  */
-@Getter
-@Setter
-@ConfigurationProperties(prefix = "breeze.xss")
-public class XssProperties extends BaseProperties {
+@Data
+public class ChatLLM {
 }

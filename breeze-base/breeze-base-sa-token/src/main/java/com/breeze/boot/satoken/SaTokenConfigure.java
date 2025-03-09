@@ -17,9 +17,9 @@
 package com.breeze.boot.satoken;
 
 import cn.dev33.satoken.interceptor.SaInterceptor;
-import com.breeze.boot.satoken.spt.JumpAuthProperties;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -33,14 +33,15 @@ import java.util.List;
  * @author gaoweixuan
  * @since 2024/09/05
  */
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
-@Import(JumpAuthProperties.class)
+@Import(SaTokenJumpAuthProperties.class)
 public class SaTokenConfigure implements WebMvcConfigurer {
 
-    private final JumpAuthProperties jumpAuthProperties;
+    private final SaTokenJumpAuthProperties jumpAuthProperties;
 
-    private final List<String> formLoginJumpUrl = Lists.newArrayList("/login", "/error");
+    private final List<String> formLoginJumpUrl = Lists.newArrayList("/login", "/error", "/ai/**");
 
     private final List<String> captchaJumpUrl = Lists.newArrayList("/auth/v1/captcha/**");
 
@@ -57,14 +58,15 @@ public class SaTokenConfigure implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        jumpAuthProperties.getIgnoreUrls().addAll(formLoginJumpUrl);
-        jumpAuthProperties.getIgnoreUrls().addAll(captchaJumpUrl);
-        jumpAuthProperties.getIgnoreUrls().addAll(websocketJumpUrl);
-        jumpAuthProperties.getIgnoreUrls().addAll(staticJumpUrl);
-        jumpAuthProperties.getIgnoreUrls().addAll(swaggerJumpUrl);
-        jumpAuthProperties.getIgnoreUrls().addAll(druidJumpUrl);
+        List<String> ignoreUrls = jumpAuthProperties.getIgnoreUrls();
+        ignoreUrls.addAll(formLoginJumpUrl);
+        ignoreUrls.addAll(captchaJumpUrl);
+        ignoreUrls.addAll(websocketJumpUrl);
+        ignoreUrls.addAll(staticJumpUrl);
+        ignoreUrls.addAll(swaggerJumpUrl);
+        ignoreUrls.addAll(druidJumpUrl);
         // 注册 Sa-Token 拦截器，定义详细认证规则
-        registry.addInterceptor(new SaInterceptor()).excludePathPatterns(jumpAuthProperties.getIgnoreUrls()).addPathPatterns("/**");
+        registry.addInterceptor(new SaInterceptor()).excludePathPatterns(ignoreUrls).addPathPatterns("/**");
     }
 
 }

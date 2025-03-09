@@ -14,21 +14,27 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.xss.config;
+package com.breeze.boot.modules.ai.config;
 
-import com.breeze.boot.core.base.BaseProperties;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import com.breeze.boot.modules.ai.service.MockWeatherService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Description;
+
+import java.util.function.Function;
 
 /**
- * xss白名单属性
+ * 模拟天气工具
  *
  * @author gaoweixuan
- * @since 2023-03-06
+ * @since 2025/03/09
  */
-@Getter
-@Setter
-@ConfigurationProperties(prefix = "breeze.xss")
-public class XssProperties extends BaseProperties {
+@Configuration
+public class MockWeatherTools {
+
+    @Bean
+    @Description("查询本地天气")
+    public Function<MockWeatherService.Request, MockWeatherService.Response> currentWeather() {
+        return new MockWeatherService();
+    }
 }

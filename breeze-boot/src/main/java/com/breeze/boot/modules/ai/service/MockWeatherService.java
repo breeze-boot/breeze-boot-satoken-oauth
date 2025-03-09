@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.satoken.spt;
+package com.breeze.boot.modules.ai.service;
 
-import com.breeze.boot.core.base.BaseProperties;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.function.Function;
 
 /**
- * 忽略url属性配置文件
+ * 模拟天气服务
  *
  * @author gaoweixuan
- * @since 2022-08-31
+ * @since 2025/03/09
  */
-@Getter
-@Setter
-@ConfigurationProperties(prefix = "sa-token")
-public class JumpAuthProperties extends BaseProperties {
+public class MockWeatherService implements Function<MockWeatherService.Request, MockWeatherService.Response> {
+
+    public enum Unit { C, F }
+    public record Request(String location, Unit unit) {}
+    public record Response(double temp, Unit unit) {}
+
+    @Override
+    public Response apply(Request request) {
+        return new Response(30.0, Unit.C);
+    }
 }

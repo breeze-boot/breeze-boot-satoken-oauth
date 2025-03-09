@@ -41,6 +41,7 @@
     <properties>
         <java.version>17</java.version>
         <spring-boot.version>3.4.2</spring-boot.version>
+        <spring-ai.version>1.0.0-M5</spring-ai.version>
         <spring-boot-monitor.version>3.4.2</spring-boot-monitor.version>
 
         <!--Swagger Resources-->
@@ -135,6 +136,15 @@
                         <artifactId>spring-boot-starter-tomcat</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+
+            <!--spring-ai 依赖管理-->
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <!-- undertow容器 -->
@@ -429,7 +439,6 @@
 
         </dependencies>
     </dependencyManagement>
-
 
     <build>
         <finalName>${project.name}</finalName>

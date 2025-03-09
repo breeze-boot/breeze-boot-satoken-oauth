@@ -14,21 +14,29 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.xss.config;
+package com.breeze.boot.modules.ai.service;
 
-import com.breeze.boot.core.base.BaseProperties;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import com.breeze.boot.core.utils.Result;
+import com.breeze.boot.modules.ai.model.entity.ChatLLM;
+
+import java.util.List;
 
 /**
- * xss白名单属性
+ * AI聊天模型管理服务
  *
  * @author gaoweixuan
- * @since 2023-03-06
+ * @since 2025/03/09
  */
-@Getter
-@Setter
-@ConfigurationProperties(prefix = "breeze.xss")
-public class XssProperties extends BaseProperties {
+public interface IChatLLMService {
+
+    List<ChatLLM> list();
+
+    Result<?> saveChatLLM(ChatLLM chatProject);
+
+    Object getInfoById(Long projectId);
+
+    Object modifyChatLLM(Long id, ChatLLM chatProject);
+
+    Boolean deleteChatLLM(List<Long> ids);
+
 }

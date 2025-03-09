@@ -34,19 +34,17 @@ public class LoadAnnotationUtils {
      *
      * @param properties                   属性
      * @param applicationContext           应用程序上下文
-     * @param requestMappingHandlerMapping 请求映射处理程序映射
      */
     public static void loadControllerMapping(BaseProperties properties,
                                              ApplicationContext applicationContext,
-                                             RequestMappingHandlerMapping requestMappingHandlerMapping) {
+                                             Map<RequestMappingInfo, HandlerMethod> methodMap ) {
         log.info("配置的过滤的地址：{}", properties.getIgnoreUrls());
         // 获取全部的请求方法
-        Map<RequestMappingInfo, HandlerMethod> methodMap = requestMappingHandlerMapping.getHandlerMethods();
         methodMap.forEach((requestMappingInfo, method) -> {
             Class<?> clazz = applicationContext.getBean(method.getBean().toString()).getClass();
             // 根据类进行判断这个方法所在的类是否需要过滤
             if (Objects.nonNull(AnnotationUtils.findAnnotation(clazz, BaseFilter.class))) {
-                Optional.ofNullable(requestMappingInfo.getPathPatternsCondition())
+                Optional.of(requestMappingInfo.getPathPatternsCondition())
                         .ifPresent((condition) -> condition.getPatternValues().forEach(patternUrl -> setURl(properties, patternUrl)));
             } else {
                 Optional.ofNullable(requestMappingInfo.getPathPatternsCondition())

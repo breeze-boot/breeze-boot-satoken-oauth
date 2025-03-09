@@ -109,7 +109,7 @@ public class XssFilter extends GenericFilterBean {
     @Override
     public void afterPropertiesSet() throws ServletException {
         log.info("----- 初始化xss需要被过滤的路径开始 -----");
-        LoadAnnotationUtils.loadControllerMapping(xssProperties, applicationContext, requestMappingHandlerMapping);
+        LoadAnnotationUtils.loadControllerMapping(xssProperties, applicationContext, requestMappingHandlerMapping.getHandlerMethods());
         log.info("----- 初始化xss需要被过滤的路径结束 -----");
     }
 }

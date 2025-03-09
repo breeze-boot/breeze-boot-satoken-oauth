@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.xss.config;
+package com.breeze.boot.satoken;
 
 import com.breeze.boot.core.base.BaseProperties;
 import lombok.Getter;
@@ -22,13 +22,13 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * xss白名单属性
+ * 忽略url属性配置文件
  *
  * @author gaoweixuan
- * @since 2023-03-06
+ * @since 2022-08-31
  */
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "breeze.xss")
-public class XssProperties extends BaseProperties {
+@ConfigurationProperties(prefix = "sa-token")
+public class SaTokenJumpAuthProperties extends BaseProperties {
 }

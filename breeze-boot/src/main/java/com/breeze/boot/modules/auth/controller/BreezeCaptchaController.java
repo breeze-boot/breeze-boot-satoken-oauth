@@ -24,7 +24,6 @@ import com.anji.captcha.util.StringUtils;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,7 +47,6 @@ public class BreezeCaptchaController {
      * 验证码服务
      */
     private final CaptchaService captchaService;
-    private final RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 获取远程id

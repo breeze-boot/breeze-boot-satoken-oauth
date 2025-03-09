@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.xss.config;
+package com.breeze.boot.satoken.annotation;
 
-import com.breeze.boot.core.base.BaseProperties;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+
+import java.lang.annotation.*;
 
 /**
- * xss白名单属性
+ * 跳过auth
  *
  * @author gaoweixuan
- * @since 2023-03-06
+ * @since 2022-10-29
  */
-@Getter
-@Setter
-@ConfigurationProperties(prefix = "breeze.xss")
-public class XssProperties extends BaseProperties {
+@Inherited
+@Documented
+@Target({ElementType.METHOD, ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@ConditionalOnWebApplication
+public @interface JumpAuth {
 }
