@@ -23,6 +23,7 @@ import cn.dev33.satoken.exception.SaTokenException;
 import cn.dev33.satoken.oauth2.exception.SaOAuth2ClientModelException;
 import com.breeze.boot.core.enums.ResultCode;
 import com.breeze.boot.core.exception.BreezeBizException;
+import com.breeze.boot.core.lock.exception.BreezeLockException;
 import com.breeze.boot.core.utils.MessageUtil;
 import com.breeze.boot.core.utils.Result;
 import jakarta.validation.ConstraintViolation;
@@ -233,6 +234,16 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * @param ex 异常
+     * @return {@link Result}<{@link ?}>
+     */
+    @ExceptionHandler(BreezeLockException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Result<?> saOAuth2ClientModelException(BreezeLockException ex) {
+        log.error("bizException 自定义的系统异常：", ex);
+        return Result.fail(ex.getMessage());
+    }
+    /**
      * 无权限
      *
      * @param ex 异常
@@ -295,4 +306,5 @@ public class GlobalExceptionHandler {
         String message = MessageUtil.getMessage(ResultCode.SC_FORBIDDEN.getKey());
         return Result.fail(message + ":" + ex.getMessage());
     }
+
 }

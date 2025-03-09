@@ -35,9 +35,9 @@ public @interface RedissonLock {
     String value() default "defaultLock";
 
     // 等待获取锁的最大时间，单位：秒
-    long waitTime() default 10;
+    long waitTime() default 5;
 
     // 锁的自动释放时间，单位：秒
-    long leaseTime() default 30;
+    long leaseTime() default 10;
 
 }

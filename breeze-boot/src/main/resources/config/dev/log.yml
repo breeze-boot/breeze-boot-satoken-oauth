@@ -9,4 +9,4 @@ logging:
   config: classpath:logback-spring.xml
   level:
     org:
-      flowable: debug
+      flowable: error

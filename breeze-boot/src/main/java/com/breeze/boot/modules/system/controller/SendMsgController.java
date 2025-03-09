@@ -74,8 +74,8 @@ public class SendMsgController {
     @Operation(summary = "发送消息给用户")
     // 前端发送信息的路径
     @MessageMapping("/asyncSendMsgToSingleUser")
-    // 发送到websocket的路径，/点对点发送的路径/queue，发送的通道和订阅者确定后可通过这个路径接收消息/userMsg
-    @SendToUser("/queue/userMsg")
+    // 发送到websocket的路径，/点对点发送的路径/queue，发送的通道和订阅者确定后可通过这个路径接收消息/message
+    @SendToUser("/queue/message")
     public Result<MsgVO> asyncSendMsgToSingleUser(Principal principal, @Payload MsgParam msgParam) {
         return this.webSocketMsgService.asyncSendMsgToSingleUser(principal, msgParam);
     }
@@ -90,8 +90,8 @@ public class SendMsgController {
     @Operation(summary = "发送消息给部门以及子部门")
     // 前端发送信息的路径
     @MessageMapping("/syncSendMsgDeptUser")
-    // 发送到websocket的路径，/点对点发送的路径/queue，发送的通道和订阅者确定后可通过这个路径接收消息/userMsg
-    @SendToUser("/queue/userMsg")
+    // 发送到websocket的路径，/点对点发送的路径/queue，发送的通道和订阅者确定后可通过这个路径接收消息/message
+    @SendToUser("/queue/message")
     public Result<MsgVO> syncSendMsgDeptUser(Principal principal, @Payload MsgParam msgParam) {
         return this.webSocketMsgService.syncSendMsgDeptUser(principal, msgParam);
     }

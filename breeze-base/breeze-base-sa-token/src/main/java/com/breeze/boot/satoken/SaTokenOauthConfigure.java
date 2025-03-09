@@ -46,7 +46,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static com.breeze.boot.core.constants.CacheConstants.PERMISSIONS;
 import static com.breeze.boot.core.constants.CacheConstants.ROLE_PERMISSION;
 import static com.breeze.boot.core.enums.ResultCode.VERIFY_UN_PASS;
 import static com.breeze.boot.log.enums.LogEnum.LogType.LOGIN;

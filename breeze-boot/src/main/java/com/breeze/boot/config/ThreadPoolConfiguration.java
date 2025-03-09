@@ -31,9 +31,9 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 @Slf4j
 @Configuration
-public class ThreadPoolConfig {
+public class ThreadPoolConfiguration {
 
-    @Bean(name = "breezeThreadPoolExecutor")
+    @Bean
     public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
         log.info("---------- 开始加载线程池 ----------");
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();

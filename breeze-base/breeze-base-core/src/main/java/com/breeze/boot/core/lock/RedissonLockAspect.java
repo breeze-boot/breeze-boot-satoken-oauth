@@ -17,6 +17,7 @@
 package com.breeze.boot.core.lock;
 
 import com.breeze.boot.core.lock.annotation.RedissonLock;
+import com.breeze.boot.core.lock.exception.BreezeLockException;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -71,7 +72,7 @@ public class RedissonLockAspect {
             if (isLocked) {
                 return point.proceed();
             } else {
-                throw new RuntimeException("Failed to acquire distributed lock");
+                throw new BreezeLockException();
             }
         } catch (Throwable e) {
             throw new RuntimeException(e);

@@ -181,7 +181,7 @@ public class StompJsWebSocketMsgServiceImpl extends WebSocketMsgService {
         List<SysUser> sysUserList = this.sysUserService.listByIds(userIds);
         for (SysUser sysUser : sysUserList) {
             // 这里只是使用另一种实现方式
-            this.simpMessagingTemplate.convertAndSendToUser(sysUser.getUsername(), "/queue/userMsg", Result.ok(msgVO));
+            this.simpMessagingTemplate.convertAndSendToUser(sysUser.getUsername(), "/queue/message", Result.ok(msgVO));
             sysUserMsgList.add(this.buildMsgBody(sysMsg, sender, sysUser));
         }
         return sysUserMsgList;

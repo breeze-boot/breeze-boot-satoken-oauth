@@ -58,7 +58,6 @@ public class SysRegisteredClientServiceImpl extends ServiceImpl<SysRegisteredCli
 
     private final AesSecretProperties aesSecretProperties;
 
-
     /**
      * set 转换 string + [,]
      *

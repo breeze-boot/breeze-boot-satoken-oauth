@@ -1,2 +1,3 @@
 com.breeze.boot.message.WebSocketConfiguration
+com.breeze.boot.message.config.RabbitTemplateConfig
 com.breeze.boot.message.RabbitConfiguration

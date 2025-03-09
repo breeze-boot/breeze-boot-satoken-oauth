@@ -219,7 +219,9 @@ public enum ResultCode {
     /**
      * sql转换错误
      */
-    SQL_PARSE_EXCEPTION("result.sql.parse.exception", "sql转换错误" );
+    SQL_PARSE_EXCEPTION("result.sql.parse.exception", "sql转换错误" ),
+
+    LOCK_EXCEPTION("result.lock.fail.exception" , "您提交太快，请稍等再提交");
 
     private final String key;
 

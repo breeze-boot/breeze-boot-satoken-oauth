@@ -20,15 +20,19 @@ import com.breeze.boot.message.config.BreezeChannelInterceptorAdapter;
 import com.breeze.boot.message.config.BreezeHandShakeInterceptor;
 import com.breeze.boot.message.config.BreezeRabbitMqProperties;
 import com.breeze.boot.message.events.PublisherSaveMsgEvent;
+import jakarta.annotation.PreDestroy;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.messaging.simp.stomp.StompBrokerRelayMessageHandler;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
@@ -53,6 +57,10 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
     private final AmqpAdmin rabbitAdmin;
 
+    private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+    private final ApplicationContext applicationContext;
+
     /**
      * websocket端点接收客户端的连接
      */
@@ -66,6 +74,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     @EventListener
     public void handleSubscribe(SessionSubscribeEvent event) {
         String destination = SimpMessageHeaderAccessor.wrap(event.getMessage()).getDestination();
+        log.info("客户端订阅了目标地址: {}", destination);
     }
 
     @EventListener
@@ -74,12 +83,16 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
         if (log.isDebugEnabled()) {
             log.debug("客户端断开连接 sessionId: {}", sessionId);
         }
-        boolean deleted = rabbitAdmin.deleteQueue("userMsg-user" + sessionId);
-        if (deleted) {
-            log.info("删除队列成功 userMsg-user{}", sessionId);
-            return;
+        try {
+            boolean deleted = rabbitAdmin.deleteQueue("userMsg-user" + sessionId);
+            if (deleted) {
+                log.info("删除队列成功 userMsg-user{}", sessionId);
+            } else {
+                log.warn("队列 userMsg-user{} 不存在，无需删除", sessionId);
+            }
+        } catch (Exception e) {
+            log.error("删除队列 userMsg-user{} 时出现异常: {}", sessionId, e.getMessage(), e);
         }
-        log.info("删除队列失败 userMsg-user{}", sessionId);
     }
 
     /**
@@ -92,20 +105,37 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
         // 点对点消息的订阅前缀
         // registry.setUserDestinationPrefix("/user");
         // 客户端发送消息的前缀
-        // registry.setApplicationDestinationPrefixes("/msg");
-
-        registry.enableStompBrokerRelay("/topic", "/queue")
-                .setRelayHost(mqProperties.getAddresses())       // rabbitmq-host服务器地址
-                .setRelayPort(mqProperties.getStompPort())       // rabbitmq-stomp 服务器服务端口
-                .setClientLogin(mqProperties.getUsername())      // 登陆账户
-                .setClientPasscode(mqProperties.getPassword())   // 登陆密码
-                .setSystemLogin(mqProperties.getUsername())      // 登陆账户
-                .setSystemPasscode(mqProperties.getPassword())   // 登陆密码
-                .setVirtualHost(mqProperties.getVirtualHost());
+        // registry.setApplicationDestinationPrefixes("/message");
+        int maxRetries = 3;
+        int retryCount = 0;
+        while (retryCount < maxRetries) {
+            try {
+                registry.enableStompBrokerRelay("/topic", "/queue")
+                        .setRelayHost(mqProperties.getAddresses())       // rabbitmq-host服务器地址
+                        .setRelayPort(mqProperties.getStompPort())       // rabbitmq-stomp 服务器服务端口
+                        .setClientLogin(mqProperties.getUsername())      // 登陆账户
+                        .setClientPasscode(mqProperties.getPassword())   // 登陆密码
+                        .setSystemLogin(mqProperties.getUsername())      // 登陆账户
+                        .setSystemPasscode(mqProperties.getPassword())   // 登陆密码
+                        .setVirtualHost(mqProperties.getVirtualHost());
+                break; // 连接成功，退出重试循环
+            } catch (Exception e) {
+                retryCount++;
+                log.error("连接RabbitMQ消息代理失败（第 {} 次重试）: {}", retryCount, e.getMessage(), e);
+                try {
+                    Thread.sleep(2000); // 等待 2 秒后重试
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+        if (retryCount == maxRetries) {
+            log.error("连接RabbitMQ消息代理失败，达到最大重试次数");
+        }
         //定义一对一推送的时候前缀
         registry.setUserDestinationPrefix("/user/");
         //客户端需要把消息发送到/message/xxx地址
-        registry.setApplicationDestinationPrefixes("/message");
+        registry.setApplicationDestinationPrefixes("/send");
     }
 
     /**
@@ -114,10 +144,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(new BreezeChannelInterceptorAdapter());
-        registration.taskExecutor()    // 线程信息
-                .corePoolSize(400)     // 核心线程池
-                .maxPoolSize(800)      // 最多线程池数
-                .keepAliveSeconds(60); // 超过核心线程数后，空闲线程超时60秒则杀死
+        registration.taskExecutor(threadPoolTaskExecutor);
     }
 
     /**
@@ -130,4 +157,9 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
                 .setMessageSizeLimit(128 * 1024);   // 消息大小
     }
 
+    @PreDestroy
+    public void destroy() {
+        StompBrokerRelayMessageHandler stompBrokerRelay = applicationContext.getBean(StompBrokerRelayMessageHandler.class);
+        stompBrokerRelay.stop();
+    }
 }
