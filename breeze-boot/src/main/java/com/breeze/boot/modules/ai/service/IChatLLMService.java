@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, gaoweixuan (breeze-cloud@foxmail.com).
+ * Copyright (c) 2025, gaoweixuan (breeze-cloud@foxmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.breeze.boot.modules.ai.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.ai.model.entity.ChatLLM;
 
@@ -27,15 +28,15 @@ import java.util.List;
  * @author gaoweixuan
  * @since 2025/03/09
  */
-public interface IChatLLMService {
+public interface IChatLLMService extends IService<ChatLLM>{
 
     List<ChatLLM> list();
 
-    Result<?> saveChatLLM(ChatLLM chatProject);
+    Result<?> saveChatLLM(ChatLLM chatLLM);
 
-    Object getInfoById(Long projectId);
+    Object getInfoById(Long llmId);
 
-    Object modifyChatLLM(Long id, ChatLLM chatProject);
+    Object modifyChatLLM(Long id, ChatLLM chatLLM);
 
     Boolean deleteChatLLM(List<Long> ids);
 

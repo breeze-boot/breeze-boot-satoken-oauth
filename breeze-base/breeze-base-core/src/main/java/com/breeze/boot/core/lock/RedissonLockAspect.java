@@ -17,7 +17,7 @@
 package com.breeze.boot.core.lock;
 
 import com.breeze.boot.core.lock.annotation.RedissonLock;
-import com.breeze.boot.core.lock.exception.BreezeLockException;
+import com.breeze.boot.core.exception.BreezeLockException;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

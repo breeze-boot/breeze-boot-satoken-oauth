@@ -16,8 +16,8 @@
 
 package com.breeze.boot.modules.auth.model.bo;
 
-import com.breeze.boot.core.annotation.SensitiveInfo;
-import com.breeze.boot.core.enums.SensitiveStrategy;
+import com.breeze.boot.core.sensitive.annotation.SensitiveInfo;
+import com.breeze.boot.core.sensitive.enums.SensitiveStrategy;
 import com.breeze.boot.modules.auth.model.entity.SysRole;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;

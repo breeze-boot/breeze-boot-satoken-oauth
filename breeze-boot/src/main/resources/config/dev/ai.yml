@@ -1,7 +1,0 @@
-spring:
-  ai:
-    dashscope:
-      api-key: sk-*****
-      chat:
-        options:
-          model: qwen-max

@@ -21,7 +21,7 @@ import cn.dev33.satoken.oauth2.SaOAuth2Manager;
 import cn.dev33.satoken.oauth2.data.loader.SaOAuth2DataLoader;
 import cn.dev33.satoken.oauth2.data.model.loader.SaClientModel;
 import cn.dev33.satoken.secure.SaSecureUtil;
-import com.breeze.boot.core.jackson.propertise.AesSecretProperties;
+import com.breeze.boot.satoken.propertise.AesSecretProperties;
 import com.breeze.boot.satoken.model.BaseSysRegisteredClient;
 import com.breeze.boot.satoken.oauth2.IClientService;
 import lombok.RequiredArgsConstructor;

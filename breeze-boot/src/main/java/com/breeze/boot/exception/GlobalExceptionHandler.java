@@ -23,7 +23,7 @@ import cn.dev33.satoken.exception.SaTokenException;
 import cn.dev33.satoken.oauth2.exception.SaOAuth2ClientModelException;
 import com.breeze.boot.core.enums.ResultCode;
 import com.breeze.boot.core.exception.BreezeBizException;
-import com.breeze.boot.core.lock.exception.BreezeLockException;
+import com.breeze.boot.core.exception.BreezeLockException;
 import com.breeze.boot.core.utils.MessageUtil;
 import com.breeze.boot.core.utils.Result;
 import jakarta.validation.ConstraintViolation;
@@ -243,6 +243,7 @@ public class GlobalExceptionHandler {
         log.error("bizException 自定义的系统异常：", ex);
         return Result.fail(ex.getMessage());
     }
+
     /**
      * 无权限
      *
@@ -294,7 +295,7 @@ public class GlobalExceptionHandler {
         String message = MessageUtil.getMessage(ResultCode.RESOURCE_NO_FOUND.getKey());
         return Result.fail(message);
     }
-	
+
     /**
      * @param ex 异常
      * @return {@link Result}<{@link ?}>

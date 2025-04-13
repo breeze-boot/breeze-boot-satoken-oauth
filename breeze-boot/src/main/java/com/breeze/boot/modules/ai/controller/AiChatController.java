@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, gaoweixuan (breeze-cloud@foxmail.com).
+ * Copyright (c) 2025, gaoweixuan (breeze-cloud@foxmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,24 @@
 
 package com.breeze.boot.modules.ai.controller;
 
-import com.breeze.boot.modules.ai.config.AiLoggingAdvisor;
+import com.breeze.boot.core.utils.Result;
+import com.breeze.boot.modules.ai.model.entity.MongoDBChatConversation;
+import com.breeze.boot.modules.ai.model.query.HistoryChatPage;
+import com.breeze.boot.modules.ai.model.vo.ChatConversationMessageVO;
+import com.breeze.boot.modules.ai.service.IAiChatService;
+import com.breeze.boot.modules.ai.service.RagService;
 import com.breeze.boot.xss.annotation.JumpXss;
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor;
-import org.springframework.ai.chat.client.advisor.PromptChatMemoryAdvisor;
-import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
-import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.VectorStore;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.time.LocalDate;
+import java.util.List;
 
 /**
  * ai聊天控制器
@@ -40,41 +41,65 @@ import java.time.LocalDate;
  * @author gaoweixuan
  * @since 2025/03/09
  */
+@Slf4j
 @RestController
 @CrossOrigin
+@RequiredArgsConstructor
+@RequestMapping("/ai/v1")
 public class AiChatController {
 
-    private final ChatClient chatClient;
+    private final IAiChatService chatService;
 
-    public AiChatController(ChatClient.Builder chatClientBuilder, ChatMemory chatMemory, VectorStore vectorStore) {
-        this.chatClient = chatClientBuilder.defaultSystem(
-                        """
-                                您是清风系统管家。请以友好、乐于助人且愉快的方式来回复
-                                您正在通过在线聊天系统与客户互动
-                                您可以帮助用户操作系统，可以通过对话完成系统操作
-                                请讲中文
-                                今天的日期是 {current_date}
-                                """
-                )
-        .defaultAdvisors(
-                new PromptChatMemoryAdvisor(chatMemory),
-                new AiLoggingAdvisor(),
-                new QuestionAnswerAdvisor(vectorStore, SearchRequest.builder().build()) // RAG
-        )
-        .defaultFunctions("currentWeather")
-        .build();
-}
+    private final RagService localRagService;
 
-@JumpXss
-@GetMapping(value = "/ai/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-public Flux<String> chat(@RequestParam(value = "message", defaultValue = "请介绍自己") String message) {
-Flux<String> content = this.chatClient.prompt()
-        .user(message)
-        .system(promptSystemSpec -> promptSystemSpec.param("current_date", LocalDate.now().toString()))
-        .advisors(advisorSpec -> advisorSpec.param(AbstractChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY, 100))
-        .stream()
-        .content();
-return content.concatWith(Flux.just("[complete]"));
-}
+    @JumpXss
+    @GetMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> chat(@RequestParam(value = "conversationId") String conversationId,
+                             @RequestParam(value = "message", defaultValue = "请介绍自己") String message) {
+        return this.chatService.chat(conversationId, message);
+    }
+
+    @GetMapping("/create")
+    public Result<String> create(@RequestParam Long userId) {
+        return this.chatService.create(userId);
+    }
+
+    @GetMapping("/history")
+    public Result<Page<MongoDBChatConversation>> history(HistoryChatPage historyChatPage) {
+        return this.chatService.history(historyChatPage);
+    }
+
+    @GetMapping("/historyDetail")
+    public Result<List<ChatConversationMessageVO>> historyDetail(@RequestParam String id) {
+        return this.chatService.historyDetail(id);
+    }
+
+
+    @PostMapping("/importDoc")
+    public void importDoc(MultipartFile file) {
+        localRagService.importDoc(file);
+    }
+
+    @JumpXss
+    @GetMapping(value = "/ragChat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<ServerSentEvent<String>> ragChat(@RequestParam(value = "conversationId") String conversationId,
+                                                 @RequestParam(value = "message", defaultValue = "请介绍自己") String message,
+                                                 @RequestParam(value = "token") String token) {
+
+         Flux<String> dataFlux = chatService.chat(message, conversationId, token);
+
+        // 创建一个 Mono 用于监听取消信号
+        Mono<Void> cancellationSignal = Mono.create(sink -> {
+            // 这里可以添加更多逻辑来监听取消事件
+            dataFlux.doOnCancel(sink::success);
+        });
+
+        return dataFlux
+                .takeUntilOther(cancellationSignal)
+                .map(data -> ServerSentEvent.<String>builder().data(data).build())
+                .doOnCancel(() -> {
+                    log.info("客户端取消了连接，停止数据发送");
+                });
+    }
 
 }

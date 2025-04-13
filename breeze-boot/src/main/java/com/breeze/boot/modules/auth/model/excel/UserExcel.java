@@ -21,8 +21,8 @@ import com.alibaba.excel.annotation.write.style.*;
 import com.alibaba.excel.enums.poi.BorderStyleEnum;
 import com.alibaba.excel.enums.poi.HorizontalAlignmentEnum;
 import com.alibaba.excel.enums.poi.VerticalAlignmentEnum;
-import com.breeze.boot.core.annotation.SensitiveInfo;
-import com.breeze.boot.core.enums.SensitiveStrategy;
+import com.breeze.boot.core.sensitive.annotation.SensitiveInfo;
+import com.breeze.boot.core.sensitive.enums.SensitiveStrategy;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 

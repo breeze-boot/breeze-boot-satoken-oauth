@@ -23,7 +23,6 @@ import cn.dev33.satoken.secure.BCrypt;
 import cn.dev33.satoken.stp.StpUtil;
 import com.breeze.boot.core.base.UserPrincipal;
 import com.breeze.boot.core.exception.BreezeBizException;
-import com.breeze.boot.core.jackson.propertise.AesSecretProperties;
 import com.breeze.boot.core.utils.AesUtil;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.log.bo.SysLogBO;
@@ -31,11 +30,13 @@ import com.breeze.boot.log.enums.LogType;
 import com.breeze.boot.log.events.PublisherSaveSysLogEvent;
 import com.breeze.boot.log.events.SysLogSaveEvent;
 import com.breeze.boot.satoken.oauth2.IUserDetailService;
+import com.breeze.boot.satoken.propertise.AesSecretProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import org.springframework.util.Assert;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -60,6 +61,7 @@ import static com.breeze.boot.log.enums.LogEnum.Result.SUCCESS;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Import({AesSecretProperties.class})
 public class SaTokenOauthConfigure {
     private final static String BCRYPT = "{bcrypt}";
 

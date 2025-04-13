@@ -26,7 +26,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.breeze.boot.core.base.UserPrincipal;
 import com.breeze.boot.core.enums.DataPermissionType;
-import com.breeze.boot.core.jackson.propertise.AesSecretProperties;
+import com.breeze.boot.satoken.propertise.AesSecretProperties;
 import com.breeze.boot.core.utils.AesUtil;
 import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.core.utils.EasyExcelExport;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, gaoweixuan (breeze-cloud@foxmail.com).
+ * Copyright (c) 2025, gaoweixuan (breeze-cloud@foxmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ package com.breeze.boot.modules.ai.model.vo;
  * 聊天大模型VO
  *
  * @author gaoweixuan
- * @version 1.0.0
  * @since 2025/03/09
  */
 public class ChatLLMVO {

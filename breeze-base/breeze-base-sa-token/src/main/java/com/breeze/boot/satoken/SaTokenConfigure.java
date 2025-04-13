@@ -41,7 +41,7 @@ public class SaTokenConfigure implements WebMvcConfigurer {
 
     private final SaTokenJumpAuthProperties jumpAuthProperties;
 
-    private final List<String> formLoginJumpUrl = Lists.newArrayList("/login", "/error", "/ai/**");
+    private final List<String> formLoginJumpUrl = Lists.newArrayList("/login", "/error");
 
     private final List<String> captchaJumpUrl = Lists.newArrayList("/auth/v1/captcha/**");
 

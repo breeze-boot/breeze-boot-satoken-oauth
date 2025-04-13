@@ -20,7 +20,7 @@ import cn.hutool.core.util.StrUtil;
 import com.anji.captcha.model.common.ResponseModel;
 import com.anji.captcha.model.vo.CaptchaVO;
 import com.anji.captcha.service.CaptchaService;
-import com.breeze.boot.core.jackson.propertise.AesSecretProperties;
+import com.breeze.boot.satoken.propertise.AesSecretProperties;
 import com.breeze.boot.log.events.PublisherSaveSysLogEvent;
 import com.breeze.boot.modules.auth.service.SysRegisteredClientService;
 import com.breeze.boot.modules.auth.service.SysUserService;

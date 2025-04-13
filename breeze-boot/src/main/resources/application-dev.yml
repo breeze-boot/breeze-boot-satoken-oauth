@@ -16,9 +16,31 @@ spring:
           max-idle: 8
           # 连接池中的最小空闲连接 默认0
           min-idle: 0
+
+    # MongoDB 配置
+    mongodb:
+      uri: mongodb://${BREEZE_MONGO_USER_PWD}@${BREEZE_MONGO_HOST}/breeze_chat?authSource=admin
+
   cache:
     # 缓存类型 redis、none(不使用缓存)
     type: redis
+
+  # ai
+  ai:
+    dashscope:
+      api-key: ${BREEZE_DASH_KEY}
+      chat:
+        options:
+          model: qwen-max
+    vectorstore:
+      elasticsearch:
+        index-name: breeze_chat_index
+        similarity: cosine
+        dimensions: 1536
+
+  elasticsearch:
+    uris: ${BREEZE_ES_HOST}
+
 
   # 数据源配置
   datasource:
