@@ -6,5 +6,3 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 RUN echo 'Asia/Shanghai' >/etc/timezone
 
 COPY ./breeze_boot_17.sql /docker-entrypoint-initdb.d
-
-COPY ./breeze_flowable_17.sql /docker-entrypoint-initdb.d

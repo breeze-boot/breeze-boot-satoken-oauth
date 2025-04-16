@@ -22,6 +22,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -54,4 +56,20 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         registry.addResourceHandler("/img/**").addResourceLocations("file:" + this.localProperties.getRootPath());
     }
 
+    @Override
+    public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        // 设置核心线程数
+        executor.setCorePoolSize(10);
+        // 设置最大线程数
+        executor.setMaxPoolSize(100);
+        // 设置队列容量
+        executor.setQueueCapacity(25);
+        // 设置线程名称前缀
+        executor.setThreadNamePrefix("BreezeAsyncThread-");
+        // 初始化线程池
+        executor.initialize();
+        // 将自定义的线程池任务执行器设置到WebMvc配置中
+        configurer.setTaskExecutor(executor);
+    }
 }

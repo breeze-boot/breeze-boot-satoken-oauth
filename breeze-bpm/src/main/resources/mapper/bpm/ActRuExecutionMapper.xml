@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.breeze.boot.bpm.mapper.ActRuExecutionMapper">
+
+    <select id="listPage" resultType="com.breeze.boot.bpm.model.vo.BpmInstanceVO">
+        SELECT RES.ID_               AS id,
+               RES.PROC_INST_ID_     AS procInstId,
+               RES.BUSINESS_KEY_     AS businessKey,
+               RES.SUSPENSION_STATE_ AS suspensionState,
+               RES.TENANT_ID_        AS tenantId,
+               RES.START_ACT_ID_     AS startActId,
+               RES.START_TIME_       AS startTime,
+               RES.START_USER_ID_    AS startUserId,
+               P.KEY_                AS `procDefKey`,
+               P.ID_                 AS procDefId,
+               P.NAME_               AS `procDefName`,
+               P.VERSION_            AS version,
+               P.DEPLOYMENT_ID_      AS deploymentId,
+               `user`.DISPLAY_NAME_  AS startUserName,
+               `user`.EMAIL_         AS email,
+               T.ASSIGNEE_           AS assignee
+        FROM act_ru_execution AS RES
+                 INNER JOIN act_re_procdef AS P ON RES.PROC_DEF_ID_ = P.ID_
+                 INNER JOIN act_ru_task AS T ON RES.ID_ = T.PROC_INST_ID_
+                 INNER JOIN act_id_user AS `user` ON RES.START_USER_ID_ = `user`.ID_
+        WHERE RES.PARENT_ID_ IS NULL
+        ORDER BY RES.ID_ ASC
+    </select>
+
+</mapper>

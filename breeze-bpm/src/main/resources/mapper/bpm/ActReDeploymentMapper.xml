@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.breeze.boot.bpm.mapper.ActReDeploymentMapper">
+
+    <resultMap id="BaseResultMap" type="com.breeze.boot.bpm.model.entity.ActReDeployment">
+        <id property="id" column="ID_" jdbcType="VARCHAR"/>
+        <result property="name" column="NAME_" jdbcType="VARCHAR"/>
+        <result property="category" column="CATEGORY_" jdbcType="VARCHAR"/>
+        <result property="key" column="KEY_" jdbcType="VARCHAR"/>
+        <result property="tenantId" column="TENANT_ID_" jdbcType="VARCHAR"/>
+        <result property="deployTime" column="DEPLOY_TIME_" jdbcType="TIMESTAMP"/>
+        <result property="derivedFrom" column="DERIVED_FROM_" jdbcType="VARCHAR"/>
+        <result property="derivedFromRoot" column="DERIVED_FROM_ROOT_" jdbcType="VARCHAR"/>
+        <result property="parentDeploymentId" column="PARENT_DEPLOYMENT_ID_" jdbcType="VARCHAR"/>
+        <result property="engineVersion" column="ENGINE_VERSION_" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="listPage" resultType="com.breeze.boot.bpm.model.vo.BpmDefinitionVO">
+        SELECT DEP.ID_                   AS id,
+               DEF.ID_                   AS procDefId,
+               DEP.NAME_                 AS procDefName,
+               DEP.KEY_                  AS `procDefKey`,
+               DEP.TENANT_ID_            AS tenantId,
+               DEP.DEPLOY_TIME_          AS deploymentTime,
+               DEP.DERIVED_FROM_         AS derivedFrom,
+               DEP.DERIVED_FROM_ROOT_    AS derivedFromRoot,
+               DEP.ENGINE_VERSION_       AS engineVersion,
+               cate.category_name        AS categoryName,
+               DEF.VERSION_              AS version,
+               DEF.SUSPENSION_STATE_     AS suspended
+        FROM act_re_deployment AS DEP
+                 LEFT JOIN act_bpm_category AS cate ON DEP.CATEGORY_ = cate.category_code
+                 LEFT JOIN act_re_procdef AS DEF ON DEP.ID_ = DEF.DEPLOYMENT_ID_
+        WHERE DEF.VERSION_ = (SELECT max(VERSION_) FROM ACT_RE_PROCDEF WHERE KEY_ = DEP.KEY_)
+        ORDER BY DEP.ID_ ASC
+    </select>
+
+    <select id="getInfo" resultType="com.breeze.boot.bpm.model.vo.BpmDefinitionVO">
+        SELECT DEP.ID_                   AS id,
+               DEP.NAME_                 AS procDefName,
+               DEP.KEY_                  AS `procDefKey`,
+               DEP.TENANT_ID_            AS tenantId,
+               DEP.DEPLOY_TIME_          AS deploymentTime,
+               DEP.DERIVED_FROM_         AS derivedFrom,
+               DEP.DERIVED_FROM_ROOT_    AS derivedFromRoot,
+               DEP.ENGINE_VERSION_       AS engineVersion,
+               cate.category_code        AS categoryCode,
+               cate.category_name        AS categoryName,
+               DEF.VERSION_              AS version,
+               DEF.SUSPENSION_STATE_     AS suspended
+        FROM act_re_deployment AS DEP
+                 LEFT JOIN act_bpm_category AS cate
+                           ON DEP.CATEGORY_ = cate.category_code
+                 LEFT JOIN act_re_procdef AS DEF ON DEP.ID_ = DEF.DEPLOYMENT_ID_
+        WHERE DEF.VERSION_ = (SELECT max(VERSION_) FROM ACT_RE_PROCDEF WHERE KEY_ = DEP.KEY_)
+          AND DEP.ID_ = #{definitionId}
+        ORDER BY DEP.ID_ ASC
+    </select>
+
+
+</mapper>

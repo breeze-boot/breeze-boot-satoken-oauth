@@ -50,7 +50,7 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 @Configuration
 @AllArgsConstructor
 @EnableWebSocketMessageBroker
-@Import(PublisherSaveMsgEvent.class)
+@Import({PublisherSaveMsgEvent.class, BreezeRabbitMqProperties.class})
 public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
 
     private final BreezeRabbitMqProperties mqProperties;

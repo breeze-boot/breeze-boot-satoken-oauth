@@ -25,7 +25,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-undertow</artifactId>
-            <version>${spring-boot.version}</version>
         </dependency>
 
         <!-- actuator -->
@@ -45,54 +44,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-
-        <!--阿里AI-->
-        <dependency>
-            <groupId>com.alibaba.cloud.ai</groupId>
-            <artifactId>spring-ai-alibaba-starter</artifactId>
-            <version>1.0.0-M5.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
-
-        <!-- 向量存储 -->
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-elasticsearch-store-spring-boot-starter</artifactId>
-            <version>1.0.0-M5</version>
-        </dependency>
-        <!-- PDF 解析 -->
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-pdf-document-reader</artifactId>
-            <version>1.0.0-M5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-tika-document-reader</artifactId>
-            <version>1.0.0-M5</version>
-        </dependency>
-
-        <dependency>
-            <groupId>co.elastic.clients</groupId>
-            <artifactId>elasticsearch-java</artifactId>
-            <version>8.13.3</version>
-        </dependency>
-
-        <!-- flowable -->
-        <dependency>
-            <groupId>org.flowable</groupId>
-            <artifactId>flowable-spring-boot-starter</artifactId>
-            <version>${flowable.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.mybatis</groupId>
-                    <artifactId>mybatis</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- monitor client -->
@@ -123,12 +74,6 @@
         <dependency>
             <groupId>com.breeze</groupId>
             <artifactId>breeze-base-sa-token</artifactId>
-        </dependency>
-
-        <!--定时任务-->
-        <dependency>
-            <groupId>com.breeze</groupId>
-            <artifactId>breeze-quartz</artifactId>
         </dependency>
 
         <!--日志-->
@@ -188,6 +133,24 @@
             <groupId>com.baomidou</groupId>
             <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
         </dependency>
+
+        <!--定时任务-->
+        <dependency>
+            <groupId>com.breeze</groupId>
+            <artifactId>breeze-quartz</artifactId>
+        </dependency>
+
+        <!--ai-->
+        <dependency>
+            <groupId>com.breeze</groupId>
+            <artifactId>breeze-ai</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.breeze</groupId>
+            <artifactId>breeze-bpm</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -195,10 +158,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
-                <configuration>
-                    <includeSystemScope>true</includeSystemScope>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>io.fabric8</groupId>

@@ -84,7 +84,8 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      */
     @Override
     public Page<RoleVO> listPage(RoleQuery roleQuery) {
-        Page<RoleBO> sysRolePage = this.baseMapper.listPage(new Page<>(roleQuery.getCurrent(), roleQuery.getSize()), roleQuery);
+        Page<SysRole> page = new Page<>(roleQuery.getCurrent(), roleQuery.getSize());
+        Page<RoleBO> sysRolePage = this.baseMapper.listPage(page, roleQuery);
         return this.sysRoleMapStruct.bo2VOPage(sysRolePage);
     }
 

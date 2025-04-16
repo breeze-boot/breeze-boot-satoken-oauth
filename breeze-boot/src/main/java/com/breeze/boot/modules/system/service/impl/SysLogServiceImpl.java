@@ -16,7 +16,6 @@
 
 package com.breeze.boot.modules.system.service.impl;
 
-import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.breeze.boot.log.bo.SysLogBO;
@@ -67,7 +66,6 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
      *
      * @param sysLogBO 系统日志BO
      */
-    @DS("master")
     @Override
     public void saveSysLog(SysLogBO sysLogBO) {
         SysLog sysLog = this.sysLogMapStruct.bo2Entity(sysLogBO);

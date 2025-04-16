@@ -44,7 +44,6 @@
         <dependency>
             <groupId>com.breeze</groupId>
             <artifactId>breeze-base-sa-token</artifactId>
-            <version>1.0</version>
         </dependency>
 
         <dependency>
