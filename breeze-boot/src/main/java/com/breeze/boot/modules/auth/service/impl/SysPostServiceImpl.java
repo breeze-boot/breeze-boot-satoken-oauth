@@ -25,7 +25,7 @@ import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.auth.mapper.SysPostMapper;
 import com.breeze.boot.modules.auth.model.entity.SysPost;
 import com.breeze.boot.modules.auth.model.form.PostForm;
-import com.breeze.boot.modules.auth.model.mappers.SysPostMapStruct;
+import com.breeze.boot.modules.auth.model.converter.SysPostConverter;
 import com.breeze.boot.modules.auth.model.query.PostQuery;
 import com.breeze.boot.modules.auth.model.vo.PostVO;
 import com.breeze.boot.modules.auth.service.SysPostService;
@@ -49,23 +49,23 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SysPostServiceImpl extends ServiceImpl<SysPostMapper, SysPost> implements SysPostService {
 
-    private final SysPostMapStruct sysPostMapStruct;
+    private final SysPostConverter sysPostConverter;
 
     /**
      * 列表页面
      *
-     * @param postQuery 岗位查询
+     * @param query 岗位查询
      * @return {@link IPage}<{@link PostVO}>
      */
     @Override
     @DymicSql
-    public IPage<PostVO> listPage(@ConditionParam PostQuery postQuery) {
+    public IPage<PostVO> listPage(@ConditionParam PostQuery query) {
         Page<SysPost> page = new LambdaQueryChainWrapper<>(this.getBaseMapper())
-                .like(StrUtil.isAllNotBlank(postQuery.getPostCode()), SysPost::getPostCode, postQuery.getPostCode())
-                .like(StrUtil.isAllNotBlank(postQuery.getPostName()), SysPost::getPostName, postQuery.getPostName())
+                .like(StrUtil.isAllNotBlank(query.getPostCode()), SysPost::getPostCode, query.getPostCode())
+                .like(StrUtil.isAllNotBlank(query.getPostName()), SysPost::getPostName, query.getPostName())
                 .orderByDesc(SysPost::getCreateTime)
-                .page(new Page<>(postQuery.getCurrent(), postQuery.getSize()));
-        return this.sysPostMapStruct.page2PageVO(page);
+                .page(new Page<>(query.getCurrent(), query.getSize()));
+        return this.sysPostConverter.page2PageVO(page);
     }
 
     /**
@@ -77,30 +77,30 @@ public class SysPostServiceImpl extends ServiceImpl<SysPostMapper, SysPost> impl
     @Override
     public PostVO getInfoById(Long postId) {
         SysPost sysPost = this.getById(postId);
-        return this.sysPostMapStruct.entity2VO(sysPost);
+        return this.sysPostConverter.entity2VO(sysPost);
     }
 
     /**
      * 保存岗位
      *
-     * @param postForm 岗位表单
+     * @param form 岗位表单
      * @return {@link Boolean }
      */
     @Override
-    public Boolean savePost(PostForm postForm) {
-        return this.save(sysPostMapStruct.form2Entity(postForm));
+    public Boolean savePost(PostForm form) {
+        return this.save(sysPostConverter.form2Entity(form));
     }
 
     /**
      * 修改岗位
      *
      * @param id       ID
-     * @param postForm 岗位表单
+     * @param form 岗位表单
      * @return {@link Boolean }
      */
     @Override
-    public Boolean modifyPost(Long id, PostForm postForm) {
-        SysPost sysPost = sysPostMapStruct.form2Entity(postForm);
+    public Boolean modifyPost(Long id, PostForm form) {
+        SysPost sysPost = sysPostConverter.form2Entity(form);
         sysPost.setId(id);
         return this.updateById(sysPost);
     }

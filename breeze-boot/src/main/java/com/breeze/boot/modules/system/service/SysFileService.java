@@ -40,32 +40,32 @@ public interface SysFileService extends IService<SysFile> {
     /**
      * 列表页面
      *
-     * @param fileQuery 文件查询
+     * @param query 文件查询
      * @return {@link Page}<{@link SysFile}>
      */
-    Page<SysFile> listPage(FileQuery fileQuery);
+    Page<SysFile> listPage(FileQuery query);
 
-    Boolean updateFileById(Long fileId, FileBizForm fileBizForm);
+    Boolean updateFileById(Long fileId, FileBizForm form);
 
     /**
      * 上传minio
      *
-     * @param fileForm 文件上传参数
-     * @param request   请求
-     * @param response  响应
+     * @param form     文件上传参数
+     * @param request  请求
+     * @param response 响应
      * @return {@link Result}<{@link Map}<{@link String}, {@link Object}>>
      */
-    Result<Map<String, Object>> uploadMinioS3(FileForm fileForm, HttpServletRequest request, HttpServletResponse response);
+    Result<Map<String, Object>> uploadMinioS3(FileForm form, HttpServletRequest request, HttpServletResponse response);
 
     /**
      * 上传本地存储
      *
-     * @param fileForm 文件参数
-     * @param request   请求
-     * @param response  响应
+     * @param form     文件参数
+     * @param request  请求
+     * @param response 响应
      * @return {@link Result}<{@link Map}<{@link String}, {@link Object}>>
      */
-    Result<Map<String, Object>> uploadLocalStorage(FileForm fileForm, HttpServletRequest request, HttpServletResponse response);
+    Result<Map<String, Object>> uploadLocalStorage(FileForm form, HttpServletRequest request, HttpServletResponse response);
 
     /**
      * 预览

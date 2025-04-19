@@ -20,14 +20,13 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.breeze.boot.ai.mapper.ChatDocMapper;
+import com.breeze.boot.ai.model.converter.CharDocConverter;
 import com.breeze.boot.ai.model.entity.AiChatDoc;
 import com.breeze.boot.ai.model.form.ChatDocForm;
-import com.breeze.boot.ai.model.mappers.CharDocMapStruct;
 import com.breeze.boot.ai.model.query.AiChatDocQuery;
 import com.breeze.boot.ai.model.vo.AiChatDocVO;
 import com.breeze.boot.ai.service.IAiChatDocService;
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +42,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AIChatDocServiceImpl extends ServiceImpl<ChatDocMapper, AiChatDoc> implements IAiChatDocService {
 
-    private final CharDocMapStruct charDocMapStruct;
+    private final CharDocConverter charDocConverter;
 
     /**
      * 列表页面
@@ -52,25 +51,25 @@ public class AIChatDocServiceImpl extends ServiceImpl<ChatDocMapper, AiChatDoc> 
     public Page<AiChatDocVO> listPage(AiChatDocQuery query) {
         Page<AiChatDoc> page = new Page<>(query.getCurrent(), query.getSize());
         Page<AiChatDoc> aiChatDocPage = this.page(page, Wrappers.<AiChatDoc>lambdaQuery());
-        return this.charDocMapStruct.entity2VOPage(aiChatDocPage);
+        return this.charDocConverter.entity2VOPage(aiChatDocPage);
     }
 
     @Override
-    public boolean saveChatDoc(ChatDocForm chatDocForm) {
+    public boolean saveChatDoc(ChatDocForm form) {
         AiChatDoc chatDoc = AiChatDoc.builder()
-                .docName(chatDocForm.getDocName())
-                .docUrl(chatDocForm.getDocUrl()).build();
+                .docName(form.getDocName())
+                .docUrl(form.getDocUrl()).build();
         return this.save(chatDoc);
     }
 
     @Override
     public AiChatDocVO getInfoById(Long docId) {
-        return this.charDocMapStruct.entity2VO(this.getById(docId));
+        return this.charDocConverter.entity2VO(this.getById(docId));
     }
 
     @Override
-    public Boolean modifyChatDoc(Long id, ChatDocForm chatDocForm) {
-        AiChatDoc chatDoc = this.charDocMapStruct.form2Entity(chatDocForm);
+    public Boolean modifyChatDoc(Long id, ChatDocForm form) {
+        AiChatDoc chatDoc = this.charDocConverter.form2Entity(form);
         chatDoc.setId(id);
         return this.updateById(chatDoc);
     }

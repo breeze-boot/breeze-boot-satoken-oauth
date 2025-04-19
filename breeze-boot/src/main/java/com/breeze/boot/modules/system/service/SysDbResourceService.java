@@ -36,10 +36,10 @@ public interface SysDbResourceService extends IService<SysDbResource> {
     /**
      * 分页
      *
-     * @param dbResourceQuery 数据源查询参数
+     * @param query 数据源查询参数
      * @return {@link Page}<{@link DbResourceVO}>
      */
-    Page<DbResourceVO> listPage(DbResourceQuery dbResourceQuery);
+    Page<DbResourceVO> listPage(DbResourceQuery query);
 
     /**
      * 按id获取数据库资源
@@ -52,19 +52,19 @@ public interface SysDbResourceService extends IService<SysDbResource> {
     /**
      * 添加数据源
      *
-     * @param dbResourceForm 数据源
+     * @param form 数据源
      * @return {@link Boolean}
      */
-    Boolean saveDbResource(DbResourceForm dbResourceForm);
+    Boolean saveDbResource(DbResourceForm form);
 
     /**
      * 更新数据源
      *
-     * @param id     ID
-     * @param dbResourceForm db表格
+     * @param id   ID
+     * @param form db表格
      * @return {@link Boolean}
      */
-    Boolean modifyDbResource(Long id, DbResourceForm dbResourceForm);
+    Boolean modifyDbResource(Long id, DbResourceForm form);
 
     /**
      * 删除数据源

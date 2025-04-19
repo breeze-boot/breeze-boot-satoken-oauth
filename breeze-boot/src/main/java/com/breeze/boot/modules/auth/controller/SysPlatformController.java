@@ -20,7 +20,6 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.breeze.boot.core.lock.annotation.RedissonLock;
 import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.log.annotation.BreezeSysLog;
@@ -76,15 +75,14 @@ public class SysPlatformController {
     /**
      * 列表
      *
-     * @param platformQuery 平台查询
+     * @param query 平台查询
      * @return {@link Result}<{@link Page}<{@link PlatformVO}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("auth:platform:list")
-    @RedissonLock(value = "'lock_' + #platformQuery.platformCode")
-    public Result<Page<PlatformVO>> list(@RequestBody PlatformQuery platformQuery) {
-        return Result.ok(this.sysPlatformService.listPage(platformQuery));
+    public Result<Page<PlatformVO>> list(@RequestBody PlatformQuery query) {
+        return Result.ok(this.sysPlatformService.listPage(query));
     }
 
     /**
@@ -110,8 +108,9 @@ public class SysPlatformController {
     @Operation(summary = "校验平台编码是否重复")
     @GetMapping("/checkPlatformCode")
     @SaCheckPermission("auth:platform:list")
-    public Result<Boolean> checkPlatformCode(@Parameter(description = "平台编码") @NotBlank(message = "平台编码不能为空") @RequestParam("platformCode") String platformCode,
-                                             @Parameter(description = "平台ID") @RequestParam(value = "platformId", required = false) Long platformId) {
+    public Result<Boolean> checkPlatformCode(
+            @Parameter(description = "平台编码") @NotBlank(message = "平台编码不能为空") @RequestParam("platformCode") String platformCode,
+            @Parameter(description = "平台ID") @RequestParam(value = "platformId", required = false) Long platformId) {
         // @formatter:off
         return Result.ok(Objects.isNull(this.sysPlatformService.getOne(Wrappers.<SysPlatform>lambdaQuery()
                 .ne(Objects.nonNull(platformId), SysPlatform::getId, platformId)
@@ -122,21 +121,21 @@ public class SysPlatformController {
     /**
      * 创建
      *
-     * @param platformForm 平台表单
+     * @param form 平台表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "保存")
     @PostMapping
     @SaCheckPermission("auth:platform:create")
     @BreezeSysLog(description = "平台信息保存", type = LogType.SAVE)
-    public Result<Boolean> save(@Valid @RequestBody PlatformForm platformForm) {
-        return Result.ok(this.sysPlatformService.savePlatform(platformForm));
+    public Result<Boolean> save(@Valid @RequestBody PlatformForm form) {
+        return Result.ok(this.sysPlatformService.savePlatform(form));
     }
 
     /**
      * 修改
      *
-     * @param platformForm 平台表单
+     * @param form 平台表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "修改")
@@ -144,8 +143,8 @@ public class SysPlatformController {
     @SaCheckPermission("auth:platform:modify")
     @BreezeSysLog(description = "平台信息修改", type = LogType.EDIT)
     public Result<Boolean> modify(@Parameter(description = "平台ID") @NotNull(message = "平台ID不能为空") @PathVariable Long id,
-                                  @Valid @RequestBody PlatformForm platformForm) {
-        return Result.ok(this.sysPlatformService.modifyPlatform(id, platformForm));
+                                  @Valid @RequestBody PlatformForm form) {
+        return Result.ok(this.sysPlatformService.modifyPlatform(id, form));
     }
 
     /**
@@ -160,7 +159,8 @@ public class SysPlatformController {
     @BreezeSysLog(description = "平台信息删除", type = LogType.DELETE)
     public Result<Boolean> delete(@Parameter(description = "平台IDS")
                                   @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
-        List<SysMenu> platformEntityList = this.sysMenuService.list(Wrappers.<SysMenu>lambdaQuery().in(SysMenu::getPlatformId, (Object[]) ids));
+        List<SysMenu> platformEntityList = this.sysMenuService.list(Wrappers.<SysMenu>lambdaQuery()
+                .in(SysMenu::getPlatformId, (Object[]) ids));
         AssertUtil.isTrue(CollUtil.isEmpty(platformEntityList), IS_USED);
         return Result.ok(this.sysPlatformService.removeByIds(Arrays.asList(ids)));
     }

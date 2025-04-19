@@ -64,14 +64,14 @@ public class SysTenantController {
     /**
      * 列表
      *
-     * @param tenantQuery 租户查询
+     * @param query 租户查询
      * @return {@link Result}<{@link Page}<{@link TenantVO}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("auth:tenant:list")
-    public Result<Page<TenantVO>> list(@RequestBody TenantQuery tenantQuery) {
-        return Result.ok(this.sysTenantService.listPage(tenantQuery));
+    public Result<Page<TenantVO>> list(@RequestBody TenantQuery query) {
+        return Result.ok(this.sysTenantService.listPage(query));
     }
 
     /**
@@ -111,8 +111,11 @@ public class SysTenantController {
     @Operation(summary = "校验租户编码是否重复")
     @GetMapping("/checkTenantCode")
     @SaCheckPermission("auth:tenant:list")
-    public Result<Boolean> checkTenantCode(@Parameter(description = "租户编码") @NotBlank(message = "租户编码不能为空") @RequestParam("tenantCode") String tenantCode,
-                                           @Parameter(description = "租户ID") @RequestParam(value = "tenantId", required = false) Long tenantId) {
+    public Result<Boolean> checkTenantCode(
+            // @formatter:off
+            @Parameter(description = "租户编码") @NotBlank(message = "租户编码不能为空") @RequestParam("tenantCode") String tenantCode,
+            @Parameter(description = "租户ID") @RequestParam(value = "tenantId", required = false) Long tenantId) {
+            // @formatter:on
         // @formatter:off
         return Result.ok(Objects.isNull(this.sysTenantService.getOne(Wrappers.<SysTenant>lambdaQuery()
                 .ne(Objects.nonNull(tenantId), SysTenant::getId, tenantId)
@@ -123,8 +126,8 @@ public class SysTenantController {
     /**
      * 修改
      *
-     * @param id         ID
-     * @param tenantForm 租户表单
+     * @param id   ID
+     * @param form 租户表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "修改")
@@ -132,8 +135,8 @@ public class SysTenantController {
     @SaCheckPermission("auth:tenant:modify")
     @BreezeSysLog(description = "租户信息修改", type = LogType.EDIT)
     public Result<Boolean> modify(@Parameter(description = "租户ID") @NotNull(message = "租户ID不能为空") @PathVariable Long id,
-                                  @Valid @RequestBody TenantForm tenantForm) {
-        return Result.ok(this.sysTenantService.modifyTenant(id,tenantForm));
+                                  @Valid @RequestBody TenantForm form) {
+        return Result.ok(this.sysTenantService.modifyTenant(id,form));
     }
 
     /**

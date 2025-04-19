@@ -39,13 +39,13 @@ public class ActRuExecutionServiceImpl extends ServiceImpl<ActRuExecutionMapper,
     /**
      * 列表页面
      *
-     * @param bpmInstanceQuery 流程实例查询
+     * @param query 流程实例查询
      * @return {@link Page}<{@link BpmInstanceVO}>
      */
     @Override
-    public Page<BpmInstanceVO> listPage(BpmInstanceQuery bpmInstanceQuery) {
-        Page<BpmInstanceVO> page = new Page<>(bpmInstanceQuery.getCurrent(), bpmInstanceQuery.getSize());
-        return this.baseMapper.listPage(page, bpmInstanceQuery);
+    public Page<BpmInstanceVO> listPage(BpmInstanceQuery query) {
+        Page<BpmInstanceVO> page = new Page<>(query.getCurrent(), query.getSize());
+        return this.baseMapper.listPage(page, query);
     }
 
 }

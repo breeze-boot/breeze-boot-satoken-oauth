@@ -25,7 +25,6 @@
         <module>breeze-base-validator</module>
         <module>breeze-base-core</module>
         <module>breeze-base-doc</module>
-        <module>breeze-base-sms</module>
         <module>breeze-base-anji-captcha</module>
         <module>breeze-base-sa-token</module>
         <module>spring-boot3-starter-captcha</module>

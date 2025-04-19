@@ -44,14 +44,14 @@ public class BpmUserController {
     /**
      * 列表
      *
-     * @param userQuery 用户查询
+     * @param query 用户查询
      * @return {@link Result }<{@link Page }<{@link BpmUserVO }>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("bpm:user:list")
-    public Result<Page<BpmUserVO>> list(@RequestBody BpmUserQuery userQuery) {
-        return Result.ok(this.userService.listPage(userQuery));
+    public Result<Page<BpmUserVO>> list(@RequestBody BpmUserQuery query) {
+        return Result.ok(this.userService.listPage(query));
     }
 
 }

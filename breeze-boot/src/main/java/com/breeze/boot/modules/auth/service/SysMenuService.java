@@ -55,10 +55,10 @@ public interface SysMenuService extends IService<SysMenu> {
     /**
      * 菜单列表
      *
-     * @param menuQuery 菜单查询
+     * @param query 菜单查询
      * @return {@link Result}<{@link ?}>
      */
-    Result<?> listMenu(MenuQuery menuQuery);
+    Result<?> listMenu(MenuQuery query);
 
     /**
      * 树形权限列表
@@ -81,10 +81,10 @@ public interface SysMenuService extends IService<SysMenu> {
      * 修改菜单
      *
      * @param id          id
-     * @param menuForm 菜单表单
+     * @param form 菜单表单
      * @return {@link Result}<{@link Boolean}>
      */
-    Result<Boolean> modifyMenu(Long id, MenuForm menuForm);
+    Result<Boolean> modifyMenu(Long id, MenuForm form);
 
     /**
      * 删除通过id

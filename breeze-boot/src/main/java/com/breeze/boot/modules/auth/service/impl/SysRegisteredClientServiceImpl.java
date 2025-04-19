@@ -70,40 +70,40 @@ public class SysRegisteredClientServiceImpl extends ServiceImpl<SysRegisteredCli
     /**
      * 列表页面
      *
-     * @param registeredClientQuery 注册客户端参数
+     * @param query 注册客户端参数
      * @return {@link Page}<{@link RegisteredClientVO}>
      */
     @Override
-    public Page<RegisteredClientVO> listPage(RegisteredClientQuery registeredClientQuery) {
-        Page<SysRegisteredClient> page = new Page<>(registeredClientQuery.getCurrent(), registeredClientQuery.getSize());
-        Page<RegisteredClientVO> registeredClientPage = this.baseMapper.listPage(page, registeredClientQuery);
+    public Page<RegisteredClientVO> listPage(RegisteredClientQuery query) {
+        Page<SysRegisteredClient> page = new Page<>(query.getCurrent(), query.getSize());
+        Page<RegisteredClientVO> registeredClientPage = this.baseMapper.listPage(page, query);
         return registeredClientPage.setRecords(registeredClientPage.getRecords().stream().peek(this::getClientVO).collect(Collectors.toList()));
     }
 
     /**
      * 保存
      *
-     * @param registeredClientForm 注册客户端表单
+     * @param form 注册客户端表单
      */
     @SneakyThrows
     @Override
-    public Result<Boolean> saveRegisteredClient(RegisteredClientForm registeredClientForm) {
-        Assert.notNull(registeredClientForm, "registeredClient cannot be null");
-        SysRegisteredClient registeredClient = this.getByClientId(registeredClientForm.getClientId());
+    public Result<Boolean> saveRegisteredClient(RegisteredClientForm form) {
+        Assert.notNull(form, "registeredClient cannot be null");
+        SysRegisteredClient registeredClient = this.getByClientId(form.getClientId());
         AssertUtil.isTrue(Objects.isNull(registeredClient), EXISTS);
-        return Result.ok(this.save(this.buildClient(registeredClientForm)));
+        return Result.ok(this.save(this.buildClient(form)));
     }
 
     /**
      * 更新
      *
      * @param id     id
-     * @param client 注册客户端表单
+     * @param form 注册客户端表单
      * @return {@link Boolean}
      */
     @Override
-    public Boolean modifyRegisteredClient(Long id, RegisteredClientForm client) {
-        SysRegisteredClient sysRegisteredClient = this.buildClient(client);
+    public Boolean modifyRegisteredClient(Long id, RegisteredClientForm form) {
+        SysRegisteredClient sysRegisteredClient = this.buildClient(form);
         sysRegisteredClient.setId(id);
         return this.update(Wrappers.<SysRegisteredClient>lambdaUpdate()
                 .set(SysRegisteredClient::getClientId, sysRegisteredClient.getClientId())
@@ -169,15 +169,15 @@ public class SysRegisteredClientServiceImpl extends ServiceImpl<SysRegisteredCli
     /**
      * 重置客户端密钥
      *
-     * @param resetClientSecretForm 重置客户秘密表单
+     * @param form 重置客户秘密表单
      * @return {@link Boolean}
      */
     @Override
-    public Boolean resetClientSecret(ResetClientSecretForm resetClientSecretForm) {
-        resetClientSecretForm.setClientSecret(BCrypt.hashpw(resetClientSecretForm.getClientSecret(), BCrypt.gensalt()));
+    public Boolean resetClientSecret(ResetClientSecretForm form) {
+        form.setClientSecret(BCrypt.hashpw(form.getClientSecret(), BCrypt.gensalt()));
         return this.update(Wrappers.<SysRegisteredClient>lambdaUpdate()
-                .set(SysRegisteredClient::getClientSecret, resetClientSecretForm.getClientSecret())
-                .eq(SysRegisteredClient::getId, resetClientSecretForm.getId()));
+                .set(SysRegisteredClient::getClientSecret, form.getClientSecret())
+                .eq(SysRegisteredClient::getId, form.getId()));
     }
 
     /**

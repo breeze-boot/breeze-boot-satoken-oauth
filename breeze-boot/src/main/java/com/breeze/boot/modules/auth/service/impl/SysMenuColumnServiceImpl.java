@@ -25,7 +25,7 @@ import com.breeze.boot.modules.auth.mapper.SysMenuColumnMapper;
 import com.breeze.boot.modules.auth.model.entity.SysMenuColumn;
 import com.breeze.boot.modules.auth.model.entity.SysRoleMenuColumn;
 import com.breeze.boot.modules.auth.model.form.MenuColumnForm;
-import com.breeze.boot.modules.auth.model.mappers.SysMenuColumnMapStruct;
+import com.breeze.boot.modules.auth.model.converter.SysMenuColumnConverter;
 import com.breeze.boot.modules.auth.model.query.MenuColumnQuery;
 import com.breeze.boot.modules.auth.model.vo.MenuColumnVO;
 import com.breeze.boot.modules.auth.model.vo.RolesMenuColumnVO;
@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SysMenuColumnServiceImpl extends ServiceImpl<SysMenuColumnMapper, SysMenuColumn> implements SysMenuColumnService {
 
-    private final SysMenuColumnMapStruct sysMenuColumnMapStruct;
+    private final SysMenuColumnConverter sysMenuColumnConverter;
 
     private final SysRoleMenuColumnService sysRoleMenuColumnService;
 
@@ -79,14 +79,14 @@ public class SysMenuColumnServiceImpl extends ServiceImpl<SysMenuColumnMapper, S
     /**
      * 列表页面
      *
-     * @param permissionQuery 权限查询
+     * @param query 权限查询
      * @return {@link Page}<{@link RowPermissionVO}>
      */
     @Override
-    public Page<MenuColumnVO> listPage(MenuColumnQuery permissionQuery) {
-        Page<SysMenuColumn> page = new Page<>(permissionQuery.getCurrent(), permissionQuery.getSize());
-        Page<SysMenuColumn> sysColumnPermissionPage = this.baseMapper.listPage(page, permissionQuery);
-        return this.sysMenuColumnMapStruct.page2VOPage(sysColumnPermissionPage);
+    public Page<MenuColumnVO> listPage(MenuColumnQuery query) {
+        Page<SysMenuColumn> page = new Page<>(query.getCurrent(), query.getSize());
+        Page<SysMenuColumn> sysColumnPermissionPage = this.baseMapper.listPage(page, query);
+        return this.sysMenuColumnConverter.page2VOPage(sysColumnPermissionPage);
     }
 
     /**
@@ -98,28 +98,28 @@ public class SysMenuColumnServiceImpl extends ServiceImpl<SysMenuColumnMapper, S
     @Override
     public MenuColumnVO getInfoById(Long menuColumnId) {
         SysMenuColumn sysMenuColumn = this.getById(menuColumnId);
-        return this.sysMenuColumnMapStruct.entity2VO(sysMenuColumn);
+        return this.sysMenuColumnConverter.entity2VO(sysMenuColumn);
     }
 
     /**
      * 保存
      *
-     * @param menuColumnForm 菜单栏表单
+     * @param form 菜单栏表单
      * @return {@link Result }<{@link Boolean }>
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Result<Boolean> saveMenuColumn(MenuColumnForm menuColumnForm) {
-        for (String column : menuColumnForm.getColumns()) {
+    public Result<Boolean> saveMenuColumn(MenuColumnForm form) {
+        for (String column : form.getColumns()) {
             SysMenuColumn sysMenuColumn = new SysMenuColumn();
-            sysMenuColumn.setMenu(menuColumnForm.getMenu());
+            sysMenuColumn.setMenu(form.getMenu());
             sysMenuColumn.setColumn(column);
-            if (menuColumnForm.getVisible()) {
-                List<SysMenuColumn> sysMenuColumnList = list(Wrappers.<SysMenuColumn>lambdaQuery().eq(SysMenuColumn::getColumn, column).eq(SysMenuColumn::getMenu, menuColumnForm.getMenu()));
+            if (form.getVisible()) {
+                List<SysMenuColumn> sysMenuColumnList = list(Wrappers.<SysMenuColumn>lambdaQuery().eq(SysMenuColumn::getColumn, column).eq(SysMenuColumn::getMenu, form.getMenu()));
                 if (CollUtil.isNotEmpty(sysMenuColumnList) && sysMenuColumnList.size() == 1) {
-                    this.sysRoleMenuColumnService.remove(Wrappers.<SysRoleMenuColumn>lambdaQuery().eq(SysRoleMenuColumn::getMenu, menuColumnForm.getMenu()));
+                    this.sysRoleMenuColumnService.remove(Wrappers.<SysRoleMenuColumn>lambdaQuery().eq(SysRoleMenuColumn::getMenu, form.getMenu()));
                 }
-                this.remove(Wrappers.<SysMenuColumn>lambdaQuery().eq(SysMenuColumn::getColumn, column).eq(SysMenuColumn::getMenu, menuColumnForm.getMenu()));
+                this.remove(Wrappers.<SysMenuColumn>lambdaQuery().eq(SysMenuColumn::getColumn, column).eq(SysMenuColumn::getMenu, form.getMenu()));
             } else {
                 this.save(sysMenuColumn);
             }

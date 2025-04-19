@@ -1,0 +1,10 @@
+export default {
+    ${entityClassLowerName}: {
+    fields: {
+    #foreach($column in $columns)
+    ${column.attrName}: '${column.attrName}',
+    #end
+    },
+    rules: {},
+    },
+}

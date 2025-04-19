@@ -58,14 +58,14 @@ public class SysDictItemController {
     /**
      * 列表
      *
-     * @param dictItemQuery 字典项查询
+     * @param query 字典项查询
      * @return {@link Result}<{@link List}<{@link DictItemVO}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/list")
     @SaCheckPermission("sys:dict:list")
-    public Result<List<DictItemVO>> list(@RequestBody DictItemQuery dictItemQuery) {
-        return Result.ok(this.sysDictItemService.listDictItem(dictItemQuery));
+    public Result<List<DictItemVO>> list(@RequestBody DictItemQuery query) {
+        return Result.ok(this.sysDictItemService.listDictItem(query));
     }
 
     /**
@@ -84,22 +84,22 @@ public class SysDictItemController {
     /**
      * 创建
      *
-     * @param dictItemForm 字典项表单
+     * @param form 字典项表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "保存")
     @PostMapping
     @SaCheckPermission("sys:dict:create")
     @BreezeSysLog(description = "字典项信息保存", type = LogType.SAVE)
-    public Result<Boolean> save(@Valid @RequestBody DictItemForm dictItemForm) {
-        return Result.ok(sysDictItemService.saveDictItem(dictItemForm));
+    public Result<Boolean> save(@Valid @RequestBody DictItemForm form) {
+        return Result.ok(sysDictItemService.saveDictItem(form));
     }
 
     /**
      * 修改
      *
      * @param id           ID
-     * @param dictItemForm 字典项表单
+     * @param form 字典项表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "修改")
@@ -107,8 +107,8 @@ public class SysDictItemController {
     @SaCheckPermission("sys:dict:modify")
     @BreezeSysLog(description = "字典项信息修改", type = LogType.EDIT)
     public Result<Boolean> modify(@Parameter(description = "字典项ID") @NotNull(message = "字典项ID不能为空") @PathVariable Long id,
-                                  @Valid @RequestBody DictItemForm dictItemForm) {
-        return Result.ok(this.sysDictItemService.modifyDictItem(id, dictItemForm));
+                                  @Valid @RequestBody DictItemForm form) {
+        return Result.ok(this.sysDictItemService.modifyDictItem(id, form));
     }
 
     /**

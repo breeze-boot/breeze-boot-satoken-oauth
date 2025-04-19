@@ -19,10 +19,10 @@ package com.breeze.boot.bpm.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.breeze.boot.bpm.model.converter.BpmGroupConverter;
 import com.breeze.boot.bpm.service.IGroupService;
 import com.breeze.boot.bpm.mapper.GroupMapper;
 import com.breeze.boot.bpm.model.entity.Group;
-import com.breeze.boot.bpm.model.mappers.BpmGroupMapStruct;
 import com.breeze.boot.bpm.model.query.BpmGroupQuery;
 import com.breeze.boot.bpm.model.vo.BpmGroupVO;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +32,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class GroupServiceImpl extends ServiceImpl<GroupMapper, Group> implements IGroupService {
 
-    private final BpmGroupMapStruct bpmGroupMapStruct;
+    private final BpmGroupConverter bpmGroupConverter;
 
     @Override
-    public Page<BpmGroupVO> listPage(BpmGroupQuery groupQuery) {
-        Page<Group> page = this.baseMapper.listPage(new Page<>(groupQuery.getCurrent(), groupQuery.getSize()), groupQuery);
-        return this.bpmGroupMapStruct.entityPage2PageVO(page);
+    public Page<BpmGroupVO> listPage(BpmGroupQuery query) {
+        Page<Group> page = this.baseMapper.listPage(new Page<>(query.getCurrent(), query.getSize()), query);
+        return this.bpmGroupConverter.entityPage2PageVO(page);
     }
 
 }

@@ -171,29 +171,29 @@ public class BpmInstanceServiceImpl implements IBpmInstanceService {
     /**
      * 列表页面
      *
-     * @param bpmInstanceQuery 流程实例查询
+     * @param query 流程实例查询
      * @return {@link Page}<{@link BpmInstanceVO}>
      */
     @Override
-    public Page<BpmInstanceVO> listPage(BpmInstanceQuery bpmInstanceQuery) {
-        return this.actRuExecutionService.listPage(bpmInstanceQuery);
+    public Page<BpmInstanceVO> listPage(BpmInstanceQuery query) {
+        return this.actRuExecutionService.listPage(query);
     }
 
     @Override
-    public void voidProcess(BpmApprovalForm bpmApprovalForm) {
-        String deleteReason = "终止" + (StringUtils.isNotBlank(bpmApprovalForm.getComment()) ? bpmApprovalForm.getComment() : "");
+    public void voidProcess(BpmApprovalForm form) {
+        String deleteReason = "终止" + (StringUtils.isNotBlank(form.getComment()) ? form.getComment() : "");
         // 设置审批意见
         if (StringUtils.isNotEmpty(deleteReason)) {
             // 维护历史任务实例删除原因
-            Task task = taskService.createTaskQuery().taskId(bpmApprovalForm.getTaskId()).singleResult();
-            taskService.addComment(bpmApprovalForm.getTaskId(), task.getProcessInstanceId(), deleteReason);
+            Task task = taskService.createTaskQuery().taskId(form.getTaskId()).singleResult();
+            taskService.addComment(form.getTaskId(), task.getProcessInstanceId(), deleteReason);
         }
-        runtimeService.deleteProcessInstance(bpmApprovalForm.getProcInstId(), deleteReason);
+        runtimeService.deleteProcessInstance(form.getProcInstId(), deleteReason);
     }
 
     @Override
-    public void remove(List<String> processInstanceIdList) {
-        for (String procInstId : processInstanceIdList) {
+    public void remove(List<String> idList) {
+        for (String procInstId : idList) {
             //根据流程实例id 去ACT_RU_EXECUTION与ACT_RE_PROCDEF关联查询流程实例数据
             // @formatter:off
             ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()

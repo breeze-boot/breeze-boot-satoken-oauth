@@ -21,10 +21,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.breeze.boot.modules.system.mapper.SysEmailConfigMapper;
+import com.breeze.boot.modules.system.model.converter.SysEmailConverter;
 import com.breeze.boot.modules.system.model.entity.SysEmailConfig;
 import com.breeze.boot.modules.system.model.form.EmailConfigForm;
 import com.breeze.boot.modules.system.model.form.EmailConfigOpenForm;
-import com.breeze.boot.modules.system.model.mappers.SysEmailMapStruct;
 import com.breeze.boot.modules.system.model.query.EmailConfigQuery;
 import com.breeze.boot.modules.system.model.vo.EmailConfigVO;
 import com.breeze.boot.modules.system.service.SysEmailConfigService;
@@ -48,23 +48,23 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SysEmailConfigServiceImpl extends ServiceImpl<SysEmailConfigMapper, SysEmailConfig> implements SysEmailConfigService {
 
-    private final SysEmailMapStruct sysEmailMapStruct;
+    private final SysEmailConverter sysEmailConverter;
 
     /**
      * 列表页
      *
-     * @param emailConfigQuery 电子邮件查询
+     * @param query 电子邮件查询
      * @return {@link Page }<{@link EmailConfigVO }>
      */
     @Override
     @DymicSql
-    public Page<EmailConfigVO> listPage(@ConditionParam EmailConfigQuery emailConfigQuery) {
-        Page<SysEmailConfig> emailPage = new Page<>(emailConfigQuery.getCurrent(), emailConfigQuery.getSize());
+    public Page<EmailConfigVO> listPage(@ConditionParam EmailConfigQuery query) {
+        Page<SysEmailConfig> emailPage = new Page<>(query.getCurrent(), query.getSize());
         QueryWrapper<SysEmailConfig> queryWrapper = new QueryWrapper<>();
-        emailConfigQuery.getSortQueryWrapper(queryWrapper);
-        queryWrapper.like(StrUtil.isAllNotBlank(emailConfigQuery.getUsername()), "username", emailConfigQuery.getUsername());
+        query.getSortQueryWrapper(queryWrapper);
+        queryWrapper.like(StrUtil.isAllNotBlank(query.getUsername()), "username", query.getUsername());
         Page<SysEmailConfig> page = this.page(emailPage, queryWrapper);
-        return this.sysEmailMapStruct.page2PageVO(page);
+        return this.sysEmailConverter.page2PageVO(page);
     }
 
     /**
@@ -76,41 +76,41 @@ public class SysEmailConfigServiceImpl extends ServiceImpl<SysEmailConfigMapper,
     @Override
     public EmailConfigVO getInfoById(Long emailId) {
         SysEmailConfig sysEmailConfig = this.getById(emailId);
-        return this.sysEmailMapStruct.entity2VO(sysEmailConfig);
+        return this.sysEmailConverter.entity2VO(sysEmailConfig);
     }
 
     /**
      * 保存
      *
-     * @param emailConfigForm 电子邮件表单
+     * @param form 电子邮件表单
      * @return {@link Boolean }
      */
     @Override
-    public Boolean saveEmail(EmailConfigForm emailConfigForm) {
-        return this.save(this.sysEmailMapStruct.form2Entity(emailConfigForm));
+    public Boolean saveEmail(EmailConfigForm form) {
+        return this.save(this.sysEmailConverter.form2Entity(form));
     }
 
     /**
      * 修改
      *
      * @param id        ID
-     * @param emailConfigForm 电子邮件表单
+     * @param form 电子邮件表单
      * @return {@link Boolean }
      */
     @Override
-    public Boolean modifyEmail(Long id, EmailConfigForm emailConfigForm) {
-        SysEmailConfig sysEmailConfig = sysEmailMapStruct.form2Entity(emailConfigForm);
+    public Boolean modifyEmail(Long id, EmailConfigForm form) {
+        SysEmailConfig sysEmailConfig = sysEmailConverter.form2Entity(form);
         sysEmailConfig.setId(id);
         return this.updateById(sysEmailConfig);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean open(EmailConfigOpenForm emailConfigOpenForm) {
+    public Boolean open(EmailConfigOpenForm form) {
         List<SysEmailConfig> allList = this.list();
         List<SysEmailConfig> sysEmailConfigList = allList.stream().peek(item -> {
-            if (emailConfigOpenForm.getStatus() == 1) {
-                if (Objects.equals(item.getId(), emailConfigOpenForm.getId())) {
+            if (form.getStatus() == 1) {
+                if (Objects.equals(item.getId(), form.getId())) {
                     item.setStatus(1);
                 } else {
                     item.setStatus(0);

@@ -55,42 +55,42 @@ public class BpmDefinitionController {
     /**
      * 部署
      *
-     * @param bpmDesignXmlStringForm 流程设计参数
+     * @param form 流程设计参数
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "保存设计V1")
     @PostMapping("/v1/design")
     @JumpXss
     @SaCheckPermission("bpm:definition:design")
-    public Result<String> deploy(@Valid @RequestBody BpmDesignXmlStringForm bpmDesignXmlStringForm) {
-        return this.bpmDefinitionService.deploy(bpmDesignXmlStringForm);
+    public Result<String> deploy(@Valid @RequestBody BpmDesignXmlStringForm form) {
+        return this.bpmDefinitionService.deploy(form);
     }
 
     /**
      * 部署
      *
-     * @param bpmDesignXmlFileForm 流程设计参数
+     * @param form 流程设计参数
      * @return {@link Result}<{@link String}>
      */
     @Operation(summary = "保存设计V2")
     @PostMapping("/v2/design")
     @SaCheckPermission("bpm:definition:design")
     @JumpXss
-    public Result<String> deploy(@Valid @RequestBody BpmDesignXmlFileForm bpmDesignXmlFileForm) {
-        return this.bpmDefinitionService.deploy(bpmDesignXmlFileForm);
+    public Result<String> deploy(@Valid @RequestBody BpmDesignXmlFileForm form) {
+        return this.bpmDefinitionService.deploy(form);
     }
 
     /**
      * 列表
      *
-     * @param bpmDefinitionQuery 流程定义查询
+     * @param query 流程定义查询
      * @return {@link Result}<{@link IPage}<{@link BpmDefinitionVO}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("bpm:definition:list")
-    public Result<Page<BpmDefinitionVO>> list(@RequestBody BpmDefinitionQuery bpmDefinitionQuery) {
-        return Result.ok(this.bpmDefinitionService.listPage(bpmDefinitionQuery));
+    public Result<Page<BpmDefinitionVO>> list(@RequestBody BpmDefinitionQuery query) {
+        return Result.ok(this.bpmDefinitionService.listPage(query));
     }
 
     /**
@@ -109,14 +109,14 @@ public class BpmDefinitionController {
     /**
      * 流程定义版本列表
      *
-     * @param bpmDefinitionQuery 流程定义查询
+     * @param query 流程定义查询
      * @return {@link Result}<{@link Page}<{@link BpmDefinitionVO}>>
      */
     @Operation(summary = "流程定义版本列表")
     @PostMapping("/listVersion")
     @SaCheckPermission("bpm:definition:list")
-    public Result<Page<BpmDefinitionVO>> listVersion(@RequestBody BpmDefinitionQuery bpmDefinitionQuery) {
-        return Result.ok(this.bpmDefinitionService.listVersionPage(bpmDefinitionQuery));
+    public Result<Page<BpmDefinitionVO>> listVersion(@RequestBody BpmDefinitionQuery query) {
+        return Result.ok(this.bpmDefinitionService.listVersionPage(query));
     }
 
     /**
@@ -199,14 +199,14 @@ public class BpmDefinitionController {
     /**
      * 删除
      *
-     * @param bpmDefinitionDeleteFormList 流定义删除参数
+     * @param formList 流定义删除参数
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "删除")
     @DeleteMapping
     @SaCheckPermission("bpm:definition:delete")
-    public Result<Boolean> delete(@RequestBody List<BpmDefinitionDeleteForm> bpmDefinitionDeleteFormList) {
-        return Result.ok(this.bpmDefinitionService.delete(bpmDefinitionDeleteFormList));
+    public Result<Boolean> delete(@RequestBody List<BpmDefinitionDeleteForm> formList) {
+        return Result.ok(this.bpmDefinitionService.delete(formList));
     }
 
 }

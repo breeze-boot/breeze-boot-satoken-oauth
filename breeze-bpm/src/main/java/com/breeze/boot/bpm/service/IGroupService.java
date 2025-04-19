@@ -24,7 +24,7 @@ import com.breeze.boot.bpm.model.vo.BpmGroupVO;
 
 public interface IGroupService extends IService<Group> {
 
-    Page<BpmGroupVO> listPage(BpmGroupQuery groupQuery);
+    Page<BpmGroupVO> listPage(BpmGroupQuery query);
 
 }
 

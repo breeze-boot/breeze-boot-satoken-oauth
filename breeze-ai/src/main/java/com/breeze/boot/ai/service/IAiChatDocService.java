@@ -19,9 +19,9 @@ package com.breeze.boot.ai.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.breeze.boot.ai.model.entity.AiChatDoc;
+import com.breeze.boot.ai.model.form.ChatDocForm;
 import com.breeze.boot.ai.model.query.AiChatDocQuery;
 import com.breeze.boot.ai.model.vo.AiChatDocVO;
-import com.breeze.boot.ai.model.form.ChatDocForm;
 
 import java.util.List;
 
@@ -35,11 +35,11 @@ public interface IAiChatDocService extends IService<AiChatDoc> {
 
     Page<AiChatDocVO> listPage(AiChatDocQuery query);
 
-    boolean saveChatDoc(ChatDocForm chatDocForm);
+    boolean saveChatDoc(ChatDocForm form);
 
     AiChatDocVO getInfoById(Long docId);
 
-    Boolean modifyChatDoc(Long id,  ChatDocForm chatDocForm);
+    Boolean modifyChatDoc(Long id, ChatDocForm form);
 
     Boolean deleteChatDoc(List<Long> ids);
 

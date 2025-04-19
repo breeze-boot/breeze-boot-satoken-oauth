@@ -38,10 +38,10 @@ public interface SysTenantService extends IService<SysTenant> {
     /**
      * 列表页面
      *
-     * @param tenantQuery 租户查询
+     * @param query 租户查询
      * @return {@link Page}<{@link TenantVO}>
      */
-    Page<TenantVO> listPage(TenantQuery tenantQuery);
+    Page<TenantVO> listPage(TenantQuery query);
 
     /**
      * 按id获取信息
@@ -54,11 +54,11 @@ public interface SysTenantService extends IService<SysTenant> {
     /**
      * 修改租户
      *
-     * @param id         ID
-     * @param tenantForm 租户表单
+     * @param id   ID
+     * @param form 租户表单
      * @return {@link Boolean }
      */
-    Boolean modifyTenant(Long id, TenantForm tenantForm);
+    Boolean modifyTenant(Long id, TenantForm form);
 
     /**
      * 通过IDS删除租户

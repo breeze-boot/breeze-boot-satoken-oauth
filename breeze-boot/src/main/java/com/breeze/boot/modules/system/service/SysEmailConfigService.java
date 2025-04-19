@@ -35,10 +35,10 @@ public interface SysEmailConfigService extends IService<SysEmailConfig> {
     /**
      * 列表页
      *
-     * @param emailConfigQuery 电子邮件查询
+     * @param query 电子邮件查询
      * @return {@link Page }<{@link EmailConfigVO }>
      */
-    Page<EmailConfigVO> listPage(EmailConfigQuery emailConfigQuery);
+    Page<EmailConfigVO> listPage(EmailConfigQuery query);
 
     /**
      * 按id获取信息
@@ -51,26 +51,26 @@ public interface SysEmailConfigService extends IService<SysEmailConfig> {
     /**
      * 保存电子邮件
      *
-     * @param emailConfigForm 电子邮件表单
+     * @param form 电子邮件表单
      * @return {@link Boolean }
      */
-    Boolean saveEmail(EmailConfigForm emailConfigForm);
+    Boolean saveEmail(EmailConfigForm form);
 
     /**
      * 修改电子邮件
      *
      * @param id        ID
-     * @param emailConfigForm 电子邮件表单
+     * @param form 电子邮件表单
      * @return {@link Boolean }
      */
-    Boolean modifyEmail(Long id, EmailConfigForm emailConfigForm);
+    Boolean modifyEmail(Long id, EmailConfigForm form);
 
     /**
      * 开启关闭锁定
      *
-     * @param emailConfigOpenForm 邮件打开表单
+     * @param form 邮件打开表单
      * @return {@link Boolean }
      */
-    Boolean open(EmailConfigOpenForm emailConfigOpenForm);
+    Boolean open(EmailConfigOpenForm form);
 
 }

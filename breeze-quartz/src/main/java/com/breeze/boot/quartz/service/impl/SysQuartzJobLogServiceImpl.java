@@ -18,7 +18,7 @@ package com.breeze.boot.quartz.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.breeze.boot.quartz.domain.SysQuartzJobLog;
+import com.breeze.boot.quartz.domain.entity.SysQuartzJobLog;
 import com.breeze.boot.quartz.mapper.SysQuartzJobLogMapper;
 import com.breeze.boot.quartz.domain.query.JobQuery;
 import com.breeze.boot.quartz.service.SysQuartzJobLogService;
@@ -38,12 +38,12 @@ public class SysQuartzJobLogServiceImpl extends ServiceImpl<SysQuartzJobLogMappe
     /**
      * 列表页面
      *
-     * @param jobQuery 任务查询
+     * @param query 任务查询
      * @return {@link Page}<{@link SysQuartzJobLog}>
      */
     @Override
-    public Page<SysQuartzJobLog> listPage(JobQuery jobQuery) {
-        return this.baseMapper.listPage(new Page<>(jobQuery.getCurrent(), jobQuery.getSize()), jobQuery);
+    public Page<SysQuartzJobLog> listPage(JobQuery query) {
+        return this.baseMapper.listPage(new Page<>(query.getCurrent(), query.getSize()), query);
     }
 
     /**

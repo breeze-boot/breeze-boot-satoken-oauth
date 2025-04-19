@@ -40,13 +40,13 @@ public class ActReDeploymentServiceImpl extends ServiceImpl<ActReDeploymentMappe
     /**
      * 列表页面
      *
-     * @param flowDeploymentQuery 流程定义查询
+     * @param query 流程定义查询
      * @return {@link Page}<{@link BpmDefinitionVO}>
      */
     @Override
-    public Page<BpmDefinitionVO> listPage(BpmDefinitionQuery flowDeploymentQuery) {
-        Page<BpmDefinitionVO> page = new Page<>(flowDeploymentQuery.getCurrent(), flowDeploymentQuery.getSize());
-        return this.baseMapper.listPage(page, flowDeploymentQuery);
+    public Page<BpmDefinitionVO> listPage(BpmDefinitionQuery query) {
+        Page<BpmDefinitionVO> page = new Page<>(query.getCurrent(), query.getSize());
+        return this.baseMapper.listPage(page, query);
     }
     @Override
     public BpmDefinitionVO getInfo(String definitionId) {

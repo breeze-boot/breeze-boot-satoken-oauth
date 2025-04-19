@@ -56,13 +56,13 @@ public class SysAuditLogController {
     /**
      * 列表
      *
-     * @param auditLogQuery 审计日志查询
+     * @param query 审计日志查询
      * @return {@link Result}<{@link Page}<{@link LogVO}>>
      */
     @PostMapping("/page")
     @SaCheckPermission("sys:auditLog:list")
-    public Result<Page<AuditLogVO>> list(@RequestBody AuditLogQuery auditLogQuery) {
-        return Result.ok(this.sysAuditLogService.listPage(auditLogQuery));
+    public Result<Page<AuditLogVO>> list(@RequestBody AuditLogQuery query) {
+        return Result.ok(this.sysAuditLogService.listPage(query));
     }
 
     /**

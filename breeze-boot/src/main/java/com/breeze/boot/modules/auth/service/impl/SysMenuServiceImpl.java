@@ -32,7 +32,7 @@ import com.breeze.boot.modules.auth.model.bo.UserRoleBO;
 import com.breeze.boot.modules.auth.model.entity.SysMenu;
 import com.breeze.boot.modules.auth.model.entity.SysRoleMenu;
 import com.breeze.boot.modules.auth.model.form.MenuForm;
-import com.breeze.boot.modules.auth.model.mappers.SysMenuMapStruct;
+import com.breeze.boot.modules.auth.model.converter.SysMenuConverter;
 import com.breeze.boot.modules.auth.model.query.MenuQuery;
 import com.breeze.boot.modules.auth.service.SysMenuService;
 import com.breeze.boot.modules.auth.service.SysRoleMenuService;
@@ -60,7 +60,7 @@ import static com.breeze.boot.core.enums.ResultCode.IS_USED;
 @RequiredArgsConstructor
 public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> implements SysMenuService {
 
-    private final SysMenuMapStruct sysMenuMapStruct;
+    private final SysMenuConverter sysMenuConverter;
 
     /**
      * 系统角色菜单服务
@@ -108,20 +108,20 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         if (CollUtil.isEmpty(menuList)) {
             return Result.ok();
         }
-        List<SysMenuBO> sysMenuBOList = this.sysMenuMapStruct.entity2BO(menuList);
+        List<SysMenuBO> sysMenuBOList = this.sysMenuConverter.entity2BO(menuList);
         return Result.ok(this.buildTrees(sysMenuBOList));
     }
 
     /**
      * 菜单列表
      *
-     * @param menuQuery 菜单查询
+     * @param query 菜单查询
      * @return {@link Result}<{@link ?}>
      */
     @Override
-    public Result<?> listMenu(MenuQuery menuQuery) {
-        List<SysMenuBO> sysMenuBOList = this.baseMapper.listMenu(menuQuery);
-        if (StrUtil.isAllNotBlank(menuQuery.getName()) || StrUtil.isAllNotBlank(menuQuery.getTitle())) {
+    public Result<?> listMenu(MenuQuery query) {
+        List<SysMenuBO> sysMenuBOList = this.baseMapper.listMenu(query);
+        if (StrUtil.isAllNotBlank(query.getName()) || StrUtil.isAllNotBlank(query.getTitle())) {
             return Result.ok(sysMenuBOList);
         }
         // 查询数据
@@ -155,19 +155,19 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     public Result<Boolean> saveMenu(MenuForm menuForm) {
         SysMenu sysMenu = this.getById(menuForm.getParentId());
         AssertUtil.isFalse(!Objects.equals(ROOT, menuForm.getParentId()) && Objects.isNull(sysMenu), ResultCode.NOT_FOUND);
-        return Result.ok(this.save(sysMenuMapStruct.form2Entity(menuForm)));
+        return Result.ok(this.save(sysMenuConverter.form2Entity(menuForm)));
     }
 
     /**
      * 修改菜单
      *
      * @param id          id
-     * @param menuForm 菜单实体
+     * @param form 菜单实体
      * @return {@link Result}<{@link Boolean}>
      */
     @Override
-    public Result<Boolean> modifyMenu(Long id, MenuForm menuForm) {
-        SysMenu sysMenu = sysMenuMapStruct.form2Entity(menuForm);
+    public Result<Boolean> modifyMenu(Long id, MenuForm form) {
+        SysMenu sysMenu = sysMenuConverter.form2Entity(form);
         sysMenu.setId(id);
         return Result.ok(this.updateById(sysMenu));
     }

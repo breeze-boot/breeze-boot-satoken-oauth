@@ -65,14 +65,14 @@ public class SysUserController {
     /**
      * 列表
      *
-     * @param userQuery 用户查询
+     * @param query 用户查询
      * @return {@link Result}<{@link Page}<{@link UserVO}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("auth:user:list")
-    public Result<Page<UserVO>> list(@RequestBody UserQuery userQuery) {
-        return Result.ok(this.sysUserService.listPage(userQuery));
+    public Result<Page<UserVO>> list(@RequestBody UserQuery query) {
+        return Result.ok(this.sysUserService.listPage(query));
     }
 
     /**
@@ -91,21 +91,21 @@ public class SysUserController {
     /**
      * 创建
      *
-     * @param userForm 用户表单
+     * @param form 用户表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "保存")
     @PostMapping
     @SaCheckPermission("auth:user:create")
-    public Result<Boolean> save(@Valid @RequestBody UserForm userForm) {
-        return sysUserService.saveUser(userForm);
+    public Result<Boolean> save(@Valid @RequestBody UserForm form) {
+        return sysUserService.saveUser(form);
     }
 
     /**
      * 修改
      *
-     * @param id       id
-     * @param userForm 用户表单
+     * @param id   id
+     * @param form 用户表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "修改")
@@ -113,8 +113,8 @@ public class SysUserController {
     @SaCheckPermission("auth:user:modify")
     @BreezeSysLog(description = "用户信息修改", type = LogType.EDIT)
     public Result<Boolean> modify(@Parameter(description = "用户ID") @NotNull(message = "用户ID不能为空") @PathVariable Long id,
-                                  @Valid @RequestBody UserForm userForm) {
-        return Result.ok(sysUserService.modifyUser(id, userForm));
+                                  @Valid @RequestBody UserForm form) {
+        return Result.ok(sysUserService.modifyUser(id, form));
     }
 
     /**
@@ -143,8 +143,11 @@ public class SysUserController {
      */
     @Operation(summary = "校验用户名是否重复")
     @GetMapping("/checkUsername")
-    public Result<Boolean> checkUsername(@Parameter(description = "用户名") @NotBlank(message = "用户名不能为空") @RequestParam("username") String username,
-                                         @Parameter(description = "用户ID") @RequestParam(value = "userId", required = false) Long userId) {
+    public Result<Boolean> checkUsername(
+            // @formatter:off
+            @Parameter(description = "用户名") @NotBlank(message = "用户名不能为空") @RequestParam("username") String username,
+            @Parameter(description = "用户ID") @RequestParam(value = "userId", required = false) Long userId) {
+            // @formatter:on
         // @formatter:off
         return Result.ok(Objects.isNull(this.sysUserService.getOne(Wrappers.<SysUser>lambdaQuery()
                 .ne(Objects.nonNull(userId), SysUser::getId, userId)
@@ -161,8 +164,11 @@ public class SysUserController {
      */
     @Operation(summary = "校验用户账户是否重复")
     @GetMapping("/checkUserCode")
-    public Result<Boolean> checkUserCode(@Parameter(description = "用户账户") @NotBlank(message = "用户账户不能为空") @RequestParam("userCode") String userCode,
-                                         @Parameter(description = "用户ID") @RequestParam(value = "userId", required = false) Long userId) {
+    public Result<Boolean> checkUserCode(
+            // @formatter:off
+            @Parameter(description = "用户账户") @NotBlank(message = "用户账户不能为空") @RequestParam("userCode") String userCode,
+            @Parameter(description = "用户ID") @RequestParam(value = "userId", required = false) Long userId) {
+            // @formatter:on
         // @formatter:off
         return Result.ok(Objects.isNull(this.sysUserService.getOne(Wrappers.<SysUser>lambdaQuery()
                 .ne(Objects.nonNull(userId), SysUser::getId, userId)
@@ -201,13 +207,13 @@ public class SysUserController {
     /**
      * 导出
      *
-     * @param userQuery 用户查询
-     * @param response  响应
+     * @param query    用户查询
+     * @param response 响应
      */
     @Operation(summary = "导出")
     @PostMapping("/export")
-    public void export(@RequestBody UserQuery userQuery, HttpServletResponse response) {
-        this.sysUserService.export(userQuery, response);
+    public void export(@RequestBody UserQuery query, HttpServletResponse response) {
+        this.sysUserService.export(query, response);
     }
 
     /**
@@ -222,29 +228,29 @@ public class SysUserController {
     /**
      * 重置密码
      *
-     * @param userResetForm 用户重置密码参数
+     * @param form 用户重置密码参数
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "重置密码")
     @PutMapping("/reset")
     @SaCheckPermission("auth:user:reset")
     @BreezeSysLog(description = "用户重置密码", type = LogType.EDIT)
-    public Result<Boolean> reset(@Valid @RequestBody UserResetForm userResetForm) {
-        return Result.ok(sysUserService.reset(userResetForm));
+    public Result<Boolean> reset(@Valid @RequestBody UserResetForm form) {
+        return Result.ok(sysUserService.reset(form));
     }
 
     /**
      * 开启关闭锁定
      *
-     * @param userOpenForm 用户开关表单
+     * @param form 用户开关表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "用户锁定开关")
     @PutMapping("/open")
     @SaCheckPermission("auth:user:modify")
     @BreezeSysLog(description = "用户锁定", type = LogType.EDIT)
-    public Result<Boolean> open(@Valid @RequestBody UserOpenForm userOpenForm) {
-        return Result.ok(sysUserService.open(userOpenForm));
+    public Result<Boolean> open(@Valid @RequestBody UserOpenForm form) {
+        return Result.ok(sysUserService.open(form));
     }
 
     /**
@@ -252,15 +258,15 @@ public class SysUserController {
      * <p>
      * /listUserRoles 不使用权限标识，直接使用这个
      *
-     * @param userRolesForm 用户角色参数
+     * @param form 用户角色参数
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "用户分配角色")
     @PutMapping("/setRole")
     @SaCheckPermission(value = {"auth:user:set:role"}, orRole = "ROLE_ADMIN")
     @BreezeSysLog(description = "用户分配角色", type = LogType.EDIT)
-    public Result<Boolean> setRole(@Valid @RequestBody UserRolesForm userRolesForm) {
-        return sysUserService.setRole(userRolesForm);
+    public Result<Boolean> setRole(@Valid @RequestBody UserRolesForm form) {
+        return sysUserService.setRole(form);
     }
 
     /**
@@ -271,7 +277,7 @@ public class SysUserController {
      */
     @Operation(summary = "用户下拉框", description = "下拉框接口")
     @GetMapping("/listDeptUser")
-    public Result<List<SysUser>> listDeptUser(@RequestParam(value = "deptId" ,required = false) Long deptId) {
+    public Result<List<SysUser>> listDeptUser(@RequestParam(value = "deptId", required = false) Long deptId) {
         return this.sysUserService.listDeptUser(deptId);
     }
 

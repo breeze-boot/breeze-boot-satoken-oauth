@@ -24,6 +24,6 @@ import com.breeze.boot.bpm.model.vo.BpmUserVO;
 
 public interface IUserService extends IService<User> {
 
-    Page<BpmUserVO> listPage(BpmUserQuery userQuery);
+    Page<BpmUserVO> listPage(BpmUserQuery query);
 
 }

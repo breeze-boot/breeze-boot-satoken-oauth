@@ -34,7 +34,7 @@ import com.breeze.boot.modules.system.model.entity.SysEmailSubject;
 import com.breeze.boot.modules.system.model.form.MSubjectForm;
 import com.breeze.boot.modules.system.model.form.MSubjectOpenForm;
 import com.breeze.boot.modules.system.model.form.MSubjectSetUserForm;
-import com.breeze.boot.modules.system.model.mappers.SysMSubjectMapStruct;
+import com.breeze.boot.modules.system.model.converter.SysMSubjectConverter;
 import com.breeze.boot.modules.system.model.query.MSubjectQuery;
 import com.breeze.boot.modules.system.model.vo.EmailConfigVO;
 import com.breeze.boot.modules.system.model.vo.MSubjectEmailVO;
@@ -66,7 +66,7 @@ import static com.breeze.boot.core.enums.ResultCode.EMAIL_NOT_FOUND;
 @RequiredArgsConstructor
 public class SysMSubjectServiceImpl extends ServiceImpl<SysEmailSubjectMapper, SysEmailSubject> implements SysMSubjectService {
 
-    private final SysMSubjectMapStruct sysMSubjectMapStruct;
+    private final SysMSubjectConverter sysMSubjectConverter;
 
     private final SysUserService sysUserService;
 
@@ -75,18 +75,18 @@ public class SysMSubjectServiceImpl extends ServiceImpl<SysEmailSubjectMapper, S
     /**
      * 列表页
      *
-     * @param mSubjectQuery 邮箱主题查询
+     * @param query 邮箱主题查询
      * @return {@link Page }<{@link MSubjectVO }>
      */
     @Override
     @DymicSql
-    public Page<MSubjectVO> listPage(@ConditionParam MSubjectQuery mSubjectQuery) {
-        Page<SysEmailSubject> emailPage = new Page<>(mSubjectQuery.getCurrent(), mSubjectQuery.getSize());
+    public Page<MSubjectVO> listPage(@ConditionParam MSubjectQuery query) {
+        Page<SysEmailSubject> emailPage = new Page<>(query.getCurrent(), query.getSize());
         QueryWrapper<SysEmailSubject> queryWrapper = new QueryWrapper<>();
-        mSubjectQuery.getSortQueryWrapper(queryWrapper);
-        queryWrapper.like(StrUtil.isAllNotBlank(mSubjectQuery.getUsername()), "username", mSubjectQuery.getUsername());
+        query.getSortQueryWrapper(queryWrapper);
+        queryWrapper.like(StrUtil.isAllNotBlank(query.getUsername()), "username", query.getUsername());
         Page<SysEmailSubject> page = this.page(emailPage, queryWrapper);
-        return this.sysMSubjectMapStruct.page2PageVO(page);
+        return this.sysMSubjectConverter.page2PageVO(page);
     }
 
     /**
@@ -98,7 +98,7 @@ public class SysMSubjectServiceImpl extends ServiceImpl<SysEmailSubjectMapper, S
     @Override
     public MSubjectVO getInfoById(Long subjectId) {
         SysEmailSubject sysEmailSubject = this.getById(subjectId);
-        MSubjectVO mSubjectVO = this.sysMSubjectMapStruct.entity2VO(sysEmailSubject);
+        MSubjectVO mSubjectVO = this.sysMSubjectConverter.entity2VO(sysEmailSubject);
         List<SysUser> ccUserList = this.sysUserService.listByIds(Arrays.asList(Optional.ofNullable(sysEmailSubject.getCc()).orElse("").split(",")));
         mSubjectVO.setCcUserId(Optional.ofNullable(ccUserList).orElseGet(Lists::newArrayList).stream().map(SysUser::getId).collect(Collectors.toList()));
         List<SysUser> toUserList = this.sysUserService.listByIds(Arrays.asList(Optional.ofNullable(sysEmailSubject.getTo()).orElse("").split(",")));
@@ -109,24 +109,24 @@ public class SysMSubjectServiceImpl extends ServiceImpl<SysEmailSubjectMapper, S
     /**
      * 保存
      *
-     * @param subjectForm 邮箱主题表单
+     * @param form 邮箱主题表单
      * @return {@link Boolean }
      */
     @Override
-    public Boolean saveEmailSubject(MSubjectForm subjectForm) {
-        return this.save(this.sysMSubjectMapStruct.form2Entity(subjectForm));
+    public Boolean saveEmailSubject(MSubjectForm form) {
+        return this.save(this.sysMSubjectConverter.form2Entity(form));
     }
 
     /**
      * 修改
      *
      * @param id           ID
-     * @param mSubjectForm 邮箱主题表单
+     * @param form 邮箱主题表单
      * @return {@link Boolean }
      */
     @Override
-    public Boolean modifyEmailSubject(Long id, MSubjectForm mSubjectForm) {
-        SysEmailSubject sysEmailSubject = sysMSubjectMapStruct.form2Entity(mSubjectForm);
+    public Boolean modifyEmailSubject(Long id, MSubjectForm form) {
+        SysEmailSubject sysEmailSubject = sysMSubjectConverter.form2Entity(form);
         sysEmailSubject.setId(id);
         return this.updateById(sysEmailSubject);
     }
@@ -165,16 +165,16 @@ public class SysMSubjectServiceImpl extends ServiceImpl<SysEmailSubjectMapper, S
     /**
      * 打开
      *
-     * @param mSubjectOpenForm 邮箱主题开关表单
+     * @param form 邮箱主题开关表单
      * @return {@link Boolean }
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean open(MSubjectOpenForm mSubjectOpenForm) {
+    public Boolean open(MSubjectOpenForm form) {
         List<SysEmailSubject> allList = this.list();
         List<SysEmailSubject> sysEmailList = allList.stream().peek(item -> {
-            if (mSubjectOpenForm.getStatus() == 1) {
-                if (Objects.equals(item.getId(), mSubjectOpenForm.getId())) {
+            if (form.getStatus() == 1) {
+                if (Objects.equals(item.getId(), form.getId())) {
                     item.setStatus(1);
                 } else {
                     item.setStatus(0);
@@ -188,17 +188,17 @@ public class SysMSubjectServiceImpl extends ServiceImpl<SysEmailSubjectMapper, S
      * 设置电子邮件用户
      *
      * @param id                  ID
-     * @param mSubjectSetUserForm m主题集用户表单
+     * @param form m主题集用户表单
      * @return {@link Boolean }
      */
     @Override
-    public Boolean setEmailUser(Long id, MSubjectSetUserForm mSubjectSetUserForm) {
+    public Boolean setEmailUser(Long id, MSubjectSetUserForm form) {
         SysEmailSubject sysEmailSubject = getSysEmailSubject(id);
-        if (CollUtil.isNotEmpty(mSubjectSetUserForm.getCcUserId())) {
-            sysEmailSubject.setCc(String.join(",", mSubjectSetUserForm.getCcUserId()));
+        if (CollUtil.isNotEmpty(form.getCcUserId())) {
+            sysEmailSubject.setCc(String.join(",", form.getCcUserId()));
         }
-        if (CollUtil.isEmpty(mSubjectSetUserForm.getCcUserId())) {
-            sysEmailSubject.setTo(String.join(",", mSubjectSetUserForm.getToUserId()));
+        if (CollUtil.isEmpty(form.getCcUserId())) {
+            sysEmailSubject.setTo(String.join(",", form.getToUserId()));
         }
         return sysEmailSubject.updateById();
     }

@@ -63,14 +63,14 @@ public class SysPostController {
     /**
      * 列表
      *
-     * @param postQuery 岗位查询
+     * @param query 岗位查询
      * @return {@link Result}<{@link IPage}<{@link PostVO}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("auth:post:list")
-    public Result<IPage<PostVO>> list(@RequestBody PostQuery postQuery) {
-        return Result.ok(this.sysPostService.listPage(postQuery));
+    public Result<IPage<PostVO>> list(@RequestBody PostQuery query) {
+        return Result.ok(this.sysPostService.listPage(query));
     }
 
     /**
@@ -96,8 +96,9 @@ public class SysPostController {
     @Operation(summary = "校验岗位编码是否重复")
     @GetMapping("/checkPostCode")
     @SaCheckPermission("auth:post:list")
-    public Result<Boolean> checkPostCode(@Parameter(description = "岗位编码") @NotBlank(message = "岗位编码不能为空") @RequestParam("postCode") String postCode,
-                                         @Parameter(description = "岗位ID") @RequestParam(value = "postId", required = false) Long postId) {
+    public Result<Boolean> checkPostCode(
+            @Parameter(description = "岗位编码") @NotBlank(message = "岗位编码不能为空") @RequestParam("postCode") String postCode,
+            @Parameter(description = "岗位ID") @RequestParam(value = "postId", required = false) Long postId) {
         // @formatter:off
         return Result.ok(Objects.isNull(this.sysPostService.getOne(Wrappers.<SysPost>lambdaQuery()
                 .ne(Objects.nonNull(postId), SysPost::getId, postId)
@@ -108,21 +109,21 @@ public class SysPostController {
     /**
      * 创建
      *
-     * @param postForm 岗位表单
+     * @param form 岗位表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "保存")
     @PostMapping
     @SaCheckPermission("auth:post:create")
     @BreezeSysLog(description = "岗位信息保存", type = LogType.SAVE)
-    public Result<Boolean> save(@Valid @RequestBody PostForm postForm) {
-        return Result.ok(this.sysPostService.savePost(postForm));
+    public Result<Boolean> save(@Valid @RequestBody PostForm form) {
+        return Result.ok(this.sysPostService.savePost(form));
     }
 
     /**
      * 修改
      *
-     * @param postForm 平台实体
+     * @param form 平台实体
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "修改")
@@ -130,8 +131,8 @@ public class SysPostController {
     @SaCheckPermission("auth:post:modify")
     @BreezeSysLog(description = "岗位信息修改", type = LogType.EDIT)
     public Result<Boolean> modify(@Parameter(description = "岗位ID") @NotNull(message = "岗位ID不能为空") @PathVariable Long id,
-                                  @Valid @RequestBody PostForm postForm) {
-        return Result.ok(this.sysPostService.modifyPost(id, postForm));
+                                  @Valid @RequestBody PostForm form) {
+        return Result.ok(this.sysPostService.modifyPost(id, form));
     }
 
     /**

@@ -16,11 +16,11 @@
 
 package com.breeze.boot.quartz.manager;
 
-import com.breeze.boot.core.constants.QuartzConstants;
 import com.breeze.boot.quartz.conf.AllowConcurrentExecutionJob;
 import com.breeze.boot.quartz.conf.BreezeQuartzJobListener;
 import com.breeze.boot.quartz.conf.DisallowConcurrentExecutionJob;
-import com.breeze.boot.quartz.domain.SysQuartzJob;
+import com.breeze.boot.quartz.domain.entity.SysQuartzJob;
+import com.breeze.boot.quartz.enums.QuartzEnum;
 import com.breeze.boot.quartz.service.SysQuartzJobLogService;
 import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +32,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-import static com.breeze.boot.core.constants.QuartzConstants.*;
-import static com.breeze.boot.core.constants.QuartzConstants.MisfirePolicy.*;
+import static com.breeze.boot.quartz.enums.QuartzEnum.*;
 
 /**
  * quartz经理
@@ -47,74 +46,138 @@ import static com.breeze.boot.core.constants.QuartzConstants.MisfirePolicy.*;
 public class QuartzManager {
 
     private final SysQuartzJobLogService quartzJobLogService;
-
     private final Scheduler scheduler;
 
+    /**
+     * 根据类名获取QuartzJobBean的Class对象
+     *
+     * @param classname 类名
+     * @return QuartzJobBean的Class对象
+     * @throws ClassNotFoundException 如果类未找到
+     */
     @SuppressWarnings("unchecked")
-    private static Class<? extends QuartzJobBean> getClass(String classname) throws Exception {
+    private static Class<? extends QuartzJobBean> getClass(String classname) throws ClassNotFoundException {
         return (Class<? extends QuartzJobBean>) Class.forName(classname);
     }
 
+    /**
+     * 根据并发标志获取QuartzJobBean的Class对象
+     *
+     * @param concurrent 并发标志
+     * @return QuartzJobBean的Class对象
+     */
     @SuppressWarnings("unchecked")
     private static Class<? extends QuartzJobBean> getClass(Integer concurrent) {
         return concurrent == 1 ? AllowConcurrentExecutionJob.class : DisallowConcurrentExecutionJob.class;
     }
 
     /**
-     * 添加任务
+     * 添加或更新任务
      *
      * @param quartzJob quartz任务
      */
     public void addOrUpdateJob(SysQuartzJob quartzJob) {
         try {
-            Class<? extends QuartzJobBean> jobClass = getClass(quartzJob.getConcurrent());
-            JobDataMap jobDataMap = new JobDataMap();
-            jobDataMap.put(JOB_DATA_KEY, quartzJob);
-            JobDetail jobDetail = JobBuilder.newJob(jobClass)
-                    .withIdentity(quartzJob.getId() + ":" + JOB_NAME, quartzJob.getJobGroupName())
-                    .usingJobData(jobDataMap)
-                    .build();
-            Trigger trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(quartzJob.getId() + ":" + TRIGGER_NAME, quartzJob.getJobGroupName())
-                    .withSchedule(this.getScheduleBuilder(quartzJob))
-                    .build();
-
-            // 针对特定的JobDetail进行监听
-            BreezeQuartzJobListener listener = new BreezeQuartzJobListener(this.quartzJobLogService);
-            // Matcher<JobKey> matcher = KeyMatcher.keyEquals(jobDetail.getKey());
-            // this.scheduler.getListenerManager().addJobListener(listener, matcher);
-
-            // 设置全局监听
-            this.scheduler.getListenerManager().addJobListener(listener);
-
-            JobKey jobKey = JobKey.jobKey(quartzJob.getId() + ":" + JOB_NAME, quartzJob.getJobGroupName());
-            if (scheduler.checkExists(jobKey)) {
-                // 删除重复流程
-                scheduler.deleteJob(jobKey);
-            }
-
-            // 绑定trigger
-            this.scheduler.scheduleJob(jobDetail, trigger);
-            // 根据用户提交的参数判断任务是否启动
-            if (Objects.equals(quartzJob.getStatus(), QuartzConstants.Status.PAUSE.getStatus())) {
-                scheduler.pauseJob(jobKey);
+            if (isJobExists(quartzJob)) {
+                this.updateJob(quartzJob);
             } else {
-                if (!this.scheduler.isShutdown()) {
-                    this.scheduler.start();
-                }
+                this.addJob(quartzJob);
             }
-        } catch (Exception e) {
-            log.error("添加任务失败", e);
+        } catch (ClassNotFoundException e) {
+            log.error("任务类未找到", e);
+        } catch (SchedulerException e) {
+            log.error("调度器异常", e);
         }
     }
 
+    /**
+     * 添加任务
+     *
+     * @param quartzJob quartz任务
+     * @throws ClassNotFoundException 如果任务类未找到
+     * @throws SchedulerException     如果调度器出现异常
+     */
+    private void addJob(SysQuartzJob quartzJob) throws ClassNotFoundException, SchedulerException {
+        Class<? extends QuartzJobBean> jobClass = getClass(quartzJob.getConcurrent());
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put(JOB_DATA_KEY, quartzJob);
+        JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(quartzJob.getId() + ":" + JOB_NAME, quartzJob.getJobGroupName()).usingJobData(jobDataMap).build();
+        Trigger trigger = TriggerBuilder.newTrigger().withIdentity(quartzJob.getId() + ":" + TRIGGER_NAME, quartzJob.getJobGroupName()).withSchedule(getScheduleBuilder(quartzJob)).build();
+
+        BreezeQuartzJobListener listener = new BreezeQuartzJobListener(quartzJobLogService);
+        scheduler.getListenerManager().addJobListener(listener);
+
+        scheduler.scheduleJob(jobDetail, trigger);
+        handleJobStatus(quartzJob, jobDetail.getKey());
+    }
+
+    /**
+     * 更新任务
+     *
+     * @param quartzJob quartz任务
+     * @throws SchedulerException 如果调度器出现异常
+     */
+    private void updateJob(SysQuartzJob quartzJob) throws SchedulerException {
+        JobKey jobKey = JobKey.jobKey(quartzJob.getId() + ":" + JOB_NAME, quartzJob.getJobGroupName());
+        this.scheduler.deleteJob(jobKey);
+        try {
+            this.addJob(quartzJob);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 检查任务是否存在
+     *
+     * @param quartzJob quartz任务
+     * @return 如果任务存在返回true，否则返回false
+     * @throws SchedulerException 如果调度器出现异常
+     */
+    private boolean isJobExists(SysQuartzJob quartzJob) throws SchedulerException {
+        JobKey jobKey = JobKey.jobKey(quartzJob.getId() + ":" + JOB_NAME, quartzJob.getJobGroupName());
+        return scheduler.checkExists(jobKey);
+    }
+
+    /**
+     * 处理任务状态
+     *
+     * @param quartzJob quartz任务
+     * @param jobKey    任务键
+     * @throws SchedulerException 如果调度器出现异常
+     */
+    private void handleJobStatus(SysQuartzJob quartzJob, JobKey jobKey) throws SchedulerException {
+        if (Objects.equals(quartzJob.getStatus(), QuartzEnum.Status.PAUSE.getValue())) {
+            scheduler.pauseJob(jobKey);
+        } else {
+            if (!scheduler.isShutdown()) {
+                scheduler.start();
+            }
+        }
+    }
+
+    /**
+     * 根据任务的misfire策略获取CronScheduleBuilder
+     *
+     * @param quartzJob quartz任务
+     * @return CronScheduleBuilder
+     */
     private CronScheduleBuilder getScheduleBuilder(SysQuartzJob quartzJob) {
-        if (Objects.equals(quartzJob.getMisfirePolicy(), DO_NOTHING.getCode())) {
-            return CronScheduleBuilder.cronSchedule(quartzJob.getCronExpression()).withMisfireHandlingInstructionDoNothing();
-        } else if (Objects.equals(quartzJob.getMisfirePolicy(), IGNORE_MISFIRE.getCode())) {
-            return CronScheduleBuilder.cronSchedule(quartzJob.getCronExpression()).withMisfireHandlingInstructionIgnoreMisfires();
-        } else if (Objects.equals(quartzJob.getMisfirePolicy(), FIRE_AND_PROCEED.getCode())) {
-            return CronScheduleBuilder.cronSchedule(quartzJob.getCronExpression()).withMisfireHandlingInstructionFireAndProceed();
+        MisfirePolicy misfirePolicy = getMisfirePolicy(quartzJob.getMisfirePolicy());
+        return misfirePolicy.getScheduleBuilder(quartzJob.getCronExpression());
+    }
+
+    /**
+     * 根据misfire策略代码获取MisfirePolicy枚举
+     *
+     * @param misfirePolicyCode misfire策略代码
+     * @return MisfirePolicy枚举
+     */
+    private MisfirePolicy getMisfirePolicy(Integer misfirePolicyCode) {
+        for (MisfirePolicy policy : MisfirePolicy.values()) {
+            if (Objects.equals(policy.getCode(), misfirePolicyCode)) {
+                return policy;
+            }
         }
         throw new RuntimeException("策略不存在");
     }
@@ -128,12 +191,12 @@ public class QuartzManager {
     public void deleteJob(String jobName, String jobGroupName) {
         try {
             JobKey jobKey = JobKey.jobKey(jobName, jobGroupName);
-            if (this.scheduler.checkExists(jobKey)) {
-                this.scheduler.pauseTrigger(TriggerKey.triggerKey(jobName, jobGroupName));
-                this.scheduler.unscheduleJob(TriggerKey.triggerKey(jobName, jobGroupName));
-                this.scheduler.deleteJob(jobKey);
+            if (scheduler.checkExists(jobKey)) {
+                scheduler.pauseTrigger(TriggerKey.triggerKey(jobName, jobGroupName));
+                scheduler.unscheduleJob(TriggerKey.triggerKey(jobName, jobGroupName));
+                scheduler.deleteJob(jobKey);
             }
-        } catch (Exception e) {
+        } catch (SchedulerException e) {
             log.error("删除任务失败", e);
         }
     }
@@ -148,7 +211,7 @@ public class QuartzManager {
         try {
             JobKey jobKey = JobKey.jobKey(jobName, jobGroupName);
             if (scheduler.checkExists(jobKey)) {
-                this.scheduler.pauseJob(jobKey);
+                scheduler.pauseJob(jobKey);
             }
         } catch (SchedulerException e) {
             log.error("暂停任务失败", e);
@@ -165,7 +228,7 @@ public class QuartzManager {
         try {
             JobKey jobKey = JobKey.jobKey(jobName, jobGroupName);
             if (scheduler.checkExists(jobKey)) {
-                this.scheduler.resumeJob(jobKey);
+                scheduler.resumeJob(jobKey);
             }
         } catch (SchedulerException e) {
             log.error("恢复任务失败", e);
@@ -173,7 +236,7 @@ public class QuartzManager {
     }
 
     /**
-     * 现在运行job
+     * 立即运行任务
      *
      * @param jobName      任务名
      * @param jobGroupName 任务组名
@@ -182,7 +245,7 @@ public class QuartzManager {
         try {
             JobKey jobKey = JobKey.jobKey(jobName, jobGroupName);
             if (scheduler.checkExists(jobKey)) {
-                this.scheduler.triggerJob(jobKey);
+                scheduler.triggerJob(jobKey);
             }
         } catch (SchedulerException e) {
             log.error("运行任务失败", e);
@@ -191,18 +254,19 @@ public class QuartzManager {
 
     /**
      * 查询所有任务
+     *
+     * @return 任务列表
      */
     public List<Map<String, Object>> listAllJob() {
         List<Map<String, Object>> jobList = new ArrayList<>();
         try {
             GroupMatcher<JobKey> matcher = GroupMatcher.anyJobGroup();
-            Set<JobKey> jobKeyList = this.scheduler.getJobKeys(matcher);
+            Set<JobKey> jobKeyList = scheduler.getJobKeys(matcher);
             for (JobKey jobKey : jobKeyList) {
-                List<? extends Trigger> triggerList = this.scheduler.getTriggersOfJob(jobKey);
+                List<? extends Trigger> triggerList = scheduler.getTriggersOfJob(jobKey);
                 for (Trigger trigger : triggerList) {
                     Map<String, Object> jobDetailMaps = Maps.newHashMap();
-                    if (trigger instanceof CronTrigger) {
-                        CronTrigger cronTrigger = (CronTrigger) trigger;
+                    if (trigger instanceof CronTrigger cronTrigger) {
                         jobDetailMaps.put("cronExpression", cronTrigger.getCronExpression());
                         jobDetailMaps.put("timeZone", cronTrigger.getTimeZone().getDisplayName());
                     }
@@ -211,15 +275,15 @@ public class QuartzManager {
                     jobDetailMaps.put("JobGroupName", jobKey.getGroup());
                     jobDetailMaps.put("JobName", jobKey.getName());
                     jobDetailMaps.put("StartTime", trigger.getStartTime());
-                    jobDetailMaps.put("JobClassName", this.scheduler.getJobDetail(jobKey).getJobClass().getName());
+                    jobDetailMaps.put("JobClassName", scheduler.getJobDetail(jobKey).getJobClass().getName());
                     jobDetailMaps.put("NextFireTime", trigger.getNextFireTime());
                     jobDetailMaps.put("PreviousFireTime", trigger.getPreviousFireTime());
-                    jobDetailMaps.put("Status", this.scheduler.getTriggerState(trigger.getKey()).name());
+                    jobDetailMaps.put("Status", scheduler.getTriggerState(trigger.getKey()).name());
                     jobList.add(jobDetailMaps);
                 }
             }
         } catch (SchedulerException e) {
-            log.error("查询任务务失败", e);
+            log.error("查询任务失败", e);
         }
         return jobList;
     }

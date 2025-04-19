@@ -36,10 +36,10 @@ public interface IBpmTaskService {
     /**
      * 获取待办列表
      *
-     * @param userTaskQuery 用户任务查询
+     * @param query 用户任务查询
      * @return {@link Page}<{@link UserTaskVO}>
      */
-    Page<UserTaskVO> listUserTodoTask(UserTaskQuery userTaskQuery);
+    Page<UserTaskVO> listUserTodoTask(UserTaskQuery query);
 
     /**
      * 获取任务详情
@@ -52,10 +52,10 @@ public interface IBpmTaskService {
     /**
      * 查询用户已办任务
      *
-     * @param userTaskQuery 用户任务查询
+     * @param query 用户任务查询
      * @return {@link Page }<{@link UserTaskVO }>
      */
-    Page<UserTaskVO> listCompletedTask(UserTaskQuery userTaskQuery);
+    Page<UserTaskVO> listCompletedTask(UserTaskQuery query);
 
     /**
      * 获取审批信息列表
@@ -79,10 +79,10 @@ public interface IBpmTaskService {
     /**
      * 完成
      *
-     * @param bpmApprovalForm 流程审批参数
+     * @param form 流程审批参数
      * @return {@link Boolean }
      */
-    Boolean complete(BpmApprovalForm bpmApprovalForm);
+    Boolean complete(BpmApprovalForm form);
 
     /**
      * 签收任务
@@ -121,18 +121,18 @@ public interface IBpmTaskService {
     /**
      * 废止流程
      *
-     * @param bpmApprovalForm  bpm审批表单
+     * @param form  bpm审批表单
      * @return {@link Boolean }
      */
-    Boolean abolition(BpmApprovalForm bpmApprovalForm);
+    Boolean abolition(BpmApprovalForm form);
 
     /**
      * 查询用户发起任务
      *
-     * @param userTaskQuery 用户任务查询
+     * @param query 用户任务查询
      * @return {@link Page }<{@link UserTaskVO }>
      */
-    Page<UserTaskVO> listApplyUserTask(UserTaskQuery userTaskQuery);
+    Page<UserTaskVO> listApplyUserTask(UserTaskQuery query);
 
     /**
      * 反签收任务

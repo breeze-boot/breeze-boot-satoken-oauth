@@ -53,19 +53,50 @@ public class TenantLoadFilter extends GenericFilterBean {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         try {
-            String headerTenantId = request.getHeader(X_TENANT_ID);
-            String paramTenantId = request.getParameter(X_TENANT_ID);
-            if (StrUtil.isNotBlank(headerTenantId)) {
-                BreezeTenantHolder.setTenant(Long.parseLong(headerTenantId));
-            } else if (StrUtil.isAllNotBlank(paramTenantId)) {
-                BreezeTenantHolder.setTenant(Long.parseLong(paramTenantId));
-            } else if (StrUtil.equals("undefined",headerTenantId) || StrUtil.equals("undefined",paramTenantId)){
+            String tenantId = getTenantIdFromRequest(request);
+            if (StrUtil.isNotBlank(tenantId)) {
+                try {
+                    BreezeTenantHolder.setTenant(Long.parseLong(tenantId));
+                } catch (NumberFormatException e) {
+                    log.error("租户ID格式错误，无法转换为Long类型: {}", tenantId, e);
+                    throw new BreezeBizException(ResultCode.TENANT_NOT_FOUND);
+                }
+            } else if (isTenantIdUndefined(request)) {
                 throw new BreezeBizException(ResultCode.TENANT_NOT_FOUND);
             }
-            log.info("当前进入的请求： {}  系统租户： {}  {} ", request.getRequestURI(), paramTenantId , headerTenantId);
+            log.info("当前进入的请求： {}  系统租户： {}", request.getRequestURI(), tenantId);
             filterChain.doFilter(request, response);
+        } catch (BreezeBizException e) {
+            log.error("租户处理异常", e);
+            // 可以根据具体需求添加异常响应逻辑
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write(e.getMessage());
         } finally {
             BreezeTenantHolder.clean();
         }
+    }
+
+    /**
+     * 从请求中获取租户ID
+     * @param request HttpServletRequest对象
+     * @return 租户ID，如果未找到则返回null
+     */
+    private String getTenantIdFromRequest(HttpServletRequest request) {
+        String headerTenantId = request.getHeader(X_TENANT_ID);
+        if (StrUtil.isNotBlank(headerTenantId)) {
+            return headerTenantId;
+        }
+        return request.getParameter(X_TENANT_ID);
+    }
+
+    /**
+     * 检查请求中的租户ID是否为 "undefined"
+     * @param request HttpServletRequest对象
+     * @return 如果租户ID为 "undefined" 则返回true，否则返回false
+     */
+    private boolean isTenantIdUndefined(HttpServletRequest request) {
+        String headerTenantId = request.getHeader(X_TENANT_ID);
+        String paramTenantId = request.getParameter(X_TENANT_ID);
+        return StrUtil.equals("undefined", headerTenantId) || StrUtil.equals("undefined", paramTenantId);
     }
 }

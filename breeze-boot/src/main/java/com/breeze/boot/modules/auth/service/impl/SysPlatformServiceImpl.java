@@ -23,9 +23,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.breeze.boot.core.utils.BUtils;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.auth.mapper.SysPlatformMapper;
+import com.breeze.boot.modules.auth.model.converter.SysPlatformConverter;
 import com.breeze.boot.modules.auth.model.entity.SysPlatform;
 import com.breeze.boot.modules.auth.model.form.PlatformForm;
-import com.breeze.boot.modules.auth.model.mappers.SysPlatformMapStruct;
 import com.breeze.boot.modules.auth.model.query.PlatformQuery;
 import com.breeze.boot.modules.auth.model.vo.PlatformVO;
 import com.breeze.boot.modules.auth.service.SysPlatformService;
@@ -50,23 +50,23 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SysPlatformServiceImpl extends ServiceImpl<SysPlatformMapper, SysPlatform> implements SysPlatformService {
 
-    private final SysPlatformMapStruct sysPlatformMapStruct;
+    private final SysPlatformConverter sysPlatformConverter;
 
     /**
      * 列表页面
      *
-     * @param platformQuery 平台查询
+     * @param query 平台查询
      * @return {@link Page}<{@link PlatformVO}>
      */
     @Override
     @DymicSql
-    public Page<PlatformVO> listPage(@ConditionParam PlatformQuery platformQuery) {
-        Page<SysPlatform> platformPage = new Page<>(platformQuery.getCurrent(), platformQuery.getSize());
+    public Page<PlatformVO> listPage(@ConditionParam PlatformQuery query) {
+        Page<SysPlatform> platformPage = new Page<>(query.getCurrent(), query.getSize());
         QueryWrapper<SysPlatform> wrapper = new QueryWrapper<>();
-        wrapper.like(StrUtil.isAllNotBlank(platformQuery.getPlatformName()), BUtils.toFieldName(SysPlatform::getPlatformName), platformQuery.getPlatformName());
-        wrapper.like(StrUtil.isAllNotBlank(platformQuery.getPlatformCode()), BUtils.toFieldName(SysPlatform::getPlatformCode), platformQuery.getPlatformCode());
+        wrapper.like(StrUtil.isAllNotBlank(query.getPlatformName()), BUtils.toFieldName(SysPlatform::getPlatformName), query.getPlatformName());
+        wrapper.like(StrUtil.isAllNotBlank(query.getPlatformCode()), BUtils.toFieldName(SysPlatform::getPlatformCode), query.getPlatformCode());
         Page<SysPlatform> page = this.page(platformPage, wrapper);
-        return this.sysPlatformMapStruct.page2PageVO(page);
+        return this.sysPlatformConverter.page2PageVO(page);
     }
 
     /**
@@ -78,30 +78,30 @@ public class SysPlatformServiceImpl extends ServiceImpl<SysPlatformMapper, SysPl
     @Override
     public PlatformVO getInfoById(Long platformId) {
         SysPlatform sysPlatform = this.getById(platformId);
-        return this.sysPlatformMapStruct.entity2VO(sysPlatform);
+        return this.sysPlatformConverter.entity2VO(sysPlatform);
     }
 
     /**
      * 保存平台
      *
-     * @param platformForm 平台形式
+     * @param form 平台形式
      * @return {@link Boolean }
      */
     @Override
-    public Boolean savePlatform(PlatformForm platformForm) {
-        return this.save(sysPlatformMapStruct.form2Entity(platformForm));
+    public Boolean savePlatform(PlatformForm form) {
+        return this.save(sysPlatformConverter.form2Entity(form));
     }
 
     /**
      * 修改平台
      *
      * @param id           ID
-     * @param platformForm 平台形式
+     * @param form 平台形式
      * @return {@link Boolean }
      */
     @Override
-    public Boolean modifyPlatform(Long id, PlatformForm platformForm) {
-        SysPlatform sysPlatform = sysPlatformMapStruct.form2Entity(platformForm);
+    public Boolean modifyPlatform(Long id, PlatformForm form) {
+        SysPlatform sysPlatform = sysPlatformConverter.form2Entity(form);
         sysPlatform.setId(id);
         return this.updateById(sysPlatform);
     }

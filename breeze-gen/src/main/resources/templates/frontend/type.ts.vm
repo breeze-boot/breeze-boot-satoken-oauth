@@ -1,0 +1,80 @@
+/**
+ * @author: gaoweixuan
+ * @since: ${date}
+ */
+import { PageQuery, ResponseData } from '@/types/types.ts'
+
+/**
+ * ${entityClassNameComment}列表类型声明
+ */
+export interface ${entityClassName}Record {
+    #foreach($column in $columns)
+    #if($column.attrType == 'LocalDateTime' || $column.attrType == 'LocalDate' || $column.attrType == 'Date')
+        ${column.attrName}: string
+    #elseif($column.attrType == 'Long' || $column.attrType == 'Integrer')
+        ${column.attrName}: number
+    #elseif($column.attrType == 'String')
+        ${column.attrName}: string
+    #elseif($column.attrType == 'Boolean')
+        ${column.attrName}: boolean
+    #else
+        ${column.attrName}: any
+    #end
+    #end
+}
+
+/**
+ * ${entityClassNameComment}列表数组类型声明
+ */
+export type ${entityClassName}Records = ${entityClassName}Record[]
+
+/**
+ * ${entityClassNameComment}列表接口响应类型声明
+ */
+export interface ${entityClassName}ResponseData extends ResponseData {
+    data: {
+        records: ${entityClassName}Records | ${entityClassName}Record
+        total: number
+        size: number
+        current: number
+        pages: number
+    }
+}
+
+/**
+ * ${entityClassNameComment}列表查询类型声明
+ */
+export interface ${entityClassName}Query extends PageQuery {
+    #foreach($column in $columns)
+        #if($column.attrType == 'LocalDateTime' || $column.attrType == 'LocalDate' || $column.attrType == 'Date')
+                ${column.attrName}: string
+        #elseif($column.attrType == 'Long' || $column.attrType == 'Integrer')
+                ${column.attrName}: number
+        #elseif($column.attrType == 'String')
+                ${column.attrName}: string
+        #elseif($column.attrType == 'Boolean')
+                ${column.attrName}: boolean
+        #else
+                ${column.attrName}: any
+        #end
+    #end
+}
+
+/**
+ * ${entityClassNameComment}表单类型声明
+ */
+export interface ${entityClassName}Form {
+    #foreach($column in $columns)
+        #if($column.attrType == 'LocalDateTime' || $column.attrType == 'LocalDate' || $column.attrType == 'Date')
+                ${column.attrName}: string
+        #elseif($column.attrType == 'Long' || $column.attrType == 'Integrer')
+                ${column.attrName}: number
+        #elseif($column.attrType == 'String')
+                ${column.attrName}: string
+        #elseif($column.attrType == 'Boolean')
+                ${column.attrName}: boolean
+        #else
+                ${column.attrName}: any
+        #end
+    #end
+}

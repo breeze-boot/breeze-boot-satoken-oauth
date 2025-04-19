@@ -26,12 +26,12 @@ import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.auth.mapper.SysRoleMapper;
 import com.breeze.boot.modules.auth.model.bo.RoleBO;
 import com.breeze.boot.modules.auth.model.bo.UserRoleBO;
+import com.breeze.boot.modules.auth.model.converter.SysRoleConverter;
 import com.breeze.boot.modules.auth.model.entity.SysRole;
 import com.breeze.boot.modules.auth.model.entity.SysRoleMenu;
 import com.breeze.boot.modules.auth.model.entity.SysRoleRowPermission;
 import com.breeze.boot.modules.auth.model.form.MenuPermissionForm;
 import com.breeze.boot.modules.auth.model.form.RoleForm;
-import com.breeze.boot.modules.auth.model.mappers.SysRoleMapStruct;
 import com.breeze.boot.modules.auth.model.query.RoleQuery;
 import com.breeze.boot.modules.auth.model.vo.RoleVO;
 import com.breeze.boot.modules.auth.service.SysMenuService;
@@ -63,7 +63,7 @@ import static com.breeze.boot.core.enums.ResultCode.ROLE_NOT_FOUND;
 @RequiredArgsConstructor
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements SysRoleService {
 
-    private final SysRoleMapStruct sysRoleMapStruct;
+    private final SysRoleConverter sysRoleConverter;
 
     /**
      * 系统角色菜单服务
@@ -79,14 +79,14 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     /**
      * 列表页面
      *
-     * @param roleQuery 角色查询
+     * @param query 角色查询
      * @return {@link Page}<{@link RoleVO}>
      */
     @Override
-    public Page<RoleVO> listPage(RoleQuery roleQuery) {
-        Page<SysRole> page = new Page<>(roleQuery.getCurrent(), roleQuery.getSize());
-        Page<RoleBO> sysRolePage = this.baseMapper.listPage(page, roleQuery);
-        return this.sysRoleMapStruct.bo2VOPage(sysRolePage);
+    public Page<RoleVO> listPage(RoleQuery query) {
+        Page<SysRole> page = new Page<>(query.getCurrent(), query.getSize());
+        Page<RoleBO> sysRolePage = this.baseMapper.listPage(page, query);
+        return this.sysRoleConverter.bo2VOPage(sysRolePage);
     }
 
     /**
@@ -97,7 +97,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      */
     @Override
     public RoleVO getInfoById(Long roleId) {
-        RoleVO roleVO = this.sysRoleMapStruct.entity2VO(this.getById(roleId));
+        RoleVO roleVO = this.sysRoleConverter.entity2VO(this.getById(roleId));
         List<SysRoleRowPermission> roleRowPermissionList = this.sysRoleRowPermissionService.list(Wrappers.<SysRoleRowPermission>lambdaQuery().eq(SysRoleRowPermission::getRoleId, roleId));
         roleVO.setRowPermissionIds(roleRowPermissionList.stream().map(SysRoleRowPermission::getPermissionId).collect(Collectors.toList()));
         return roleVO;
@@ -118,16 +118,16 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      * 修改角色
      *
      * @param id       ID
-     * @param roleForm 角色表单
+     * @param form 角色表单
      * @return {@link Boolean}
      */
     @Override
-    public Result<Boolean> modifyRole(Long id, RoleForm roleForm) {
-        SysRole sysRole = sysRoleMapStruct.form2Entity(roleForm);
+    public Result<Boolean> modifyRole(Long id, RoleForm form) {
+        SysRole sysRole = sysRoleConverter.form2Entity(form);
         sysRole.setId(id);
         boolean update = this.updateById(sysRole);
         if (update) {
-            this.saveRoleRowPermission(id, roleForm);
+            this.saveRoleRowPermission(id, form);
         }
         return Result.ok(Boolean.FALSE);
     }
@@ -140,11 +140,11 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     }
 
     @Override
-    public Result<Boolean> saveRole(RoleForm roleForm) {
-        SysRole sysRole = sysRoleMapStruct.form2Entity(roleForm);
+    public Result<Boolean> saveRole(RoleForm form) {
+        SysRole sysRole = sysRoleConverter.form2Entity(form);
         boolean save = this.save(sysRole);
         if (save) {
-            this.saveRoleRowPermission(sysRole.getId(), roleForm);
+            this.saveRoleRowPermission(sysRole.getId(), form);
         }
         return Result.ok(Boolean.FALSE);
     }
@@ -206,22 +206,22 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     /**
      * 编辑权限
      *
-     * @param menuPermissionForm 菜单权限表单
+     * @param form 菜单权限表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Result<Boolean> modifyMenuPermission(MenuPermissionForm menuPermissionForm) {
-        this.sysRoleMenuService.remove(Wrappers.<SysRoleMenu>lambdaQuery().eq(SysRoleMenu::getRoleId, menuPermissionForm.getRoleId()));
-        List<SysRoleMenu> sysRoleMenuList = menuPermissionForm.getPermissionIds().stream().map(menuId -> {
+    public Result<Boolean> modifyMenuPermission(MenuPermissionForm form) {
+        this.sysRoleMenuService.remove(Wrappers.<SysRoleMenu>lambdaQuery().eq(SysRoleMenu::getRoleId, form.getRoleId()));
+        List<SysRoleMenu> sysRoleMenuList = form.getPermissionIds().stream().map(menuId -> {
             SysRoleMenu sysRoleMenu = new SysRoleMenu();
             sysRoleMenu.setMenuId(menuId);
-            sysRoleMenu.setRoleId(menuPermissionForm.getRoleId());
+            sysRoleMenu.setRoleId(form.getRoleId());
             return sysRoleMenu;
         }).collect(Collectors.toList());
         boolean batch = this.sysRoleMenuService.saveBatch(sysRoleMenuList);
         if (batch) {
-            SysRole sysRole = this.getById(menuPermissionForm.getRoleId());
+            SysRole sysRole = this.getById(form.getRoleId());
             @SuppressWarnings("unchecked") List<String> permissionList = (List<String>) SaManager.getSaTokenDao().getObject(PERMISSIONS + sysRole.getRoleCode());
             if (permissionList != null) {
                 permissionList = this.sysMenuService.listUserPermissionByRoleCode(sysRole.getRoleCode());

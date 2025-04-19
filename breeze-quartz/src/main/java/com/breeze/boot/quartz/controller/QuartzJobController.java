@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.log.annotation.BreezeSysLog;
 import com.breeze.boot.log.enums.LogType;
-import com.breeze.boot.quartz.domain.SysQuartzJob;
+import com.breeze.boot.quartz.domain.entity.SysQuartzJob;
 import com.breeze.boot.quartz.domain.form.JobOpenForm;
 import com.breeze.boot.quartz.domain.form.SysQuartzJobForm;
 import com.breeze.boot.quartz.domain.query.JobQuery;
@@ -55,14 +55,14 @@ public class QuartzJobController {
     /**
      * 列表页面
      *
-     * @param jobQuery 任务查询
+     * @param query 任务查询
      * @return {@link Result}<{@link Page}<{@link SysQuartzJob}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("sys:job:list")
-    public Result<Page<SysQuartzJob>> listPage(@RequestBody JobQuery jobQuery) {
-        return Result.ok(this.sysQuartzJobService.listPage(jobQuery));
+    public Result<Page<SysQuartzJob>> listPage(@RequestBody JobQuery query) {
+        return Result.ok(this.sysQuartzJobService.listPage(query));
     }
 
     /**
@@ -81,22 +81,22 @@ public class QuartzJobController {
     /**
      * 保存
      *
-     * @param sysQuartzJob quartz任务
+     * @param form quartz任务
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "保存")
     @PostMapping
     @SaCheckPermission("sys:job:create")
     @BreezeSysLog(description = "保存任务", type = LogType.EDIT)
-    public Result<Boolean> save(@Valid @RequestBody SysQuartzJob sysQuartzJob) {
-        return this.sysQuartzJobService.saveJob(sysQuartzJob);
+    public Result<Boolean> save(@Valid @RequestBody SysQuartzJobForm form) {
+        return this.sysQuartzJobService.saveJob(form);
     }
 
     /**
      * 修改
      *
      * @param id            ID
-     * @param quartzJobForm quartz任务
+     * @param form quartz任务
      * @return {@link Result }<{@link Boolean }>
      */
     @Operation(summary = "修改")
@@ -104,22 +104,22 @@ public class QuartzJobController {
     @SaCheckPermission("sys:job:modify")
     @BreezeSysLog(description = "修改任务", type = LogType.EDIT)
     public Result<Boolean> modify(@Parameter(description = "任务ID") @NotNull(message = "任务ID不能为空") @PathVariable Long id,
-                                  @Valid @RequestBody SysQuartzJobForm quartzJobForm) {
-        return this.sysQuartzJobService.modifyJob(id, quartzJobForm);
+                                  @Valid @RequestBody SysQuartzJobForm form) {
+        return this.sysQuartzJobService.modifyJob(id, form);
     }
 
     /**
      * 开启或关闭
      *
-     * @param jobOpenForm 任务的开启关闭参数
+     * @param form 任务的开启关闭参数
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "开启或关闭")
     @PutMapping("/open")
     @SaCheckPermission("sys:job:modify")
     @BreezeSysLog(description = "开启或关闭任务", type = LogType.EDIT)
-    public Result<Boolean> open(@Valid @RequestBody JobOpenForm jobOpenForm) {
-        return this.sysQuartzJobService.open(jobOpenForm);
+    public Result<Boolean> open(@Valid @RequestBody JobOpenForm form) {
+        return this.sysQuartzJobService.open(form);
     }
 
     /**

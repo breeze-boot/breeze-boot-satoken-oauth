@@ -37,10 +37,10 @@ public interface SysMsgUserService extends IService<SysMsgUser> {
     /**
      * 列表页面
      *
-     * @param userMsgQuery 用户消息查询
+     * @param query 用户消息查询
      * @return {@link IPage}<{@link MsgUserVO}>
      */
-    IPage<MsgUserVO> listPage(UserMsgQuery userMsgQuery);
+    IPage<MsgUserVO> listPage(UserMsgQuery query);
 
     /**
      * 获取用户的消息
@@ -53,9 +53,9 @@ public interface SysMsgUserService extends IService<SysMsgUser> {
     /**
      * 保存用户的消息
      *
-     * @param userMsgDTO 用户味精dto
+     * @param dto 用户味精dto
      */
-    void saveUserMsg(UserMsgDTO userMsgDTO);
+    void saveUserMsg(UserMsgDTO dto);
 
     /**
      * 关闭

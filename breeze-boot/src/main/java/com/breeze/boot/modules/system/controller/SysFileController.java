@@ -62,29 +62,29 @@ public class SysFileController {
     /**
      * 列表
      *
-     * @param fileQuery 文件查询
+     * @param query 文件查询
      * @return {@link Result}<{@link Page}<{@link SysFile}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("sys:file:list")
-    public Result<Page<SysFile>> list(@RequestBody FileQuery fileQuery) {
-        return Result.ok(this.sysFileService.listPage(fileQuery));
+    public Result<Page<SysFile>> list(@RequestBody FileQuery query) {
+        return Result.ok(this.sysFileService.listPage(query));
     }
 
     /**
      * 修改
      *
      * @param fileId   文件id
-     * @param fileBizForm 文件表单
+     * @param form 文件表单
      * @return {@link Result}<{@link Page}<{@link SysFile}>>
      */
     @Operation(summary = "修改")
     @PutMapping("/{fileId}")
     @SaCheckPermission("sys:file:edit")
     public Result<Boolean> modify(@Parameter(description = "文件ID") @NotNull(message = "文件ID不能为空") @PathVariable Long fileId,
-                                  @Valid @RequestBody FileBizForm fileBizForm) {
-        return Result.ok(this.sysFileService.updateFileById(fileId, fileBizForm));
+                                  @Valid @RequestBody FileBizForm form) {
+        return Result.ok(this.sysFileService.updateFileById(fileId, form));
     }
 
     /**
@@ -117,7 +117,7 @@ public class SysFileController {
     /**
      * 上传
      *
-     * @param fileForm 文件上传参数
+     * @param form 文件上传参数
      * @param request  请求
      * @param response 响应
      * @return {@link Result}<{@link Map}<{@link String}, {@link Object}>>
@@ -125,16 +125,16 @@ public class SysFileController {
     @Operation(summary = "文件上传")
     @PostMapping("/uploadMinioS3")
     @SaCheckPermission("sys:file:upload")
-    public Result<Map<String, Object>> uploadMinioS3(@Valid FileForm fileForm,
+    public Result<Map<String, Object>> uploadMinioS3(@Valid FileForm form,
                                                      HttpServletRequest request,
                                                      HttpServletResponse response) {
-        return this.sysFileService.uploadMinioS3(fileForm, request, response);
+        return this.sysFileService.uploadMinioS3(form, request, response);
     }
 
     /**
      * 上传
      *
-     * @param fileForm 文件上传参数
+     * @param form 文件上传参数
      * @param request  请求
      * @param response 响应
      * @return {@link Result}<{@link Map}<{@link String}, {@link Object}>>
@@ -142,10 +142,10 @@ public class SysFileController {
     @Operation(summary = "文件上传")
     @PostMapping("/uploadLocalStorage")
     @SaCheckPermission("sys:file:upload")
-    public Result<Map<String, Object>> uploadLocalStorage(@Valid FileForm fileForm,
+    public Result<Map<String, Object>> uploadLocalStorage(@Valid FileForm form,
                                                           HttpServletRequest request,
                                                           HttpServletResponse response) {
-        return this.sysFileService.uploadLocalStorage(fileForm, request, response);
+        return this.sysFileService.uploadLocalStorage(form, request, response);
     }
 
     /**

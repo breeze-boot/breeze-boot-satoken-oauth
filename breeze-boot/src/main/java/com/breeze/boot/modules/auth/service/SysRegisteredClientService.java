@@ -58,35 +58,35 @@ public interface SysRegisteredClientService extends IService<SysRegisteredClient
     /**
      * 列表页面
      *
-     * @param registeredClientQuery 注册客户端参数
+     * @param query 注册客户端参数
      * @return {@link Page}<{@link RegisteredClientVO}>
      */
-    Page<RegisteredClientVO> listPage(RegisteredClientQuery registeredClientQuery);
+    Page<RegisteredClientVO> listPage(RegisteredClientQuery query);
 
     /**
      * 保存注册客户端
      *
-     * @param registeredClientForm 注册客户端表单
+     * @param form 注册客户端表单
      * @return {@link Result }<{@link Boolean }>
      */
-    Result<Boolean> saveRegisteredClient(RegisteredClientForm registeredClientForm);
+    Result<Boolean> saveRegisteredClient(RegisteredClientForm form);
 
     /**
      * 更新
      *
      * @param id                   ID
-     * @param registeredClientForm 注册客户端表单
+     * @param form 注册客户端表单
      * @return {@link Boolean}
      */
-    Boolean modifyRegisteredClient(Long id, RegisteredClientForm registeredClientForm);
+    Boolean modifyRegisteredClient(Long id, RegisteredClientForm form);
 
     /**
      * 重置客户端密钥
      *
-     * @param resetClientSecretForm 重置客户端密钥
+     * @param form 重置客户端密钥
      * @return {@link Boolean}
      */
-    Boolean resetClientSecret(ResetClientSecretForm resetClientSecretForm);
+    Boolean resetClientSecret(ResetClientSecretForm form);
 
     /**
      * 信息

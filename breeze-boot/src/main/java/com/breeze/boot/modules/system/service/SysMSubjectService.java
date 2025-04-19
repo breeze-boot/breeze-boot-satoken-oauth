@@ -32,17 +32,17 @@ import java.util.List;
  * 系统邮箱主题服务
  *
  * @author gaoweixuan
-  * @since 2024-07-13
+ * @since 2024-07-13
  */
 public interface SysMSubjectService extends IService<SysEmailSubject> {
 
     /**
      * 列表页
      *
-     * @param mSubjectQuery 邮箱主题查询
+     * @param query 邮箱主题查询
      * @return {@link Page }<{@link MSubjectVO }>
      */
-    Page<MSubjectVO> listPage(MSubjectQuery mSubjectQuery);
+    Page<MSubjectVO> listPage(MSubjectQuery query);
 
     /**
      * 按id获取信息
@@ -55,19 +55,19 @@ public interface SysMSubjectService extends IService<SysEmailSubject> {
     /**
      * 保存邮箱主题
      *
-     * @param subjectForm 邮箱主题表单
+     * @param form 邮箱主题表单
      * @return {@link Boolean }
      */
-    Boolean saveEmailSubject(MSubjectForm subjectForm);
+    Boolean saveEmailSubject(MSubjectForm form);
 
     /**
      * 修改邮箱主题
      *
-     * @param id           ID
-     * @param mSubjectForm 邮箱主题表单
+     * @param id   ID
+     * @param form 邮箱主题表单
      * @return {@link Boolean }
      */
-    Boolean modifyEmailSubject(Long id, MSubjectForm mSubjectForm);
+    Boolean modifyEmailSubject(Long id, MSubjectForm form);
 
     /**
      * 邮寄
@@ -80,19 +80,19 @@ public interface SysMSubjectService extends IService<SysEmailSubject> {
     /**
      * 开启关闭锁定
      *
-     * @param mSubjectOpenForm 邮箱主题开关表单
+     * @param form 邮箱主题开关表单
      * @return {@link Boolean }
      */
-    Boolean open(MSubjectOpenForm mSubjectOpenForm);
+    Boolean open(MSubjectOpenForm form);
 
     /**
      * 设置电子邮件用户
      *
-     * @param id                  ID
-     * @param mSubjectSetUserForm m主题集用户表单
+     * @param id   ID
+     * @param form m主题集用户表单
      * @return {@link Boolean }
      */
-    Boolean setEmailUser(Long id, MSubjectSetUserForm mSubjectSetUserForm);
+    Boolean setEmailUser(Long id, MSubjectSetUserForm form);
 
     /**
      * 查看邮箱接收人

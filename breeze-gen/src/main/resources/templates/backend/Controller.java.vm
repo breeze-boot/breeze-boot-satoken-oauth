@@ -1,0 +1,133 @@
+/*
+ * Copyright (c) 2025, gaoweixuan (breeze-cloud@foxmail.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package ${packageName}.${module}.controller;
+
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.breeze.boot.core.utils.Result;
+import com.breeze.boot.log.annotation.BreezeSysLog;
+import com.breeze.boot.log.enums.LogType;
+import com.breeze.boot.${module}.model.entity.${entityClassName};
+import com.breeze.boot.${module}.model.form.${entityClassName}Form;
+import com.breeze.boot.${module}.model.query.${entityClassName}Query;
+import com.breeze.boot.${module}.model.vo.${entityClassName}VO;
+import com.breeze.boot.${module}.service.${entityClassName}Service;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * ${entityClassNameComment} 控制器
+ *
+ * @author gaoweixuan
+ * @since ${date}
+ */
+@RestController
+@RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer")
+@RequestMapping("/${module}/v1/${entityClassLowerName}")
+@Tag(name = "${module}管理模块", description = "${entityClassName}Controller")
+public class ${entityClassName}Controller {
+
+    /**
+     * ${entityClassNameComment}服务
+     */
+    private final ${entityClassName}Service ${entityClassLowerName}Service;
+
+    /**
+     * 列表
+     *
+     * @param query  ${entityClassNameComment}查询
+     * @return {@link Result}<{@link Page}<{@link ${entityClassName}VO }>>
+     */
+    @Operation(summary = "列表")
+    @PostMapping("/page")
+    @SaCheckPermission("${module}:${entityClassLowerName}:list")
+    public Result<Page<${entityClassName}VO>> list(@RequestBody ${entityClassName}Query query) {
+        return Result.ok(this.${entityClassLowerName}Service.listPage(query));
+    }
+
+    /**
+     * 详情
+     *
+     * @param ${entityClassLowerName}Id ${entityClassNameComment}id
+     * @return {@link Result}<{@link ${entityClassName}VO }>
+     */
+    @Operation(summary = "详情")
+    @GetMapping("/info/{${entityClassLowerName}Id}")
+    @SaCheckPermission("${module}:${entityClassLowerName}:info")
+    public Result<${entityClassName}VO> info(
+            @Parameter(description = "${entityClassNameComment} ID") @NotNull(message = "${entityClassNameComment}ID不能为空")
+            @PathVariable("${entityClassLowerName}Id") Long ${entityClassLowerName}Id) {
+        return Result.ok(this.${entityClassLowerName}Service.getInfoById(${entityClassLowerName}Id));
+    }
+
+    /**
+     * 创建
+     *
+     * @param form     ${entityClassNameComment}表单
+     * @return {@link Result}<{@link Boolean }>
+     */
+    @Operation(summary = "保存")
+    @PostMapping
+    @SaCheckPermission("${module}:${entityClassLowerName}:create")
+    @BreezeSysLog(description = "${entityClassNameComment}信息保存", type = LogType.SAVE)
+    public Result<Boolean> save(@Valid @RequestBody ${entityClassName}Form form) {
+        return Result.ok(this.${entityClassLowerName}Service.save(form));
+    }
+
+    /**
+     * 修改
+     *
+     * @param ${entityClassLowerName}Id ${entityClassNameComment}ID
+     * @param form     ${entityClassNameComment}表单
+     * @return {@link Result}<{@link Boolean }>
+     */
+    @Operation(summary = "修改")
+    @PutMapping("/{${entityClassLowerName}Id}")
+    @SaCheckPermission("${module}:${entityClassLowerName}:modify")
+    @BreezeSysLog(description = "${entityClassNameComment}信息修改", type = LogType.EDIT)
+    public Result<Boolean> modify(
+            @Parameter(description = "${entityClassName} ID") @NotNull(message = "${entityClassNameComment}ID不能为空") @PathVariable Long ${entityClassLowerName}Id,
+            @Valid @RequestBody ${entityClassName}Form form) {
+        return Result.ok(this.${entityClassLowerName}Service.modify${entityClassName}(${entityClassLowerName}Id, form));
+    }
+
+    /**
+     * 删除
+     *
+     * @param ids ids
+     * @return {@link Result}<{@link Boolean }>
+     */
+    @Operation(summary = "删除")
+    @DeleteMapping
+    @SaCheckPermission("${module}:${entityClassLowerName}:delete")
+    @BreezeSysLog(description = "${entityClassNameComment}信息删除", type = LogType.DELETE)
+    public Result<Boolean> delete(@Parameter(description = "${entityClassName} ids")
+                                  @NotEmpty(message = "参数不能为空") @RequestBody List<Long> ids) {
+        return this.${entityClassLowerName}Service.remove${entityClassName}ByIds(ids);
+    }
+
+}

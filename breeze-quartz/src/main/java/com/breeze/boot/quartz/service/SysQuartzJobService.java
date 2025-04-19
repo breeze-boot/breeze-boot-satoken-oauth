@@ -20,7 +20,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.breeze.boot.core.utils.Result;
-import com.breeze.boot.quartz.domain.SysQuartzJob;
+import com.breeze.boot.quartz.domain.entity.SysQuartzJob;
 import com.breeze.boot.quartz.domain.form.SysQuartzJobForm;
 import com.breeze.boot.quartz.domain.form.JobOpenForm;
 import com.breeze.boot.quartz.domain.query.JobQuery;
@@ -38,27 +38,27 @@ public interface SysQuartzJobService extends IService<SysQuartzJob> {
     /**
      * 列表页面
      *
-     * @param jobQuery 任务查询
+     * @param query 任务查询
      * @return {@link IPage}<{@link SysQuartzJob}>
      */
-    Page<SysQuartzJob> listPage(JobQuery jobQuery);
+    Page<SysQuartzJob> listPage(JobQuery query);
 
     /**
      * 保存任务
      *
-     * @param sysQuartzJob quartz任务
+     * @param form quartz任务表单
      * @return {@link Result}<{@link Boolean}>
      */
-    Result<Boolean> saveJob(SysQuartzJob sysQuartzJob);
+    Result<Boolean> saveJob(SysQuartzJobForm form);
 
     /**
      * 更新任务通过id
      *
      * @param id            ID
-     * @param quartzJobForm quartz任务
+     * @param form quartz任务
      * @return {@link Result}<{@link Boolean}>
      */
-    Result<Boolean> modifyJob(Long id, SysQuartzJobForm quartzJobForm);
+    Result<Boolean> modifyJob(Long id, SysQuartzJobForm form);
 
     /**
      * 暂停任务

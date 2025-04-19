@@ -61,14 +61,14 @@ public class SysDeptController {
     /**
      * 列表
      *
-     * @param deptQuery 部门查询
+     * @param query 部门查询
      * @return {@link Result}<{@link List}<{@link Tree}<{@link Long}>>>
      */
     @Operation(summary = "列表")
     @GetMapping
     @SaCheckPermission("auth:dept:list")
-    public Result<List<?>> list(DeptQuery deptQuery) {
-        return Result.ok(this.sysDeptService.listDept(deptQuery));
+    public Result<List<?>> list(DeptQuery query) {
+        return Result.ok(this.sysDeptService.listDept(query));
     }
 
     /**
@@ -94,8 +94,9 @@ public class SysDeptController {
     @Operation(summary = "校验部门编码是否重复")
     @GetMapping("/checkDeptCode")
     @SaCheckPermission("auth:dept:list")
-    public Result<Boolean> checkDeptCode(@Parameter(description = "部门编码") @NotBlank(message = "部门编码不能为空") @RequestParam("deptCode") String deptCode,
-                                         @Parameter(description = "部门ID") @RequestParam(value = "deptId", required = false) Long deptId) {
+    public Result<Boolean> checkDeptCode(
+            @Parameter(description = "部门编码") @NotBlank(message = "部门编码不能为空") @RequestParam("deptCode") String deptCode,
+            @Parameter(description = "部门ID") @RequestParam(value = "deptId", required = false) Long deptId) {
         // @formatter:off
         return Result.ok(Objects.isNull(this.sysDeptService.getOne(Wrappers.<SysDept>lambdaQuery()
                 .ne(Objects.nonNull(deptId), SysDept::getId, deptId)
@@ -106,21 +107,21 @@ public class SysDeptController {
     /**
      * 创建
      *
-     * @param deptForm 部门表单
+     * @param form 部门表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "保存")
     @PostMapping
     @SaCheckPermission("auth:dept:create")
     @BreezeSysLog(description = "部门信息保存", type = LogType.SAVE)
-    public Result<Boolean> save(@Valid @RequestBody DeptForm deptForm) {
-        return Result.ok(sysDeptService.saveDept(deptForm));
+    public Result<Boolean> save(@Valid @RequestBody DeptForm form) {
+        return Result.ok(sysDeptService.saveDept(form));
     }
 
     /**
      * 修改
      *
-     * @param deptForm 部门表单
+     * @param form 部门表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "修改")
@@ -128,8 +129,8 @@ public class SysDeptController {
     @SaCheckPermission("auth:dept:modify")
     @BreezeSysLog(description = "部门信息修改", type = LogType.EDIT)
     public Result<Boolean> modify(@Parameter(description = "部门ID") @NotNull(message = "部门ID不能为空") @PathVariable Long id,
-                                  @Valid @RequestBody DeptForm deptForm) {
-        return Result.ok(this.sysDeptService.modifyDept(id, deptForm));
+                                  @Valid @RequestBody DeptForm form) {
+        return Result.ok(this.sysDeptService.modifyDept(id, form));
     }
 
     /**
@@ -155,7 +156,7 @@ public class SysDeptController {
      */
     @Operation(summary = "部门下拉框", description = "下拉框接口")
     @GetMapping("/selectDept")
-    public Result<List<?>> selectDept(@RequestParam(defaultValue = "", required = false) Long id) {
+    public Result<List<?>> selectDept(@RequestParam(required = false) Long id) {
         return this.sysDeptService.selectDept(id);
     }
 

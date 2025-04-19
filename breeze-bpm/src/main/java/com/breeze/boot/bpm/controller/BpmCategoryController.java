@@ -62,14 +62,14 @@ public class BpmCategoryController {
     /**
      * 列表
      *
-     * @param processCategory 流程类别
+     * @param query 查询
      * @return {@link Result}<{@link IPage}<{@link BpmCategoryVO}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("bpm:category:list")
-    public Result<IPage<BpmCategoryVO>> list(@RequestBody BpmCategoryQuery processCategory) {
-        return Result.ok(this.bpmCategoryService.listPage(processCategory));
+    public Result<IPage<BpmCategoryVO>> list(@RequestBody BpmCategoryQuery query) {
+        return Result.ok(this.bpmCategoryService.listPage(query));
     }
 
     /**
@@ -95,8 +95,11 @@ public class BpmCategoryController {
     @Operation(summary = "校验流程分类编码是否重复")
     @GetMapping("/checkCategoryCode")
     @SaCheckPermission("bpm:category:list")
-    public Result<Boolean> checkCategoryCode(@Parameter(description = "流程分类编码") @NotBlank(message = "流程分类编码不能为空") @RequestParam("categoryCode") String categoryCode,
-                                             @Parameter(description = "流程分类ID") @RequestParam(value = "categoryId", required = false) Long categoryId) {
+    public Result<Boolean> checkCategoryCode(
+            // @formatter:off
+            @Parameter(description = "流程分类编码") @NotBlank(message = "流程分类编码不能为空") @RequestParam("categoryCode") String categoryCode,
+            @Parameter(description = "流程分类ID") @RequestParam(value = "categoryId", required = false) Long categoryId) {
+            // @formatter:on
         // @formatter:off
         return Result.ok(Objects.isNull(this.bpmCategoryService.getOne(Wrappers.<BpmCategory>lambdaQuery()
                 .ne(Objects.nonNull(categoryId), BpmCategory::getId, categoryId)
@@ -107,21 +110,21 @@ public class BpmCategoryController {
     /**
      * 创建
      *
-     * @param bpmCategoryForm 流程分类表单
+     * @param form 流程分类表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "保存")
     @PostMapping
     @SaCheckPermission("bpm:category:create")
     @BreezeSysLog(description = "流程分类信息保存", type = LogType.SAVE)
-    public Result<Boolean> save(@Valid @RequestBody BpmCategoryForm bpmCategoryForm) {
-        return Result.ok(this.bpmCategoryService.saveFlowCategory(bpmCategoryForm));
+    public Result<Boolean> save(@Valid @RequestBody BpmCategoryForm form) {
+        return Result.ok(this.bpmCategoryService.saveFlowCategory(form));
     }
 
     /**
      * 修改
      *
-     * @param bpmCategoryForm 流程分类表单
+     * @param form 流程分类表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "修改")
@@ -129,8 +132,8 @@ public class BpmCategoryController {
     @SaCheckPermission("bpm:category:modify")
     @BreezeSysLog(description = "流程分类信息修改", type = LogType.EDIT)
     public Result<Boolean> modify(@PathVariable @Parameter(description = "流程分类ID") @NotNull(message = "流程分类ID不能为空") Long id,
-                                  @Valid @RequestBody BpmCategoryForm bpmCategoryForm) {
-        return Result.ok(this.bpmCategoryService.modifyFlowCategory(id, bpmCategoryForm));
+                                  @Valid @RequestBody BpmCategoryForm form) {
+        return Result.ok(this.bpmCategoryService.modifyFlowCategory(id, form));
     }
 
     /**

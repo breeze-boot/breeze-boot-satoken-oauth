@@ -5,7 +5,7 @@
 
 <mapper namespace="com.breeze.boot.quartz.mapper.SysQuartzJobMapper">
 
-    <resultMap id="baseResultMap" type="com.breeze.boot.quartz.domain.SysQuartzJob">
+    <resultMap id="baseResultMap" type="com.breeze.boot.quartz.domain.entity.SysQuartzJob">
         <id property="id" column="id" jdbcType="BIGINT"/>
         <result property="jobName" column="job_name" jdbcType="VARCHAR"/>
         <result property="jobGroupName" column="job_group_name" jdbcType="VARCHAR"/>
@@ -24,7 +24,7 @@
         <result property="deleteBy" column="delete_by" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <select id="listPage" resultType="com.breeze.boot.quartz.domain.SysQuartzJob">
+    <select id="listPage" resultType="com.breeze.boot.quartz.domain.entity.SysQuartzJob">
         SELECT a.id,
         a.job_name,
         a.job_group_name,

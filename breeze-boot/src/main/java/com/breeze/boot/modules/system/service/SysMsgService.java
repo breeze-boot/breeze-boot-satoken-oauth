@@ -34,10 +34,10 @@ public interface SysMsgService extends IService<SysMsg> {
     /**
      * 列表页面
      *
-     * @param msgQuery 消息查询
+     * @param query 消息查询
      * @return {@link IPage}<{@link MsgVO}>
      */
-    IPage<MsgVO> listPage(MsgQuery msgQuery);
+    IPage<MsgVO> listPage(MsgQuery query);
 
     /**
      * 按id获取信息
@@ -50,18 +50,18 @@ public interface SysMsgService extends IService<SysMsg> {
     /**
      * 保存消息
      *
-     * @param msgForm 消息表单
+     * @param form 消息表单
      * @return {@link Boolean }
      */
-    Boolean saveMsg(MsgForm msgForm);
+    Boolean saveMsg(MsgForm form);
 
     /**
      * 修改消息
      *
      * @param id      ID
-     * @param msgForm 消息表单
+     * @param form 消息表单
      * @return {@link Boolean }
      */
-    Boolean modifyMsg(Long id, MsgForm msgForm);
+    Boolean modifyMsg(Long id, MsgForm form);
 
 }

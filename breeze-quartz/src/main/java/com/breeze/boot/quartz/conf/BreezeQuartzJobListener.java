@@ -17,9 +17,9 @@
 package com.breeze.boot.quartz.conf;
 
 import cn.hutool.core.date.DateUtil;
-import com.breeze.boot.core.constants.QuartzConstants;
-import com.breeze.boot.quartz.domain.SysQuartzJob;
-import com.breeze.boot.quartz.domain.SysQuartzJobLog;
+import com.breeze.boot.quartz.domain.entity.SysQuartzJob;
+import com.breeze.boot.quartz.domain.entity.SysQuartzJobLog;
+import com.breeze.boot.quartz.enums.QuartzEnum;
 import com.breeze.boot.quartz.service.SysQuartzJobLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,17 +63,14 @@ public class BreezeQuartzJobListener implements JobListener {
         if (t == null) {
             return null;
         }
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        try {
-            t.printStackTrace(new PrintStream(stream));
-        } finally {
-            try {
-                stream.close();
-            } catch (IOException e) {
-                log.error("任务日志异常信息装换异常",e);
-            }
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
+             PrintStream printStream = new PrintStream(stream)) {
+            t.printStackTrace(printStream);
+            return stream.toString();
+        } catch (IOException e) {
+            log.error("任务日志异常信息转换异常", e);
+            return null;
         }
-        return stream.toString();
     }
 
     /**
@@ -106,7 +103,6 @@ public class BreezeQuartzJobListener implements JobListener {
      * @param context 上下文
      */
     @Override
-
     public void jobExecutionVetoed(JobExecutionContext context) {
         try {
             JobDetail jobDetail = context.getJobDetail();
@@ -117,14 +113,13 @@ public class BreezeQuartzJobListener implements JobListener {
     }
 
     /**
-     * 工作被执行死刑
+     * 工作被执行
      *
      * @param context      上下文
      * @param jobException 工作异常
      */
     @Override
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
-
         try {
             JobDetail jobDetail = context.getJobDetail();
             log.info("BreezeQuartzJobListener says: {} Job was executed.", jobDetail.getKey());
@@ -133,34 +128,46 @@ public class BreezeQuartzJobListener implements JobListener {
             Date fireTime = context.getFireTime();
             Class<? extends Job> jobClass = jobDetail.getJobClass();
             log.info("JobClass:{}, Job:{}, Trigger:{}, FireTime:{}", jobClass, jobKey, triggerKey, DateUtil.formatDateTime(fireTime));
-            SysQuartzJob quartzJob = (SysQuartzJob) context.getMergedJobDataMap().get(QuartzConstants.JOB_DATA_KEY);
+            SysQuartzJob quartzJob = (SysQuartzJob) context.getMergedJobDataMap().get(QuartzEnum.JOB_DATA_KEY);
             SysQuartzJobLog quartzJobLog = logThreadLocal.get();
             quartzJobLog.setJobId(quartzJob.getId());
             quartzJobLog.setJobName(quartzJob.getJobName());
             quartzJobLog.setCronExpression(quartzJob.getCronExpression());
             quartzJobLog.setClazzName(quartzJob.getClazzName());
             quartzJobLog.setJobGroupName(quartzJob.getJobGroupName());
-            if (Objects.nonNull(jobException)) {
-                // 保存执行失败记录
-                quartzJobLog.setJobResult(0);
-                quartzJobLog.setEndTime(LocalDateTime.now());
-                quartzJobLog.setExceptionInfo(exception(jobException));
-                long millis = quartzJobLog.getCreateTime().until(quartzJobLog.getEndTime(), ChronoUnit.MILLIS);
-                log.info("花费时间: {} - {} = {}", quartzJobLog.getCreateTime(), quartzJobLog.getEndTime(), millis);
-                quartzJobLog.setJobMessage("运行时间 " + millis + " 毫秒 ");
-                this.quartzJobLogService.save(quartzJobLog);
-                return;
-            }
-            // 保存执行成功记录
-            quartzJobLog.setJobResult(1);
-            quartzJobLog.setEndTime(LocalDateTime.now());
-            long millis = quartzJobLog.getCreateTime().until(quartzJobLog.getEndTime(), ChronoUnit.MILLIS);
-            log.info("花费时间: {} - {} = {}", quartzJobLog.getCreateTime(), quartzJobLog.getEndTime(), millis);
-            quartzJobLog.setJobMessage("运行时间 " + millis + " 毫秒 ");
-            this.quartzJobLogService.save(quartzJobLog);
+
+            boolean isSuccess = Objects.isNull(jobException);
+            saveJobLog(quartzJobLog, isSuccess, jobException);
+        } catch (Exception e) {
+            log.error("记录任务执行日志时发生异常", e);
         } finally {
             log.info("释放 => logThreadLocal");
             logThreadLocal.remove();
         }
     }
-}
+
+    /**
+     * 保存任务执行日志
+     *
+     * @param quartzJobLog 任务日志实体
+     * @param isSuccess    是否执行成功
+     * @param jobException 任务异常
+     */
+    private void saveJobLog(SysQuartzJobLog quartzJobLog, boolean isSuccess, JobExecutionException jobException) {
+        quartzJobLog.setJobResult(isSuccess ? 1 : 0);
+        quartzJobLog.setEndTime(LocalDateTime.now());
+        long millis = quartzJobLog.getCreateTime().until(quartzJobLog.getEndTime(), ChronoUnit.MILLIS);
+        log.info("花费时间: {} - {} = {}", quartzJobLog.getCreateTime(), quartzJobLog.getEndTime(), millis);
+        quartzJobLog.setJobMessage("运行时间 " + millis + " 毫秒 ");
+
+        if (!isSuccess) {
+            quartzJobLog.setExceptionInfo(exception(jobException));
+        }
+
+        try {
+            quartzJobLogService.save(quartzJobLog);
+        } catch (Exception e) {
+            log.error("保存任务执行日志失败", e);
+        }
+    }
+}    

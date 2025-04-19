@@ -28,7 +28,7 @@ import com.breeze.boot.modules.auth.mapper.SysTenantMapper;
 import com.breeze.boot.modules.auth.model.entity.SysTenant;
 import com.breeze.boot.modules.auth.model.entity.SysUser;
 import com.breeze.boot.modules.auth.model.form.TenantForm;
-import com.breeze.boot.modules.auth.model.mappers.SysTenantMapStruct;
+import com.breeze.boot.modules.auth.model.converter.SysTenantConverter;
 import com.breeze.boot.modules.auth.model.query.TenantQuery;
 import com.breeze.boot.modules.auth.model.vo.TenantVO;
 import com.breeze.boot.modules.auth.service.SysTenantService;
@@ -61,22 +61,22 @@ public class SysTenantServiceImpl extends ServiceImpl<SysTenantMapper, SysTenant
      */
     private final SysUserService sysUserService;
 
-    private final SysTenantMapStruct sysTenantMapStruct;
+    private final SysTenantConverter sysTenantConverter;
 
     /**
      * 列表页面
      *
-     * @param tenantQuery 租户查询
+     * @param query 租户查询
      * @return {@link Page}<{@link TenantVO}>
      */
     @Override
     @DymicSql
-    public Page<TenantVO> listPage(@ConditionParam TenantQuery tenantQuery) {
+    public Page<TenantVO> listPage(@ConditionParam TenantQuery query) {
         Page<SysTenant> page = new LambdaQueryChainWrapper<>(this.getBaseMapper())
-                .like(StrUtil.isAllNotBlank(tenantQuery.getTenantName()), SysTenant::getTenantName, tenantQuery.getTenantName())
+                .like(StrUtil.isAllNotBlank(query.getTenantName()), SysTenant::getTenantName, query.getTenantName())
                 .orderByDesc(SysTenant::getCreateTime)
-                .page(new Page<>(tenantQuery.getCurrent(), tenantQuery.getSize()));
-        return sysTenantMapStruct.page2VOPage(page);
+                .page(new Page<>(query.getCurrent(), query.getSize()));
+        return sysTenantConverter.page2VOPage(page);
     }
 
     /**
@@ -87,19 +87,19 @@ public class SysTenantServiceImpl extends ServiceImpl<SysTenantMapper, SysTenant
      */
     @Override
     public TenantVO getInfoById(Long tenantId) {
-        return this.sysTenantMapStruct.entity2VO(this.getById(tenantId));
+        return this.sysTenantConverter.entity2VO(this.getById(tenantId));
     }
 
     /**
      * 修改租户
      *
      * @param id         ID
-     * @param tenantForm 租户表单
+     * @param form 租户表单
      * @return {@link Boolean }
      */
     @Override
-    public Boolean modifyTenant(Long id, TenantForm tenantForm) {
-        SysTenant sysTenant = this.sysTenantMapStruct.form2Entity(tenantForm);
+    public Boolean modifyTenant(Long id, TenantForm form) {
+        SysTenant sysTenant = this.sysTenantConverter.form2Entity(form);
         sysTenant.setId(id);
         return this.updateById(sysTenant);
     }

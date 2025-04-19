@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.breeze.boot.modules.system.mapper.SysMsgMapper;
 import com.breeze.boot.modules.system.model.entity.SysMsg;
 import com.breeze.boot.modules.system.model.form.MsgForm;
-import com.breeze.boot.modules.system.model.mappers.SysMsgMapStruct;
+import com.breeze.boot.modules.system.model.converter.SysMsgConverter;
 import com.breeze.boot.modules.system.model.query.MsgQuery;
 import com.breeze.boot.modules.system.service.SysMsgService;
 import com.breeze.boot.message.vo.MsgVO;
@@ -42,23 +42,23 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SysMsgServiceImpl extends ServiceImpl<SysMsgMapper, SysMsg> implements SysMsgService {
 
-    private final SysMsgMapStruct sysMsgMapStruct;
+    private final SysMsgConverter sysMsgConverter;
 
     /**
      * 列表页面
      *
-     * @param msgQuery 消息查询
+     * @param query 消息查询
      * @return {@link Page}<{@link MsgVO}>
      */
     @Override
     @DymicSql
-    public Page<MsgVO> listPage(@ConditionParam MsgQuery msgQuery) {
-        Page<SysMsg> msgPage = new Page<>(msgQuery.getCurrent(), msgQuery.getSize());
+    public Page<MsgVO> listPage(@ConditionParam MsgQuery query) {
+        Page<SysMsg> msgPage = new Page<>(query.getCurrent(), query.getSize());
         Page<SysMsg> page = new LambdaQueryChainWrapper<>(this.getBaseMapper())
-                .like(StrUtil.isAllNotBlank(msgQuery.getTitle()), SysMsg::getTitle, msgQuery.getTitle())
-                .like(StrUtil.isAllNotBlank(msgQuery.getCode()), SysMsg::getCode, msgQuery.getCode())
+                .like(StrUtil.isAllNotBlank(query.getTitle()), SysMsg::getTitle, query.getTitle())
+                .like(StrUtil.isAllNotBlank(query.getCode()), SysMsg::getCode, query.getCode())
                 .page(msgPage);
-        return this.sysMsgMapStruct.entityPage2VOPage(page);
+        return this.sysMsgConverter.entityPage2VOPage(page);
     }
 
     /**
@@ -69,18 +69,18 @@ public class SysMsgServiceImpl extends ServiceImpl<SysMsgMapper, SysMsg> impleme
      */
     @Override
     public MsgVO getInfoById(Long id) {
-        return this.sysMsgMapStruct.entity2VO(this.getById(id));
+        return this.sysMsgConverter.entity2VO(this.getById(id));
     }
 
     /**
      * 保存消息
      *
-     * @param msgForm 消息表单
+     * @param form 消息表单
      * @return {@link Boolean }
      */
     @Override
-    public Boolean saveMsg(MsgForm msgForm) {
-        SysMsg sysMsg = this.sysMsgMapStruct.form2Entity(msgForm);
+    public Boolean saveMsg(MsgForm form) {
+        SysMsg sysMsg = this.sysMsgConverter.form2Entity(form);
         return this.save(sysMsg);
     }
 
@@ -88,12 +88,12 @@ public class SysMsgServiceImpl extends ServiceImpl<SysMsgMapper, SysMsg> impleme
      * 修改消息
      *
      * @param id      ID
-     * @param msgForm 消息表单
+     * @param form 消息表单
      * @return {@link Boolean }
      */
     @Override
-    public Boolean modifyMsg(Long id, MsgForm msgForm) {
-        SysMsg sysMsg = this.sysMsgMapStruct.form2Entity(msgForm);
+    public Boolean modifyMsg(Long id, MsgForm form) {
+        SysMsg sysMsg = this.sysMsgConverter.form2Entity(form);
         sysMsg.setId(id);
         return this.updateById(sysMsg);
     }

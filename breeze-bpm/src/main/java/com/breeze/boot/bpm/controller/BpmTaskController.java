@@ -50,13 +50,13 @@ public class BpmTaskController {
     /**
      * 获取用户任务列表
      *
-     * @param userTaskQuery 用户任务查询
+     * @param query 用户任务查询
      * @return {@link Result }<{@link List }<{@link UserTaskVO }>>
      */
     @PostMapping(value = "/listUserTodoTask")
     @ResponseBody
-    public Result<Page<UserTaskVO>> listUserTodoTask(@RequestBody UserTaskQuery userTaskQuery) {
-        return Result.ok(bpmTaskService.listUserTodoTask(userTaskQuery));
+    public Result<Page<UserTaskVO>> listUserTodoTask(@RequestBody UserTaskQuery query) {
+        return Result.ok(bpmTaskService.listUserTodoTask(query));
     }
 
     /**
@@ -74,25 +74,25 @@ public class BpmTaskController {
     /**
      * 查询用户已办任务
      *
-     * @param userTaskQuery 用户任务查询对象
+     * @param query 用户任务查询对象
      * @return {@link Result }<{@link Page }<{@link UserTaskVO }>>
      */
     @PostMapping("/listCompletedTask")
     @ResponseBody
-    public Result<Page<UserTaskVO>> listCompletedTask(@RequestBody @ParameterObject UserTaskQuery userTaskQuery) {
-        return Result.ok(bpmTaskService.listCompletedTask(userTaskQuery));
+    public Result<Page<UserTaskVO>> listCompletedTask(@RequestBody @ParameterObject UserTaskQuery query) {
+        return Result.ok(bpmTaskService.listCompletedTask(query));
     }
 
     /**
      * 查询用户发起任务
      *
-     * @param userTaskQuery 用户任务查询对象
+     * @param query 用户任务查询对象
      * @return {@link Result }<{@link Page }<{@link UserTaskVO }>>
      */
     @PostMapping("/listApplyUserTask")
     @ResponseBody
-    public Result<Page<UserTaskVO>> listApplyUserTask(@RequestBody @ParameterObject UserTaskQuery userTaskQuery) {
-        return Result.ok(bpmTaskService.listApplyUserTask(userTaskQuery));
+    public Result<Page<UserTaskVO>> listApplyUserTask(@RequestBody @ParameterObject UserTaskQuery query) {
+        return Result.ok(bpmTaskService.listApplyUserTask(query));
     }
 
     /**
@@ -126,37 +126,37 @@ public class BpmTaskController {
     /**
      * 废止流程
      *
-     * @param bpmApprovalForm bpm审批表单
+     * @param form bpm审批表单
      * @return {@link Result }<{@link Boolean }>
      */
     @PostMapping("/abolition")
     @ResponseBody
-    protected Result<Boolean> abolition(@RequestBody BpmApprovalForm bpmApprovalForm) {
-        return Result.ok(bpmTaskService.abolition(bpmApprovalForm));
+    protected Result<Boolean> abolition(@RequestBody BpmApprovalForm form) {
+        return Result.ok(bpmTaskService.abolition(form));
     }
 
     /**
      * 审核通过
      *
-     * @param bpmApprovalForm  bpm审批表单
+     * @param form  bpm审批表单
      * @return {@link Result }<{@link ? }>
      */
     @PostMapping("/agree")
     @ResponseBody
-    public Result<?> agree(@Validated @RequestBody @ParameterObject BpmApprovalForm bpmApprovalForm) {
-        return Result.ok(bpmTaskService.complete(bpmApprovalForm));
+    public Result<?> agree(@Validated @RequestBody @ParameterObject BpmApprovalForm form) {
+        return Result.ok(bpmTaskService.complete(form));
     }
 
     /**
      * 审核不通过
      *
-     * @param bpmApprovalForm  bpm审批表单
+     * @param form  bpm审批表单
      * @return {@link Result }<{@link ? }>
      */
     @PostMapping("/reject")
     @ResponseBody
-    public Result<?> reject(@Validated @RequestBody @ParameterObject BpmApprovalForm bpmApprovalForm) {
-        return Result.ok(bpmTaskService.complete(bpmApprovalForm));
+    public Result<?> reject(@Validated @RequestBody @ParameterObject BpmApprovalForm form) {
+        return Result.ok(bpmTaskService.complete(form));
     }
 
     /**

@@ -44,17 +44,17 @@ public class SysRoleMenuColumnServiceImpl extends ServiceImpl<SysRoleMenuColumnM
     /**
      * 保存角色列权限
      *
-     * @param roleMenuColumnForm 角色菜单栏表单
+     * @param form 角色菜单栏表单
      * @return {@link Result }<{@link Boolean }>
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Result<Boolean> saveRoleMenuColumn(RoleMenuColumnForm roleMenuColumnForm) {
-        this.remove(Wrappers.<SysRoleMenuColumn>lambdaQuery().eq(SysRoleMenuColumn::getRoleId, roleMenuColumnForm.getRoleId()));
-        return Result.ok(this.saveBatch(roleMenuColumnForm.getMenu().stream().map(menu -> {
+    public Result<Boolean> saveRoleMenuColumn(RoleMenuColumnForm form) {
+        this.remove(Wrappers.<SysRoleMenuColumn>lambdaQuery().eq(SysRoleMenuColumn::getRoleId, form.getRoleId()));
+        return Result.ok(this.saveBatch(form.getMenu().stream().map(menu -> {
             SysRoleMenuColumn sysRoleMenuColumn = new SysRoleMenuColumn();
             sysRoleMenuColumn.setMenu(menu);
-            sysRoleMenuColumn.setRoleId(roleMenuColumnForm.getRoleId());
+            sysRoleMenuColumn.setRoleId(form.getRoleId());
             return sysRoleMenuColumn;
         }).collect(Collectors.toList())));
     }

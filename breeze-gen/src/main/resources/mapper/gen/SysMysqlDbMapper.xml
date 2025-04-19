@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.breeze.boot.gen.mapper.SysMysqlDbMapper">
+
+    <sql id="listTableSql">
+        SELECT
+        TABLE_NAME,
+        `ENGINE`,
+        TABLE_TYPE,
+        TABLE_SCHEMA,
+        ROW_FORMAT,
+        TABLE_COMMENT,
+        TABLE_ROWS,
+        VERSION,
+        CREATE_TIME
+        FROM
+        information_schema.`TABLES` AS a
+        <where>
+            table_schema = (select database())
+            AND table_name NOT LIKE "act%"
+            AND table_name NOT LIKE "flw%"
+        </where>
+    </sql>
+
+    <select id="listTableColumn" resultType="com.breeze.boot.gen.domain.entity.Column">
+        SELECT column_name,
+               data_type,
+               column_comment,
+               column_key,
+               extra,
+               ordinal_position,
+               is_nullable,
+               column_default,
+               character_maximum_length,
+               numeric_precision,
+               numeric_scale,
+               datetime_precision,
+               character_set_name,
+               collation_name,
+               column_type,
+               privileges
+        FROM information_schema.columns
+        WHERE table_name = #{tableName}
+          AND table_schema = (SELECT DATABASE())
+        ORDER BY ordinal_position;
+    </select>
+
+    <select id="listTable" resultType="com.breeze.boot.gen.domain.entity.Table">
+        <include refid="listTableSql"/>
+        <if test="query.tableName != null and query.tableName.trim() != ''">
+            AND table_name like concat('%', #{query.tableName}, '%')
+        </if>
+        order by create_time desc
+    </select>
+
+    <select id="getTableInfo" resultType="com.breeze.boot.gen.domain.entity.Table">
+        <include refid="listTableSql"/>
+        AND table_name = #{tableName}
+    </select>
+
+</mapper>

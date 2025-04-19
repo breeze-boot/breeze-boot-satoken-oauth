@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.log.annotation.BreezeSysLog;
 import com.breeze.boot.log.enums.LogType;
-import com.breeze.boot.quartz.domain.SysQuartzJobLog;
+import com.breeze.boot.quartz.domain.entity.SysQuartzJobLog;
 import com.breeze.boot.quartz.domain.query.JobQuery;
 import com.breeze.boot.quartz.service.SysQuartzJobLogService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,14 +51,14 @@ public class QuartzJobLogController {
     /**
      * 列表页面
      *
-     * @param jobQuery 任务查询
+     * @param query 任务查询
      * @return {@link Result}<{@link Page}<{@link SysQuartzJobLog}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("sys:jLog:list")
-    public Result<Page<SysQuartzJobLog>> listPage(@RequestBody JobQuery jobQuery) {
-        return Result.ok(this.quartzJobLogService.listPage(jobQuery));
+    public Result<Page<SysQuartzJobLog>> listPage(@RequestBody JobQuery query) {
+        return Result.ok(this.quartzJobLogService.listPage(query));
     }
 
     /**

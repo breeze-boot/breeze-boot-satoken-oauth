@@ -33,10 +33,10 @@ public interface IActReDeploymentService extends IService<ActReDeployment> {
     /**
      * 列表页面
      *
-     * @param flowDeploymentQuery 流程定义查询
+     * @param query 流程定义查询
      * @return {@link Page}<{@link BpmDefinitionVO}>
      */
-    Page<BpmDefinitionVO> listPage(BpmDefinitionQuery flowDeploymentQuery);
+    Page<BpmDefinitionVO> listPage(BpmDefinitionQuery query);
 
     /**
      * 详情

@@ -154,8 +154,8 @@ public class SysDictController {
     /**
      * 修改
      *
-     * @param id       id
-     * @param dictForm 字典表单
+     * @param id   id
+     * @param form 字典表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "修改")
@@ -163,22 +163,22 @@ public class SysDictController {
     @SaCheckPermission("sys:dict:modify")
     @BreezeSysLog(description = "字典信息修改", type = LogType.EDIT)
     public Result<Boolean> modify(@Parameter(description = "字典ID") @NotNull(message = "字典ID不能为空") @PathVariable Long id,
-                                  @Valid @RequestBody DictForm dictForm) {
-        return Result.ok(this.sysDictService.modifyDict(id, dictForm));
+                                  @Valid @RequestBody DictForm form) {
+        return Result.ok(this.sysDictService.modifyDict(id, form));
     }
 
     /**
      * 开关
      *
-     * @param dictOpenForm 字典开关参数
+     * @param form 字典开关参数
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "开关")
     @PutMapping("/open")
     @SaCheckPermission("sys:dict:modify")
     @BreezeSysLog(description = "字典信息开关", type = LogType.EDIT)
-    public Result<Boolean> open(@Valid @RequestBody DictOpenForm dictOpenForm) {
-        return Result.ok(this.sysDictService.open(dictOpenForm));
+    public Result<Boolean> open(@Valid @RequestBody DictOpenForm form) {
+        return Result.ok(this.sysDictService.open(form));
     }
 
     /**

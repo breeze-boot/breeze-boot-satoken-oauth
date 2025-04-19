@@ -41,10 +41,10 @@ public interface SysMenuColumnService extends IService<SysMenuColumn> {
     /**
      * 列表页面
      *
-     * @param menuColumnQuery 权限查询
+     * @param query 权限查询
      * @return {@link Page}<{@link MenuColumnVO}>
      */
-    Page<MenuColumnVO> listPage(MenuColumnQuery menuColumnQuery);
+    Page<MenuColumnVO> listPage(MenuColumnQuery query);
 
     /**
      * 按id获取信息
@@ -57,10 +57,10 @@ public interface SysMenuColumnService extends IService<SysMenuColumn> {
     /**
      * 保存
      *
-     * @param menuColumnForm 菜单栏形式
+     * @param form 菜单栏形式
      * @return {@link Result }<{@link Boolean }>
      */
-    Result<Boolean> saveMenuColumn(MenuColumnForm menuColumnForm);
+    Result<Boolean> saveMenuColumn(MenuColumnForm form);
 
     /**
      * 删除数据权限通过IDS

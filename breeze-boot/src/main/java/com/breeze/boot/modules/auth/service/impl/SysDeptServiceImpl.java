@@ -30,7 +30,7 @@ import com.breeze.boot.modules.auth.mapper.SysDeptMapper;
 import com.breeze.boot.modules.auth.model.bo.SysDeptBO;
 import com.breeze.boot.modules.auth.model.entity.SysDept;
 import com.breeze.boot.modules.auth.model.form.DeptForm;
-import com.breeze.boot.modules.auth.model.mappers.SysDeptMapStruct;
+import com.breeze.boot.modules.auth.model.converter.SysDeptConverter;
 import com.breeze.boot.modules.auth.model.query.DeptQuery;
 import com.breeze.boot.modules.auth.service.SysDeptService;
 import com.google.common.collect.Maps;
@@ -58,20 +58,20 @@ import static com.breeze.boot.core.enums.ResultCode.IS_USED;
 @RequiredArgsConstructor
 public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> implements SysDeptService {
 
-    private final SysDeptMapStruct sysDeptMapStruct;
+    private final SysDeptConverter sysDeptConverter;
 
     /**
      * 部门列表
      *
-     * @param deptQuery 部门查询
+     * @param query 部门查询
      * @return {@link List}<{@link Tree}<{@link Long}>>
      */
     @Override
-    public List<?> listDept(DeptQuery deptQuery) {
+    public List<?> listDept(DeptQuery query) {
         List<SysDept> deptEntityList = this.list(Wrappers.<SysDept>lambdaQuery()
-                .like(Objects.nonNull(deptQuery) && StrUtil.isAllNotBlank(deptQuery.getDeptName()),
-                        SysDept::getDeptName, deptQuery.getDeptName()));
-        if (StrUtil.isAllNotBlank(deptQuery.getDeptName())) {
+                .like(Objects.nonNull(query) && StrUtil.isAllNotBlank(query.getDeptName()),
+                        SysDept::getDeptName, query.getDeptName()));
+        if (StrUtil.isAllNotBlank(query.getDeptName())) {
             return deptEntityList;
         }
         List<TreeNode<Long>> treeNodeList = deptEntityList.stream().map(
@@ -83,7 +83,7 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
                     Map<String, Object> leafMap = Maps.newHashMap();
                     leafMap.put("deptName", sysDept.getDeptName());
                     leafMap.put("deptCode", sysDept.getDeptCode());
-                    if (Objects.equals(deptQuery.getId(), sysDept.getId())) {
+                    if (Objects.equals(query.getId(), sysDept.getId())) {
                         leafMap.put("disabled", Boolean.TRUE);
                     }
                     leafMap.put("value", sysDept.getId());
@@ -96,14 +96,14 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
     }
 
     @Override
-    public Boolean saveDept(DeptForm deptForm) {
-        SysDept sysDept = sysDeptMapStruct.form2Entity(deptForm);
+    public Boolean saveDept(DeptForm form) {
+        SysDept sysDept = sysDeptConverter.form2Entity(form);
         return this.save(sysDept);
     }
 
     @Override
-    public Boolean modifyDept(@Valid Long id, DeptForm deptForm) {
-        SysDept sysDept = sysDeptMapStruct.form2Entity(deptForm);
+    public Boolean modifyDept(@Valid Long id, DeptForm form) {
+        SysDept sysDept = sysDeptConverter.form2Entity(form);
         sysDept.setId(id);
         return this.updateById(sysDept);
     }

@@ -38,10 +38,10 @@ public interface SysPostService extends IService<SysPost> {
     /**
      * 列表页面
      *
-     * @param postQuery 岗位查询
+     * @param query 岗位查询
      * @return {@link IPage}<{@link PostVO}>
      */
-    IPage<PostVO> listPage(PostQuery postQuery);
+    IPage<PostVO> listPage(PostQuery query);
 
     /**
      * 获取信息
@@ -54,19 +54,19 @@ public interface SysPostService extends IService<SysPost> {
     /**
      * 保存岗位
      *
-     * @param postForm 岗位表单
+     * @param form 岗位表单
      * @return {@link Boolean }
      */
-    Boolean savePost(PostForm postForm);
+    Boolean savePost(PostForm form);
 
     /**
      * 修改岗位
      *
      * @param id       ID
-     * @param postForm 岗位表单
+     * @param form 岗位表单
      * @return {@link Boolean }
      */
-    Boolean modifyPost(Long id, PostForm postForm);
+    Boolean modifyPost(Long id, PostForm form);
 
     /**
      * 岗位下拉框

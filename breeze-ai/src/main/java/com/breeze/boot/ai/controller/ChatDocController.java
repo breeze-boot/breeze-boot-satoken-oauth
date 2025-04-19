@@ -66,16 +66,16 @@ public class ChatDocController {
     @Operation(summary = "新增")
     @SaCheckPermission("chat:doc:create")
     @PostMapping
-    public Result<Boolean> save(@Valid @ParameterObject @RequestBody ChatDocForm chatDocForm) {
-        return Result.ok(this.chatDocService.saveChatDoc(chatDocForm));
+    public Result<Boolean> save(@Valid @ParameterObject @RequestBody ChatDocForm form) {
+        return Result.ok(this.chatDocService.saveChatDoc(form));
     }
 
     @Operation(summary = "修改")
     @SaCheckPermission("chat:doc:modify")
     @PutMapping("/{id}")
     public Result<Boolean> edit(@Parameter(description = "知识库文档ID") @PathVariable Long id,
-                          @ParameterObject @Valid @RequestBody ChatDocForm chatDocForm) {
-        return Result.ok(this.chatDocService.modifyChatDoc(id, chatDocForm));
+                          @ParameterObject @Valid @RequestBody ChatDocForm form) {
+        return Result.ok(this.chatDocService.modifyChatDoc(id, form));
     }
 
     @Operation(summary = "删除")

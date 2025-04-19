@@ -35,10 +35,10 @@ public interface SysAuditLogService extends IService<SysAuditLog> {
     /**
      * 列表页面
      *
-     * @param auditQuery 审计查询
+     * @param query 审计查询
      * @return {@link Page }<{@link AuditLogVO }>
      */
-    Page<AuditLogVO> listPage(AuditLogQuery auditQuery);
+    Page<AuditLogVO> listPage(AuditLogQuery query);
 
     /**
      * 保存审核日志

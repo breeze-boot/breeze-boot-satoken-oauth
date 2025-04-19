@@ -52,7 +52,7 @@ public class SendMsgController {
     /**
      * 消息广播
      *
-     * @param msgParam 广播消息
+     * @param param 广播消息
      * @return {@link Result}<{@link MsgVO}>
      */
     @Operation(summary = "广播消息")
@@ -60,15 +60,15 @@ public class SendMsgController {
     @MessageMapping("/asyncSendBroadcastMsg")
     // 发送到websocket的路径，广播消息的路径/topic，发送的通道和订阅者确定后可通过这个路径接收消息/msg
     @SendTo("/topic/message")
-    public Result<MsgVO> asyncSendBroadcastMsg(@Payload MsgParam msgParam) {
-        return this.webSocketMsgService.asyncSendBroadcastMsg(msgParam);
+    public Result<MsgVO> asyncSendBroadcastMsg(@Payload MsgParam param) {
+        return this.webSocketMsgService.asyncSendBroadcastMsg(param);
     }
 
     /**
      * 发送消息给用户
      *
      * @param principal 主要
-     * @param msgParam  用户消息
+     * @param param  用户消息
      * @return {@link Result}<{@link MsgVO}>
      */
     @Operation(summary = "发送消息给用户")
@@ -76,15 +76,15 @@ public class SendMsgController {
     @MessageMapping("/asyncSendMsgToSingleUser")
     // 发送到websocket的路径，/点对点发送的路径/queue，发送的通道和订阅者确定后可通过这个路径接收消息/message
     @SendToUser("/queue/message")
-    public Result<MsgVO> asyncSendMsgToSingleUser(Principal principal, @Payload MsgParam msgParam) {
-        return this.webSocketMsgService.asyncSendMsgToSingleUser(principal, msgParam);
+    public Result<MsgVO> asyncSendMsgToSingleUser(Principal principal, @Payload MsgParam param) {
+        return this.webSocketMsgService.asyncSendMsgToSingleUser(principal, param);
     }
 
     /**
      * 发送消息给用户
      *
      * @param principal 主要
-     * @param msgParam  用户消息
+     * @param param  用户消息
      * @return {@link Result}<{@link MsgVO}>
      */
     @Operation(summary = "发送消息给部门以及子部门")
@@ -92,8 +92,8 @@ public class SendMsgController {
     @MessageMapping("/syncSendMsgDeptUser")
     // 发送到websocket的路径，/点对点发送的路径/queue，发送的通道和订阅者确定后可通过这个路径接收消息/message
     @SendToUser("/queue/message")
-    public Result<MsgVO> syncSendMsgDeptUser(Principal principal, @Payload MsgParam msgParam) {
-        return this.webSocketMsgService.syncSendMsgDeptUser(principal, msgParam);
+    public Result<MsgVO> syncSendMsgDeptUser(Principal principal, @Payload MsgParam param) {
+        return this.webSocketMsgService.syncSendMsgDeptUser(principal, param);
     }
 
     /**
@@ -102,13 +102,13 @@ public class SendMsgController {
      * 使用另一种实现方式
      * </p>
      * @param principal 主要
-     * @param msgParam  用户消息
+     * @param param  用户消息
      */
     @Operation(summary = "发送信息给指定的用户")
     // 前端发送信息的路径
     @MessageMapping("/asyncSendMsgToUser")
-    public void asyncSendMsgToUser(Principal principal, @Payload MsgParam msgParam) {
-        this.webSocketMsgService.asyncSendMsgToUser(principal, msgParam);
+    public void asyncSendMsgToUser(Principal principal, @Payload MsgParam param) {
+        this.webSocketMsgService.asyncSendMsgToUser(principal, param);
     }
 
 }

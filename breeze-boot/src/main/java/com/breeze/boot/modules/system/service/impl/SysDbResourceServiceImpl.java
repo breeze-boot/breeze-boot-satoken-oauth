@@ -26,7 +26,7 @@ import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.modules.system.mapper.SysDbMapper;
 import com.breeze.boot.modules.system.model.entity.SysDbResource;
 import com.breeze.boot.modules.system.model.form.DbResourceForm;
-import com.breeze.boot.modules.system.model.mappers.SysDbMapStruct;
+import com.breeze.boot.modules.system.model.converter.SysDbConverter;
 import com.breeze.boot.modules.system.model.query.DbResourceQuery;
 import com.breeze.boot.modules.system.model.vo.DbResourceVO;
 import com.breeze.boot.modules.system.service.SysDbResourceService;
@@ -48,21 +48,21 @@ public class SysDbResourceServiceImpl extends ServiceImpl<SysDbMapper, SysDbReso
 
     private final DefaultDataSourceCreator defaultDataSourceCreator;
 
-    private final SysDbMapStruct sysDbMapStruct;
+    private final SysDbConverter sysDbConverter;
 
     private final DataSource dataSource;
 
     /**
      * 分页
      *
-     * @param dbResourceQuery 数据源查询参数
+     * @param query 数据源查询参数
      * @return {@link Page}<{@link DbResourceVO}>
      */
     @Override
-    public Page<DbResourceVO> listPage(DbResourceQuery dbResourceQuery) {
-        Page<SysDbResource> page = new Page<>(dbResourceQuery.getCurrent(), dbResourceQuery.getSize());
-        Page<SysDbResource> sysDbPage = this.baseMapper.listPage(page, dbResourceQuery);
-        return sysDbMapStruct.entityPage2VOPage(sysDbPage);
+    public Page<DbResourceVO> listPage(DbResourceQuery query) {
+        Page<SysDbResource> page = new Page<>(query.getCurrent(), query.getSize());
+        Page<SysDbResource> sysDbPage = this.baseMapper.listPage(page, query);
+        return sysDbConverter.entityPage2VOPage(sysDbPage);
     }
 
     /**
@@ -73,18 +73,18 @@ public class SysDbResourceServiceImpl extends ServiceImpl<SysDbMapper, SysDbReso
      */
     @Override
     public DbResourceVO getDbResourceById(Long id) {
-        return sysDbMapStruct.entity2VO(this.getById(id));
+        return sysDbConverter.entity2VO(this.getById(id));
     }
 
     /**
      * 添加数据源
      *
-     * @param dbResourceForm 数据源
+     * @param form 数据源
      * @return {@link Boolean}
      */
     @Override
-    public Boolean saveDbResource(DbResourceForm dbResourceForm) {
-        SysDbResource sysDbResource = sysDbMapStruct.form2Entity(dbResourceForm);
+    public Boolean saveDbResource(DbResourceForm form) {
+        SysDbResource sysDbResource = sysDbConverter.form2Entity(form);
         refreshDb(sysDbResource);
         return this.save(sysDbResource);
     }
@@ -113,11 +113,11 @@ public class SysDbResourceServiceImpl extends ServiceImpl<SysDbMapper, SysDbReso
      * 更新数据源
      *
      * @param id             ID
-     * @param dbResourceForm 数据源表单
+     * @param form 数据源表单
      * @return {@link Boolean}
      */
     @Override
-    public Boolean modifyDbResource(Long id, DbResourceForm dbResourceForm) {
+    public Boolean modifyDbResource(Long id, DbResourceForm form) {
         SysDbResource sysDbResource = this.getById(id);
         AssertUtil.isNotNull(sysDbResource, ResultCode.FAIL);
         DynamicRoutingDataSource dynamicRoutingDataSource = (DynamicRoutingDataSource) dataSource;

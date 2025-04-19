@@ -59,14 +59,14 @@ public class SysEmailConfigController {
     /**
      * 列表
      *
-     * @param emailConfigQuery 邮箱查询
+     * @param query 邮箱查询
      * @return {@link Result}<{@link Page}<{@link EmailConfigVO}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("sys:emailConfig:list")
-    public Result<Page<EmailConfigVO>> list(@RequestBody EmailConfigQuery emailConfigQuery) {
-        return Result.ok(this.sysEmailConfigService.listPage(emailConfigQuery));
+    public Result<Page<EmailConfigVO>> list(@RequestBody EmailConfigQuery query) {
+        return Result.ok(this.sysEmailConfigService.listPage(query));
     }
 
     /**
@@ -85,21 +85,21 @@ public class SysEmailConfigController {
     /**
      * 创建
      *
-     * @param emailConfigForm 邮箱表单
+     * @param form 邮箱表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "保存")
     @PostMapping
     @SaCheckPermission("sys:emailConfig:create")
     @BreezeSysLog(description = "邮箱信息保存", type = LogType.SAVE)
-    public Result<Boolean> save(@Valid @RequestBody EmailConfigForm emailConfigForm) {
-        return Result.ok(this.sysEmailConfigService.saveEmail(emailConfigForm));
+    public Result<Boolean> save(@Valid @RequestBody EmailConfigForm form) {
+        return Result.ok(this.sysEmailConfigService.saveEmail(form));
     }
 
     /**
      * 修改
      *
-     * @param emailConfigForm 邮箱表单
+     * @param form 邮箱表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "修改")
@@ -107,8 +107,8 @@ public class SysEmailConfigController {
     @SaCheckPermission("sys:emailConfig:modify")
     @BreezeSysLog(description = "邮箱信息修改", type = LogType.EDIT)
     public Result<Boolean> modify(@Parameter(description = "邮箱ID") @NotNull(message = "邮箱ID不能为空") @PathVariable Long id,
-                                  @Valid @RequestBody EmailConfigForm emailConfigForm) {
-        return Result.ok(this.sysEmailConfigService.modifyEmail(id, emailConfigForm));
+                                  @Valid @RequestBody EmailConfigForm form) {
+        return Result.ok(this.sysEmailConfigService.modifyEmail(id, form));
     }
 
     /**
@@ -129,15 +129,15 @@ public class SysEmailConfigController {
     /**
      * 开启关闭锁定
      *
-     * @param emailConfigOpenForm 邮箱开关表单
+     * @param form 邮箱开关表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "邮箱锁定开关")
     @PutMapping("/open")
     @SaCheckPermission("sys:emailConfig:modify")
     @BreezeSysLog(description = "邮箱锁定开关", type = LogType.EDIT)
-    public Result<Boolean> open(@Valid @RequestBody EmailConfigOpenForm emailConfigOpenForm) {
-        return Result.ok(this.sysEmailConfigService.open(emailConfigOpenForm));
+    public Result<Boolean> open(@Valid @RequestBody EmailConfigOpenForm form) {
+        return Result.ok(this.sysEmailConfigService.open(form));
     }
 
 }

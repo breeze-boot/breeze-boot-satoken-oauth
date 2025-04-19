@@ -13,6 +13,10 @@
     <packaging>jar</packaging>
     <description>代码生成模块-未完成</description>
 
+    <properties>
+        <velocity.version>1.7</velocity.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -57,6 +61,13 @@
         <dependency>
             <groupId>com.breeze</groupId>
             <artifactId>breeze-base-mybatis</artifactId>
+        </dependency>
+
+        <!-- Velocity -->
+        <dependency>
+            <artifactId>velocity</artifactId>
+            <groupId>org.apache.velocity</groupId>
+            <version>${velocity.version}</version>
         </dependency>
     </dependencies>
 </project>

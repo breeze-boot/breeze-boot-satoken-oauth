@@ -52,18 +52,18 @@ public interface IBpmInstanceService {
     /**
      * 列表页面
      *
-     * @param bpmInstanceQuery 流程实例查询
+     * @param query 流程实例查询
      * @return {@link Page}<{@link BpmInstanceVO}>
      */
-    Page<BpmInstanceVO> listPage(BpmInstanceQuery bpmInstanceQuery);
+    Page<BpmInstanceVO> listPage(BpmInstanceQuery query);
 
     /**
      * 作废
      *
-     * @param bpmApprovalForm 流程审批参数
+     * @param form 流程审批参数
      */
-    void voidProcess(BpmApprovalForm bpmApprovalForm);
+    void voidProcess(BpmApprovalForm form);
 
-    void remove(List<String> processInstanceIdList);
+    void remove(List<String> idList);
 
 }

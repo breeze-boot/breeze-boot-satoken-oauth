@@ -38,10 +38,10 @@ public interface IBpmCategoryService extends IService<BpmCategory> {
     /**
      * 列表页面
      *
-     * @param processCategory 流程分类
+     * @param query 流程分类
      * @return {@link Page}<{@link BpmCategoryVO}>
      */
-    Page<BpmCategoryVO> listPage(BpmCategoryQuery processCategory);
+    Page<BpmCategoryVO> listPage(BpmCategoryQuery query);
 
     /**
      * 按id获取信息
@@ -54,19 +54,19 @@ public interface IBpmCategoryService extends IService<BpmCategory> {
     /**
      * 保存流类别
      *
-     * @param bpmCategoryForm 流程分类表单
+     * @param form 流程分类表单
      * @return {@link Boolean }
      */
-    Boolean saveFlowCategory(BpmCategoryForm bpmCategoryForm);
+    Boolean saveFlowCategory(BpmCategoryForm form);
 
     /**
      * 修改流类别
      *
-     * @param id ID
-     * @param bpmCategoryForm 流程分类表单
+     * @param id   ID
+     * @param form 流程分类表单
      * @return {@link Boolean }
      */
-    Boolean modifyFlowCategory(Long id, BpmCategoryForm bpmCategoryForm);
+    Boolean modifyFlowCategory(Long id, BpmCategoryForm form);
 
     /**
      * 类别下拉框

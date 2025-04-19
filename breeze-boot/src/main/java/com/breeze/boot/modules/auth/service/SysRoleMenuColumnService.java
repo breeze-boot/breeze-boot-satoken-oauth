@@ -32,9 +32,9 @@ public interface SysRoleMenuColumnService extends IService<SysRoleMenuColumn> {
     /**
      * 保存角色列权限
      *
-     * @param roleMenuColumnForm 角色菜单栏表单
+     * @param form 角色菜单栏表单
      * @return {@link Result }<{@link Boolean }>
      */
-    Result<Boolean> saveRoleMenuColumn(RoleMenuColumnForm roleMenuColumnForm);
+    Result<Boolean> saveRoleMenuColumn(RoleMenuColumnForm form);
 
 }

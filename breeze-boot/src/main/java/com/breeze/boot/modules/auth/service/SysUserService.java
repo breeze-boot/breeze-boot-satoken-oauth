@@ -42,10 +42,10 @@ public interface SysUserService extends IService<SysUser>, IUserDetailService {
     /**
      * 列表页面
      *
-     * @param userQuery 用户查询
+     * @param query 用户查询
      * @return {@link Page}<{@link UserVO}>
      */
-    Page<UserVO> listPage(UserQuery userQuery);
+    Page<UserVO> listPage(UserQuery query);
 
     /**
      * 通过ID查询用户
@@ -58,10 +58,10 @@ public interface SysUserService extends IService<SysUser>, IUserDetailService {
     /**
      * 保存用户
      *
-     * @param userForm 系统用户
+     * @param form 系统用户
      * @return {@link Result}<{@link Boolean}>
      */
-    Result<Boolean> saveUser(UserForm userForm);
+    Result<Boolean> saveUser(UserForm form);
 
     /**
      * 通过id更新用户
@@ -74,18 +74,18 @@ public interface SysUserService extends IService<SysUser>, IUserDetailService {
     /**
      * 开关
      *
-     * @param userOpenForm 用户打开表单
+     * @param form 用户打开表单
      * @return {@link Boolean}
      */
-    Boolean open(UserOpenForm userOpenForm);
+    Boolean open(UserOpenForm form);
 
     /**
      * 重置密码
      *
-     * @param userResetForm 用户重置密码表单
+     * @param form 用户重置密码表单
      * @return {@link Boolean}
      */
-    Boolean reset(UserResetForm userResetForm);
+    Boolean reset(UserResetForm form);
 
     /**
      * 删除用户
@@ -98,10 +98,10 @@ public interface SysUserService extends IService<SysUser>, IUserDetailService {
     /**
      * 用户分配角色
      *
-     * @param userRolesForm 用户角色表单
+     * @param form 用户角色表单
      * @return {@link Result}<{@link Boolean}>
      */
-    Result<Boolean> setRole(UserRolesForm userRolesForm);
+    Result<Boolean> setRole(UserRolesForm form);
 
     /**
      * 注册用户

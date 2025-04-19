@@ -59,14 +59,14 @@ public class SysMenuColumnController {
     /**
      * 列表
      *
-     * @param permissionQuery 数据权限查询
+     * @param query 数据权限查询
      * @return {@link Result }<{@link Page }<{@link MenuColumnVO }>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("auth:menuColumn:list")
-    public Result<Page<MenuColumnVO>> list(@RequestBody MenuColumnQuery permissionQuery) {
-        return Result.ok(this.sysMenuColumnService.listPage(permissionQuery));
+    public Result<Page<MenuColumnVO>> list(@RequestBody MenuColumnQuery query) {
+        return Result.ok(this.sysMenuColumnService.listPage(query));
     }
 
     /**
@@ -96,15 +96,15 @@ public class SysMenuColumnController {
     /**
      * 创建
      *
-     * @param menuColumnForm 菜单列表单
+     * @param form 菜单列表单
      * @return {@link Result }<{@link Boolean }>
      */
     @Operation(summary = "保存")
     @PostMapping
     @SaCheckPermission("auth:menu:create")
     @BreezeSysLog(description = "菜单列保存", type = LogType.SAVE)
-    public Result<Boolean> save(@Valid @RequestBody MenuColumnForm menuColumnForm) {
-        return this.sysMenuColumnService.saveMenuColumn(menuColumnForm);
+    public Result<Boolean> save(@Valid @RequestBody MenuColumnForm form) {
+        return this.sysMenuColumnService.saveMenuColumn(form);
     }
 
     /**

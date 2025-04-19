@@ -74,23 +74,23 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
     /**
      * 部署
      *
-     * @param xmlStringForm 流程设计参数
+     * @param form 流程设计参数
      * @return {@link Result}<{@link Boolean}>
      */
     @Override
-    public Result<String> deploy(BpmDesignXmlStringForm xmlStringForm) {
+    public Result<String> deploy(BpmDesignXmlStringForm form) {
         String username = BreezeStpUtil.getUser().getUsername();
         Long tenantId = BreezeStpUtil.getUser().getTenantId();
         try {
             Authentication.setAuthenticatedUserId(username);
             // 构造文件名
-            String xmlName = this.generateXmlName(xmlStringForm);
+            String xmlName = this.generateXmlName(form);
             Deployment deploy = this.repositoryService.createDeployment()
-                    .addString(xmlName, xmlStringForm.getXml())
-                    .name(xmlStringForm.getProcDefName())
-                    .key(xmlStringForm.getProcDefKey())
+                    .addString(xmlName, form.getXml())
+                    .name(form.getProcDefName())
+                    .key(form.getProcDefKey())
                     .tenantId(String.valueOf(tenantId))
-                    .category(xmlStringForm.getCategoryCode())
+                    .category(form.getCategoryCode())
                     .deploy();
 
             return Result.ok(deploy.getId(), "发布成功");
@@ -113,20 +113,20 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
     }
 
     @Override
-    public Result<String> deploy(BpmDesignXmlFileForm xmlFileForm) {
+    public Result<String> deploy(BpmDesignXmlFileForm form) {
         try {
             String username = BreezeStpUtil.getUser().getUsername();
             Long tenantId = BreezeStpUtil.getUser().getTenantId();
             Authentication.setAuthenticatedUserId(username);
             // 生成文件名的逻辑
-            String xmlName = this.generateXmlName(xmlFileForm);
+            String xmlName = this.generateXmlName(form);
             // @formatter:off
             Deployment deploy = this.repositoryService.createDeployment()
-                    .addInputStream(xmlName, getInputStream(xmlFileForm))
-                    .name(xmlFileForm.getProcDefName())
-                    .key(xmlFileForm.getProcDefKey())
+                    .addInputStream(xmlName, getInputStream(form))
+                    .name(form.getProcDefName())
+                    .key(form.getProcDefKey())
                     .tenantId(String.valueOf(tenantId))
-                    .category(xmlFileForm.getCategoryCode())
+                    .category(form.getCategoryCode())
                     .deploy();
             // @formatter:on
             log.info("流程定义成功部署，部署ID: {}", deploy.getId());
@@ -142,12 +142,12 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
     /**
      * 列表页面
      *
-     * @param bpmDefinitionQuery 流程定义查询
+     * @param query 流程定义查询
      * @return {@link Page}<{@link BpmDefinitionVO}>
      */
     @Override
-    public Page<BpmDefinitionVO> listPage(BpmDefinitionQuery bpmDefinitionQuery) {
-        return this.actReDeploymentService.listPage(bpmDefinitionQuery);
+    public Page<BpmDefinitionVO> listPage(BpmDefinitionQuery query) {
+        return this.actReDeploymentService.listPage(query);
     }
 
     @Override
@@ -204,22 +204,22 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
     /**
      * 版本列表页面
      *
-     * @param bpmDefinitionQuery 流程定义查询
+     * @param query 流程定义查询
      * @return {@link Page}<{@link BpmDefinitionVO}>
      */
     @Override
-    public Page<BpmDefinitionVO> listVersionPage(BpmDefinitionQuery bpmDefinitionQuery) {
+    public Page<BpmDefinitionVO> listVersionPage(BpmDefinitionQuery query) {
         // @formatter:off
         List<ProcessDefinition> definitionList = this.repositoryService.createProcessDefinitionQuery()
-                    .processDefinitionKey(bpmDefinitionQuery.getDefinitionKey())
+                    .processDefinitionKey(query.getDefinitionKey())
                     .orderByProcessDefinitionVersion()
-                    .listPage(bpmDefinitionQuery.getOffset(), bpmDefinitionQuery.getLimit());
+                    .listPage(query.getOffset(), query.getLimit());
         long count = this.repositoryService.createProcessDefinitionQuery()
-                    .processDefinitionKey(bpmDefinitionQuery.getDefinitionKey())
+                    .processDefinitionKey(query.getDefinitionKey())
                     .orderByProcessDefinitionVersion().count();
         // 根据部署 ID 获取部署对象
         List<Deployment> deploymentList = repositoryService.createDeploymentQuery()
-                .deploymentKey(bpmDefinitionQuery.getDefinitionKey())
+                .deploymentKey(query.getDefinitionKey())
                 .list();
         Map<String,Date> deployMap = deploymentList.stream().collect(Collectors.toMap(Deployment::getId, Deployment::getDeploymentTime));
         // @formatter:on
@@ -387,13 +387,13 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
     /**
      * 删除
      *
-     * @param deleteForms 流定义删除参数列表
+     * @param formList 流定义删除参数列表
      * @return {@link Boolean}
      */
     @Override
-    public Boolean delete(List<BpmDefinitionDeleteForm> deleteForms) {
+    public Boolean delete(List<BpmDefinitionDeleteForm> formList) {
         // @formatter:off
-        for (BpmDefinitionDeleteForm deleteForm : deleteForms) {
+        for (BpmDefinitionDeleteForm deleteForm : formList) {
             List<ProcessDefinition> definitionList = this.repositoryService.createProcessDefinitionQuery()
                     .processDefinitionKey(deleteForm.getProcDefKey())
                     .list();

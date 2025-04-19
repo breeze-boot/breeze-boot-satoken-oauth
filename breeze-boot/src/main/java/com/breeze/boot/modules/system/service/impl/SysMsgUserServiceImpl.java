@@ -53,12 +53,12 @@ public class SysMsgUserServiceImpl extends ServiceImpl<SysMsgUserMapper, SysMsgU
     /**
      * 列表页面
      *
-     * @param userMsgQuery 用户消息查询
+     * @param query 用户消息查询
      * @return {@link IPage}<{@link MsgUserVO}>
      */
     @Override
-    public IPage<MsgUserVO> listPage(UserMsgQuery userMsgQuery) {
-        return this.baseMapper.listPage(new Page<>(userMsgQuery.getCurrent(), userMsgQuery.getSize()), userMsgQuery);
+    public IPage<MsgUserVO> listPage(UserMsgQuery query) {
+        return this.baseMapper.listPage(new Page<>(query.getCurrent(), query.getSize()), query);
     }
 
     /**
@@ -75,13 +75,13 @@ public class SysMsgUserServiceImpl extends ServiceImpl<SysMsgUserMapper, SysMsgU
     /**
      * 保存接收用户消息
      *
-     * @param userMsgDTO 用户消息BO
+     * @param dto 用户消息BO
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveUserMsg(UserMsgDTO userMsgDTO) {
+    public void saveUserMsg(UserMsgDTO dto) {
         // 保存接收消息的用户
-        List<SysMsgUser> sysMsgUserList = userMsgDTO.getMsgBodyList().stream()
+        List<SysMsgUser> sysMsgUserList = dto.getMsgBodyList().stream()
                 .map(msgBody -> SysMsgUser.builder()
                         .msgId(msgBody.getMsgId())
                         .deptId(msgBody.getDeptId())

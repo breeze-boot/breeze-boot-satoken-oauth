@@ -16,10 +16,10 @@
 
 package com.breeze.boot.ai.service;
 
-import com.breeze.boot.ai.model.vo.ChatConversationMessageVO;
-import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.ai.model.entity.MongoDBChatConversation;
 import com.breeze.boot.ai.model.query.HistoryChatPage;
+import com.breeze.boot.ai.model.vo.ChatConversationMessageVO;
+import com.breeze.boot.core.utils.Result;
 import org.springframework.data.domain.Page;
 import reactor.core.publisher.Flux;
 

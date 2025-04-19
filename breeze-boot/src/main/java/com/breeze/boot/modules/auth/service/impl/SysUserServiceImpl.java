@@ -43,7 +43,7 @@ import com.breeze.boot.modules.auth.model.form.UserForm;
 import com.breeze.boot.modules.auth.model.form.UserOpenForm;
 import com.breeze.boot.modules.auth.model.form.UserResetForm;
 import com.breeze.boot.modules.auth.model.form.UserRolesForm;
-import com.breeze.boot.modules.auth.model.mappers.SysUserMapStruct;
+import com.breeze.boot.modules.auth.model.converter.SysUserConverter;
 import com.breeze.boot.modules.auth.model.query.UserQuery;
 import com.breeze.boot.modules.auth.model.vo.UserVO;
 import com.breeze.boot.modules.auth.service.*;
@@ -74,7 +74,7 @@ import static com.breeze.boot.core.enums.ResultCode.*;
 @RequiredArgsConstructor
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
-    private final SysUserMapStruct sysUserMapStruct;
+    private final SysUserConverter sysUserConverter;
 
     private final FlowableManager flowableManager;
 
@@ -116,13 +116,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     /**
      * 列表页面
      *
-     * @param userQuery 用户查询
+     * @param query 用户查询
      * @return {@link Page}<{@link UserVO}>
      */
     @Override
-    public Page<UserVO> listPage(UserQuery userQuery) {
-        Page<UserBO> userBOPage = this.baseMapper.listPage(new Page<>(userQuery.getCurrent(), userQuery.getSize()), userQuery);
-        return this.sysUserMapStruct.pageBO2PageVO(userBOPage);
+    public Page<UserVO> listPage(UserQuery query) {
+        Page<SysUser> page = new Page<>(query.getCurrent(), query.getSize());
+        Page<UserBO> userBOPage = this.baseMapper.listPage(page, query);
+        return this.sysUserConverter.pageBO2PageVO(userBOPage);
     }
 
     /**
@@ -134,7 +135,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public UserVO getInfoById(Long id) {
         SysUser sysUser = this.getById(id);
-        UserVO userVO = this.sysUserMapStruct.entity2VO(sysUser);
+        UserVO userVO = this.sysUserConverter.entity2VO(sysUser);
         AssertUtil.isNotNull(sysUser, USER_NOT_FOUND);
         List<SysRole> roleList = this.sysUserRoleService.getSysRoleByUserId(sysUser.getId());
         userVO.setRoleNames(roleList.stream().map(SysRole::getRoleName).collect(Collectors.toList()));
@@ -151,17 +152,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     /**
      * 保存用户
      *
-     * @param userForm 系统用户
+     * @param form 系统用户
      * @return {@link Boolean}
      */
     @Override
-    public Result<Boolean> saveUser(UserForm userForm) {
-        AssertUtil.isNotNull(this.sysDeptService.getById(userForm.getDeptId()), DEPT_NOT_FOUND);
-        userForm.setPassword(BCrypt.hashpw(userForm.getPassword(), BCrypt.gensalt()));
-        SysUser sysUser = sysUserMapStruct.form2Entity(userForm);
+    public Result<Boolean> saveUser(UserForm form) {
+        AssertUtil.isNotNull(this.sysDeptService.getById(form.getDeptId()), DEPT_NOT_FOUND);
+        form.setPassword(BCrypt.hashpw(form.getPassword(), BCrypt.gensalt()));
+        SysUser sysUser = sysUserConverter.form2Entity(form);
         boolean save = this.save(sysUser);
         AssertUtil.isTrue(save, FAIL);
-        return Result.ok(this.saveUserRole(userForm, sysUser.getId()));
+        return Result.ok(this.saveUserRole(form, sysUser.getId()));
     }
 
     /**
@@ -172,7 +173,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      */
     @Override
     public Boolean modifyUser(Long id, UserForm userForm) {
-        SysUser sysUser = sysUserMapStruct.form2Entity(userForm);
+        SysUser sysUser = sysUserConverter.form2Entity(userForm);
         sysUser.setId(id);
         sysUser.setPassword(null);
         boolean update = this.updateById(sysUser);
@@ -213,27 +214,27 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     /**
      * 开启关闭锁定
      *
-     * @param userOpenForm 用户打开表单
+     * @param form 用户打开表单
      * @return {@link Boolean}
      */
     @Override
-    public Boolean open(UserOpenForm userOpenForm) {
+    public Boolean open(UserOpenForm form) {
         return this.update(Wrappers.<SysUser>lambdaUpdate()
-                .set(SysUser::getIsLock, userOpenForm.getIsLock())
-                .eq(SysUser::getUsername, userOpenForm.getUsername()));
+                .set(SysUser::getIsLock, form.getIsLock())
+                .eq(SysUser::getUsername, form.getUsername()));
     }
 
     /**
      * 重置密码
      *
-     * @param userResetForm 用户重置密码表单
+     * @param form 用户重置密码表单
      * @return {@link Boolean}
      */
     @Override
-    public Boolean reset(UserResetForm userResetForm) {
+    public Boolean reset(UserResetForm form) {
         AesSecretProperties aesSecretProperties = SpringUtil.getBean(AesSecretProperties.class);
-        userResetForm.setPassword(BCrypt.hashpw(AesUtil.decryptStr(userResetForm.getPassword(), aesSecretProperties.getAesSecret()), BCrypt.gensalt()));
-        return this.update(Wrappers.<SysUser>lambdaUpdate().set(SysUser::getPassword, userResetForm.getPassword()).eq(SysUser::getId, userResetForm.getId()));
+        form.setPassword(BCrypt.hashpw(AesUtil.decryptStr(form.getPassword(), aesSecretProperties.getAesSecret()), BCrypt.gensalt()));
+        return this.update(Wrappers.<SysUser>lambdaUpdate().set(SysUser::getPassword, form.getPassword()).eq(SysUser::getId, form.getId()));
     }
 
     /**
@@ -263,15 +264,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     /**
      * 用户添加角色
      *
-     * @param userRolesForm 用户角色表单
+     * @param form 用户角色表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Override
-    public Result<Boolean> setRole(UserRolesForm userRolesForm) {
-        SysUser sysUser = this.getOne(Wrappers.<SysUser>lambdaQuery().eq(SysUser::getId, userRolesForm.getUserId()));
+    public Result<Boolean> setRole(UserRolesForm form) {
+        SysUser sysUser = this.getOne(Wrappers.<SysUser>lambdaQuery().eq(SysUser::getId, form.getUserId()));
         AssertUtil.isNotNull(sysUser, USER_NOT_FOUND);
         this.sysUserRoleService.remove(Wrappers.<SysUserRole>lambdaQuery().eq(SysUserRole::getUserId, sysUser.getId()));
-        List<SysUserRole> collect = userRolesForm.getRoleIds().stream()
+        List<SysUserRole> collect = form.getRoleIds().stream()
                 .map(roleId -> SysUserRole.builder().roleId(roleId).userId(sysUser.getId()).build())
                 .collect(Collectors.toList());
         this.sysUserRoleService.saveBatch(collect);
@@ -305,7 +306,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public List<UserVO> listUserByDeptId(List<Long> deptIds) {
         List<UserBO> userBOList = this.baseMapper.listUserByDeptId(deptIds);
-        return this.sysUserMapStruct.boList2VOList(userBOList);
+        return this.sysUserConverter.boList2VOList(userBOList);
     }
 
     /**
@@ -317,7 +318,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public void export(UserQuery userQuery, HttpServletResponse response) {
         Page<UserVO> userList = this.listPage(userQuery);
-        List<UserExcel> userExcels = this.sysUserMapStruct.vo2Excel(userList.getRecords());
+        List<UserExcel> userExcels = this.sysUserConverter.vo2Excel(userList.getRecords());
         try {
             EasyExcelExport.export(response, "用户数据", "用户数据", userExcels, UserExcel.class);
         } catch (Exception e) {
@@ -395,7 +396,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      * @return {@link UserInfoDTO}
      */
     public UserInfoDTO buildLoginUserInfo(SysUser sysUser) {
-        UserInfoDTO userInfo = sysUserMapStruct.entity2BaseLoginUser(sysUser);
+        UserInfoDTO userInfo = sysUserConverter.entity2BaseLoginUser(sysUser);
 
         try {
             // 查询用户的角色

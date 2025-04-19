@@ -20,10 +20,11 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.write.style.column.SimpleColumnWidthStyleStrategy;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -48,14 +49,11 @@ public class EasyExcelExport {
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("utf-8");
         String fileName = null;
-        try {
-            fileName = URLEncoder.encode(excelName, "UTF-8").replaceAll("\\+", "%20");
-            response.setHeader("original-file-name", fileName);
-        } catch (UnsupportedEncodingException e) {
-            log.error("文件下载失败", e);
-        }
+        fileName = URLEncoder.encode(excelName, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+        response.setHeader("original-file-name", fileName);
 
-        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + fileName + ".xlsx");
+        response.setHeader(HttpHeaders.CONTENT_ENCODING, StandardCharsets.UTF_8.name());
         try {
             EasyExcel.write(response.getOutputStream(), clazz)
                     .registerWriteHandler(new SimpleColumnWidthStyleStrategy(25))

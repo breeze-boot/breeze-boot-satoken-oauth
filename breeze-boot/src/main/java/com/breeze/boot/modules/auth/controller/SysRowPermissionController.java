@@ -70,14 +70,14 @@ public class SysRowPermissionController {
     /**
      * 列表
      *
-     * @param rowPermissionQuery 数据权限查询
+     * @param query 数据权限查询
      * @return {@link Result}<{@link Page}<{@link RowPermissionVO}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("auth:rowPermission:list")
-    public Result<Page<RowPermissionVO>> list(@RequestBody RowPermissionQuery rowPermissionQuery) {
-        return Result.ok(this.sysRowPermissionService.listPage(rowPermissionQuery));
+    public Result<Page<RowPermissionVO>> list(@RequestBody RowPermissionQuery query) {
+        return Result.ok(this.sysRowPermissionService.listPage(query));
     }
 
     /**
@@ -89,8 +89,7 @@ public class SysRowPermissionController {
     @Operation(summary = "详情")
     @GetMapping("/info/{permissionId}")
     @SaCheckPermission("auth:rowPermission:info")
-    public Result<RowPermissionVO> info(@Parameter(description = "权限ID") @NotNull(message = "参数不能为空")
-                                        @PathVariable("permissionId") Long permissionId) {
+    public Result<RowPermissionVO> info(@Parameter(description = "权限ID") @NotNull(message = "参数不能为空") @PathVariable("permissionId") Long permissionId) {
         return Result.ok(this.sysRowPermissionService.getInfoById(permissionId));
     }
 
@@ -105,8 +104,11 @@ public class SysRowPermissionController {
     @Operation(summary = "校验权限编码是否重复")
     @GetMapping("/checkRowPermissionCode")
     @SaCheckPermission("auth:rowPermission:list")
-    public Result<Boolean> checkRowPermission(@Parameter(description = "权限编码") @NotBlank(message = "权限编码不能为空") @RequestParam("permissionCode") String permissionCode,
-                                              @Parameter(description = "权限ID") @RequestParam(value = "permissionId", required = false) Long permissionId) {
+    public Result<Boolean> checkRowPermission(
+            // @formatter:off
+            @Parameter(description = "权限编码") @NotBlank(message = "权限编码不能为空") @RequestParam("permissionCode") String permissionCode,
+            @Parameter(description = "权限ID") @RequestParam(value = "permissionId", required = false) Long permissionId) {
+            // @formatter:on
         // @formatter:off
         return Result.ok(Objects.isNull(this.sysRowPermissionService.getOne(Wrappers.<SysRowPermission>lambdaQuery()
                 .ne(Objects.nonNull(permissionId), SysRowPermission::getId, permissionId)
@@ -117,22 +119,22 @@ public class SysRowPermissionController {
     /**
      * 创建
      *
-     * @param permissionParam 行权限表单
+     * @param form 行权限表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "保存")
     @PostMapping
     @SaCheckPermission("auth:rowPermission:create")
     @BreezeSysLog(description = "数据权限信息保存", type = LogType.SAVE)
-    public Result<Boolean> save(@Valid @RequestBody RowPermissionForm permissionParam) {
-        return this.sysRowPermissionService.saveRowPermission(permissionParam);
+    public Result<Boolean> save(@Valid @RequestBody RowPermissionForm form) {
+        return this.sysRowPermissionService.saveRowPermission(form);
     }
 
     /**
      * 修改
      *
-     * @param id                ID
-     * @param rowPermissionForm 数据权限表单
+     * @param id   ID
+     * @param form 数据权限表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "修改")
@@ -140,8 +142,8 @@ public class SysRowPermissionController {
     @SaCheckPermission("auth:rowPermission:modify")
     @BreezeSysLog(description = "数据权限信息修改", type = LogType.EDIT)
     public Result<Boolean> modify(@Parameter(description = "权限ID") @NotNull(message = "权限ID不能为空") @PathVariable Long id,
-                                  @Valid @RequestBody RowPermissionForm rowPermissionForm) {
-        return this.sysRowPermissionService.modifyRowPermission(id, rowPermissionForm);
+                                  @Valid @RequestBody RowPermissionForm form) {
+        return this.sysRowPermissionService.modifyRowPermission(id, form);
     }
 
     /**
@@ -154,8 +156,7 @@ public class SysRowPermissionController {
     @DeleteMapping
     @SaCheckPermission("auth:rowPermission:delete")
     @BreezeSysLog(description = "数据权限信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@Parameter(description = "权限IDS")
-                                  @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
+    public Result<Boolean> delete(@Parameter(description = "权限IDS") @NotEmpty(message = "参数不能为空") @RequestBody Long[] ids) {
         return this.sysRowPermissionService.removeRowPermissionByIds(Arrays.asList(ids));
     }
 

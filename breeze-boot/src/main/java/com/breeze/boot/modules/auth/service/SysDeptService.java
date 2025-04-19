@@ -37,26 +37,26 @@ public interface SysDeptService extends IService<SysDept> {
     /**
      * 部门列表
      *
-     * @param deptQuery 部门查询
+     * @param query 部门查询
      * @return {@link List}<{@link Tree}<{@link Long}>>
      */
-    List<?> listDept(DeptQuery deptQuery);
+    List<?> listDept(DeptQuery query);
 
     /**
      * 保存dept
      *
-     * @param deptForm dept表单
+     * @param form dept表单
      * @return {@link Boolean }
      */
-    Boolean saveDept(DeptForm deptForm);
+    Boolean saveDept(DeptForm form);
 
     /**
      * 按id更新部门
      *
-     * @param deptForm dept表单
+     * @param form dept表单
      * @return {@link Boolean }
      */
-    Boolean modifyDept(Long id, DeptForm deptForm);
+    Boolean modifyDept(Long id, DeptForm form);
 
     /**
      * 删除通过id

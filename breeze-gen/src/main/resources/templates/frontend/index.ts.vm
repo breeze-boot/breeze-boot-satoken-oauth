@@ -1,0 +1,95 @@
+#set($jsTemplateStart = '`')
+#set($jsTemplateEnd = '`')
+#set($jsDollar = '$')
+
+/**
+ * @author: gaoweixuan
+ * @since: ${date}
+ */
+import request from '@/utils/request'
+import { ${entityClassName}ResponseData, ${entityClassName}Query, ${entityClassName}Record, ${entityClassName}Form } from './type'
+import { ResponseData } from '@/types/types.ts'
+
+enum API {
+        ${entityClassNameUpper}_RESTFUL_URL = '/auth/v1/${entityClassLowerName}',
+}
+
+/**
+ * 列表
+ *
+ * @param data
+ */
+export function page(data: ${entityClassName}Query): Promise<${entityClassName}ResponseData> {
+    return request<any, ${entityClassName}ResponseData>({
+        url: $jsTemplateStart${jsDollar}{API.${entityClassNameUpper}_RESTFUL_URL}/page$jsTemplateEnd,
+        method: 'post',
+        data,
+    })
+}
+
+/**
+ * 获取详情
+ *
+ * @param id
+ */
+export function get${entityClassName}(id: number): Promise<${entityClassName}ResponseData> {
+    return request<any, ${entityClassName}ResponseData>({
+        url: $jsTemplateStart${jsDollar}{API.${entityClassNameUpper}_RESTFUL_URL}/info/${id}$jsTemplateEnd,
+        method: 'get',
+    })
+}
+
+/**
+ * 添加
+ *
+ * @param data
+ */
+export function add${entityClassName}(data: ${entityClassName}Form): Promise<ResponseData> {
+    return request<any, ResponseData>({
+        url: API.${entityClassNameUpper}_RESTFUL_URL,
+        method: 'post',
+        data,
+    })
+}
+
+/**
+ * 编辑
+ *
+ * @param id
+ * @param data
+ */
+export function edit${entityClassName}(id: number, data: ${entityClassName}Form): Promise<ResponseData> {
+    return request<any, ResponseData>({
+        url: $jsTemplateStart${jsDollar}{API.${entityClassNameUpper}_RESTFUL_URL}/${id}$jsTemplateEnd,
+        method: 'put',
+        data,
+    })
+}
+
+/**
+ * 删除
+ *
+ * @param ids
+ */
+export function delete${entityClassName}(ids: number[]): Promise<ResponseData> {
+    return request<any, ResponseData>({
+        url: API.${entityClassNameUpper}_RESTFUL_URL,
+        method: 'delete',
+        data: ids,
+    })
+}
+
+/**
+ * 导出
+ *
+ * @param data
+ */
+export function exportExcel(data: ${entityClassName}Record): Promise<any> {
+    return request<any, any>({
+        url: API.${entityClassNameUpper}_RESTFUL_URL,
+        method: 'post',
+        data,
+        // 指定响应类型为二进制流
+        responseType: 'blob',
+    })
+}

@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.breeze.boot.modules.system.mapper.SysAuditLogMapper;
 import com.breeze.boot.modules.system.model.entity.SysAuditLog;
-import com.breeze.boot.modules.system.model.mappers.SysAuditLogMapStruct;
+import com.breeze.boot.modules.system.model.converter.SysAuditLogConverter;
 import com.breeze.boot.modules.system.model.query.AuditLogQuery;
 import com.breeze.boot.modules.system.model.vo.AuditLogVO;
 import com.breeze.boot.modules.system.service.SysAuditLogService;
@@ -45,19 +45,19 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class SysAuditLogServiceImpl extends ServiceImpl<SysAuditLogMapper, SysAuditLog> implements SysAuditLogService {
 
-    private final SysAuditLogMapStruct sysAuditLogMapStruct;
+    private final SysAuditLogConverter sysAuditLogConverter;
 
     /**
      * 列表页面
      *
-     * @param auditLogQuery 审计日志查询
+     * @param query 审计日志查询
      * @return {@link Page }<{@link AuditLogVO }>
      */
     @Override
-    public Page<AuditLogVO> listPage(AuditLogQuery auditLogQuery) {
-        Page<SysAuditLog> page = new Page<>(auditLogQuery.getCurrent(), auditLogQuery.getSize());
-        Page<SysAuditLog> sysAuditLogPage = this.baseMapper.listPage(page, auditLogQuery);
-        return this.sysAuditLogMapStruct.entityPage2VOPage(sysAuditLogPage);
+    public Page<AuditLogVO> listPage(AuditLogQuery query) {
+        Page<SysAuditLog> page = new Page<>(query.getCurrent(), query.getSize());
+        Page<SysAuditLog> sysAuditLogPage = this.baseMapper.listPage(page, query);
+        return this.sysAuditLogConverter.entityPage2VOPage(sysAuditLogPage);
     }
 
     /**
@@ -91,7 +91,7 @@ public class SysAuditLogServiceImpl extends ServiceImpl<SysAuditLogMapper, SysAu
      */
     @Override
     public AuditLogVO getInfoById(Long auditLogId) {
-        return this.sysAuditLogMapStruct.entity2VO(this.getById(auditLogId));
+        return this.sysAuditLogConverter.entity2VO(this.getById(auditLogId));
     }
 
     @Override

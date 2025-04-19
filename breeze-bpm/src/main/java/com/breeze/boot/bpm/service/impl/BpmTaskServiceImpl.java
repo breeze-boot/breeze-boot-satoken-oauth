@@ -82,27 +82,27 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
     /**
      * 获取用户任务列表
      *
-     * @param userTaskQuery 用户任务查询
+     * @param query 用户任务查询
      * @return {@link Page}<{@link UserTaskVO}>
      */
     @Override
-    public Page<UserTaskVO> listUserTodoTask(UserTaskQuery userTaskQuery) {
-        Page<UserTaskVO> resultPage = new Page<>(userTaskQuery.getCurrent(), userTaskQuery.getSize(), 0L);
+    public Page<UserTaskVO> listUserTodoTask(UserTaskQuery query) {
+        Page<UserTaskVO> resultPage = new Page<>(query.getCurrent(), query.getSize(), 0L);
         TaskQuery taskQuery = this.taskService.createTaskQuery();
         TaskQuery todoTaskQuery;
         String username = BreezeStpUtil.getUser().getUsername();
-        if (userTaskQuery.getIsAssigned()) {
+        if (query.getIsAssigned()) {
             todoTaskQuery = BreezeStpUtil.isAdmin() ? taskQuery.active().includeProcessVariables() : taskQuery.taskAssignee(username).active().includeProcessVariables();
         } else {
             todoTaskQuery = BreezeStpUtil.isAdmin() ? taskQuery.active().includeProcessVariables() : taskQuery.taskCandidateUser(username).active().includeProcessVariables();
         }
-        if (StringUtils.isNotBlank(userTaskQuery.getTaskName())) {
-            todoTaskQuery.taskNameLike("%" + userTaskQuery.getTaskName() + "%");
+        if (StringUtils.isNotBlank(query.getTaskName())) {
+            todoTaskQuery.taskNameLike("%" + query.getTaskName() + "%");
         }
         // @formatter:off
         List<Task> taskList = todoTaskQuery
                 .orderByTaskCreateTime().desc()
-                .listPage(userTaskQuery.getOffset(), userTaskQuery.getSize());
+                .listPage(query.getOffset(), query.getSize());
         if (CollUtil.isEmpty(taskList)) {
             return resultPage;
         }
@@ -166,11 +166,11 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
     /**
      * 查询用户已办任务
      *
-     * @param userTaskQuery 用户任务查询
+     * @param query 用户任务查询
      * @return {@link Page }<{@link UserTaskVO }>
      */
     @Override
-    public Page<UserTaskVO> listCompletedTask(UserTaskQuery userTaskQuery) {
+    public Page<UserTaskVO> listCompletedTask(UserTaskQuery query) {
         // 查询历史任务实例
         // @formatter:off
         List<HistoricTaskInstance> hisTaskInstList = historyService.createHistoricTaskInstanceQuery()
@@ -178,14 +178,14 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
                 .orderByTaskCreateTime().asc()
                 .includeProcessVariables()
                 .finished()
-                .listPage(userTaskQuery.getOffset(), userTaskQuery.getSize());
+                .listPage(query.getOffset(), query.getSize());
 
         long count = historyService.createHistoricTaskInstanceQuery()
                 .taskAssignee(BreezeStpUtil.getUser().getUsername())
                 .orderByTaskCreateTime().asc()
                 .finished()
                 .count();
-        Page<UserTaskVO> resultPage = new Page<>(userTaskQuery.getOffset(), userTaskQuery.getSize());
+        Page<UserTaskVO> resultPage = new Page<>(query.getOffset(), query.getSize());
         // @formatter:on
         Map<String, HistoricTaskInstance> hisTaskMap = hisTaskInstList.stream().collect(toMap(HistoricTaskInstance::getProcessInstanceId, Function.identity()));
         Set<String> procInstIdSet = hisTaskInstList.stream().map(HistoricTaskInstance::getProcessInstanceId).collect(toSet());
@@ -563,22 +563,22 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
     /**
      * 审批任务
      *
-     * @param bpmApprovalForm 流程审批参数
+     * @param form 流程审批参数
      */
     @Override
-    public Boolean complete(BpmApprovalForm bpmApprovalForm) {
+    public Boolean complete(BpmApprovalForm form) {
         String username = BreezeStpUtil.getUser().getUsername();
-        String comment = StrUtil.isNotBlank(bpmApprovalForm.getComment()) ? bpmApprovalForm.getComment() : "";
+        String comment = StrUtil.isNotBlank(form.getComment()) ? form.getComment() : "";
         //设置审批意见
         if (StrUtil.isNotEmpty(comment)) {
-            taskService.addComment(bpmApprovalForm.getTaskId(), bpmApprovalForm.getProcInstId(), username + comment);
+            taskService.addComment(form.getTaskId(), form.getProcInstId(), username + comment);
         }
-        Map<String, Object> variables = bpmApprovalForm.getVariables();
+        Map<String, Object> variables = form.getVariables();
         if (CollUtil.isEmpty(variables)) {
             variables = Maps.newHashMap();
         }
-        variables.put("pass", bpmApprovalForm.getPass());
-        this.taskService.complete(bpmApprovalForm.getTaskId(), variables);
+        variables.put("pass", form.getPass());
+        this.taskService.complete(form.getTaskId(), variables);
         return Boolean.TRUE;
     }
 
@@ -666,37 +666,37 @@ public class BpmTaskServiceImpl implements IBpmTaskService {
     /**
      * 废止流程
      *
-     * @param bpmApprovalForm bpm审批表单
+     * @param form bpm审批表单
      * @return {@link Boolean }
      */
     @Override
-    public Boolean abolition(BpmApprovalForm bpmApprovalForm) {
-        ProcessInstance processInstance = this.runtimeService.createProcessInstanceQuery().processInstanceId(bpmApprovalForm.getProcInstId()).active().singleResult();
+    public Boolean abolition(BpmApprovalForm form) {
+        ProcessInstance processInstance = this.runtimeService.createProcessInstanceQuery().processInstanceId(form.getProcInstId()).active().singleResult();
         if (Objects.isNull(processInstance)) {
             throw new BreezeBizException(ResultCode.PROCESS_NOT_FOUND);
         }
 
-        taskService.addComment(bpmApprovalForm.getTaskId(), processInstance.getProcessInstanceId(), BreezeStpUtil.getUser().getUsername() + "废止任务,退回到发起人");
-        this.runtimeService.deleteProcessInstance(bpmApprovalForm.getProcInstId(), bpmApprovalForm.getComment());
+        taskService.addComment(form.getTaskId(), processInstance.getProcessInstanceId(), BreezeStpUtil.getUser().getUsername() + "废止任务,退回到发起人");
+        this.runtimeService.deleteProcessInstance(form.getProcInstId(), form.getComment());
         return Boolean.TRUE;
     }
 
     /**
      * 查询用户发起任务
      *
-     * @param userTaskQuery 用户任务查询
+     * @param query 用户任务查询
      * @return {@link Page }<{@link UserTaskVO }>
      */
     @Override
-    public Page<UserTaskVO> listApplyUserTask(UserTaskQuery userTaskQuery) {
+    public Page<UserTaskVO> listApplyUserTask(UserTaskQuery query) {
         // 查询历史任务实例
         // @formatter:off
         List<HistoricProcessInstance> hisProcInstList = historyService.createHistoricProcessInstanceQuery()
                 .startedBy(BreezeStpUtil.getUser().getUsername())
                 .orderByProcessInstanceStartTime().asc()
-                .listPage(userTaskQuery.getOffset(), userTaskQuery.getSize());
+                .listPage(query.getOffset(), query.getSize());
 
-        Page<UserTaskVO> resultPage = new Page<>(userTaskQuery.getCurrent(), userTaskQuery.getSize());
+        Page<UserTaskVO> resultPage = new Page<>(query.getCurrent(), query.getSize());
         if (CollUtil.isEmpty(hisProcInstList)) {
             return resultPage;
         }

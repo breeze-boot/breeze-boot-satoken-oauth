@@ -39,26 +39,26 @@ public interface IBpmDefinitionService {
     /**
      * 部署
      *
-     * @param bpmDesignXmlStringForm 流程设计参数
+     * @param form 流程设计参数
      * @return {@link Result}<{@link String}>
      */
-    Result<String> deploy(BpmDesignXmlStringForm bpmDesignXmlStringForm);
+    Result<String> deploy(BpmDesignXmlStringForm form);
 
     /**
      * 部署
      *
-     * @param bpmDesignXmlFileForm 流程设计参数
+     * @param form 流程设计参数
      * @return {@link Result}<{@link String}>
      */
-    Result<String> deploy(BpmDesignXmlFileForm bpmDesignXmlFileForm);
+    Result<String> deploy(BpmDesignXmlFileForm form);
 
     /**
      * 列表页面
      *
-     * @param bpmDefinitionQuery 流程定义查询
+     * @param query 流程定义查询
      * @return {@link Page}<{@link BpmDefinitionVO}>
      */
-    Page<BpmDefinitionVO> listPage(BpmDefinitionQuery bpmDefinitionQuery);
+    Page<BpmDefinitionVO> listPage(BpmDefinitionQuery query);
 
     /**
      * 挂起/激活
@@ -93,18 +93,18 @@ public interface IBpmDefinitionService {
     /**
      * 版本列表页面
      *
-     * @param bpmDefinitionQuery 流程定义查询
+     * @param query 流程定义查询
      * @return {@link Page}<{@link BpmDefinitionVO}>
      */
-    Page<BpmDefinitionVO> listVersionPage(BpmDefinitionQuery bpmDefinitionQuery);
+    Page<BpmDefinitionVO> listVersionPage(BpmDefinitionQuery query);
 
     /**
      * 删除
      *
-     * @param bpmDefinitionDeleteFormList 流定义删除参数列表
+     * @param formList 流定义删除参数列表
      * @return {@link Boolean}
      */
-    Boolean delete(List<BpmDefinitionDeleteForm> bpmDefinitionDeleteFormList);
+    Boolean delete(List<BpmDefinitionDeleteForm> formList);
 
     /**
      * 详情

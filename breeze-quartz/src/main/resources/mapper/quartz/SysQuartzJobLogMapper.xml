@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.breeze.boot.quartz.mapper.SysQuartzJobLogMapper">
 
-    <resultMap id="baseResultMap" type="com.breeze.boot.quartz.domain.SysQuartzJobLog">
+    <resultMap id="baseResultMap" type="com.breeze.boot.quartz.domain.entity.SysQuartzJobLog">
         <id property="id" column="id" jdbcType="BIGINT"/>
         <result property="jobName" column="job_name" jdbcType="VARCHAR"/>
         <result property="jobGroupName" column="job_group_name" jdbcType="VARCHAR"/>
@@ -19,7 +19,7 @@
         TRUNCATE TABLE sys_quartz_job_log;
     </update>
 
-    <select id="listPage" resultType="com.breeze.boot.quartz.domain.SysQuartzJobLog">
+    <select id="listPage" resultType="com.breeze.boot.quartz.domain.entity.SysQuartzJobLog">
         SELECT
         id,
         job_name,

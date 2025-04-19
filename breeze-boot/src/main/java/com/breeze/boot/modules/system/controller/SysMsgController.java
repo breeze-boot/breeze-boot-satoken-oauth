@@ -59,14 +59,14 @@ public class SysMsgController {
     /**
      * 列表
      *
-     * @param msgQuery 消息查询
+     * @param query 消息查询
      * @return {@link Result}<{@link IPage}<{@link MsgVO}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("sys:msg:list")
-    public Result<IPage<MsgVO>> list(@RequestBody MsgQuery msgQuery) {
-        return Result.ok(this.sysMsgService.listPage(msgQuery));
+    public Result<IPage<MsgVO>> list(@RequestBody MsgQuery query) {
+        return Result.ok(this.sysMsgService.listPage(query));
     }
 
     /**
@@ -85,22 +85,22 @@ public class SysMsgController {
     /**
      * 创建
      *
-     * @param msgForm 消息
+     * @param form 消息
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "保存")
     @PostMapping
     @SaCheckPermission("sys:msg:create")
     @BreezeSysLog(description = "消息信息保存", type = LogType.SAVE)
-    public Result<Boolean> save(@Valid @RequestBody MsgForm msgForm) {
-        return Result.ok(this.sysMsgService.saveMsg(msgForm));
+    public Result<Boolean> save(@Valid @RequestBody MsgForm form) {
+        return Result.ok(this.sysMsgService.saveMsg(form));
     }
 
     /**
      * 修改
      *
      * @param id      ID
-     * @param msgForm 消息表单
+     * @param form 消息表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "修改")
@@ -108,8 +108,8 @@ public class SysMsgController {
     @SaCheckPermission("sys:msg:modify")
     @BreezeSysLog(description = "消息信息修改", type = LogType.EDIT)
     public Result<Boolean> modify(@Parameter(description = "消息ID") @NotNull(message = "消息ID不能为空") @PathVariable Long id,
-                                  @Valid @RequestBody MsgForm msgForm) {
-        return Result.ok(this.sysMsgService.modifyMsg(id, msgForm));
+                                  @Valid @RequestBody MsgForm form) {
+        return Result.ok(this.sysMsgService.modifyMsg(id, form));
     }
 
     /**

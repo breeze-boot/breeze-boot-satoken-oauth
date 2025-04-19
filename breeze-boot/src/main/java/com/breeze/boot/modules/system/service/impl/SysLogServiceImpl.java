@@ -20,8 +20,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.breeze.boot.log.bo.SysLogBO;
 import com.breeze.boot.modules.system.mapper.SysLogMapper;
+import com.breeze.boot.modules.system.model.converter.SysLogConverter;
 import com.breeze.boot.modules.system.model.entity.SysLog;
-import com.breeze.boot.modules.system.model.mappers.SysLogMapStruct;
 import com.breeze.boot.modules.system.model.query.LogQuery;
 import com.breeze.boot.modules.system.model.vo.LogVO;
 import com.breeze.boot.modules.system.model.vo.StatisticLoginUser;
@@ -39,7 +39,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> implements SysLogService {
 
-    private final SysLogMapStruct sysLogMapStruct;
+    private final SysLogConverter sysLogConverter;
     private static final String systemName = "权限系统";
 
     /**
@@ -53,12 +53,12 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
     public Page<LogVO> listPage(LogQuery logQuery, Integer logType) {
         Page<SysLog> page = new Page<>(logQuery.getCurrent(), logQuery.getLimit());
         Page<SysLog> sysLogPage = this.baseMapper.listPage(page, logQuery, logType);
-        return this.sysLogMapStruct.entityPage2VOPage(sysLogPage);
+        return this.sysLogConverter.entityPage2VOPage(sysLogPage);
     }
 
     @Override
     public LogVO getInfoById(Long logId) {
-        return this.sysLogMapStruct.entity2VO(this.getById(logId));
+        return this.sysLogConverter.entity2VO(this.getById(logId));
     }
 
     /**
@@ -68,7 +68,7 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
      */
     @Override
     public void saveSysLog(SysLogBO sysLogBO) {
-        SysLog sysLog = this.sysLogMapStruct.bo2Entity(sysLogBO);
+        SysLog sysLog = this.sysLogConverter.bo2Entity(sysLogBO);
         sysLog.setSystemModule(systemName);
         this.save(sysLog);
     }

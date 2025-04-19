@@ -17,10 +17,9 @@
 package com.breeze.boot.modules.auth.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.breeze.boot.modules.auth.model.entity.SysRowPermission;
 import com.breeze.boot.modules.auth.model.entity.SysRoleRowPermission;
+import com.breeze.boot.modules.auth.model.entity.SysRowPermission;
 
-import java.util.List;
 import java.util.Set;
 
 /**

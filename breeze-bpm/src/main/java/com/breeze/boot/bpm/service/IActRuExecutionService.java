@@ -33,9 +33,9 @@ public interface IActRuExecutionService extends IService<ActRuExecution> {
     /**
      * 列表页面
      *
-     * @param bpmInstanceQuery 流程实例查询
+     * @param query 流程实例查询
      * @return {@link Page}<{@link BpmInstanceVO}>
      */
-    Page<BpmInstanceVO> listPage(BpmInstanceQuery bpmInstanceQuery);
+    Page<BpmInstanceVO> listPage(BpmInstanceQuery query);
 
 }

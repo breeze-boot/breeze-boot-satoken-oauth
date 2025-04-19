@@ -45,14 +45,14 @@ public class BpmGroupController {
     /**
      * 列表
      *
-     * @param groupQuery 用户组查询
+     * @param query 用户组查询
      * @return {@link Result }<{@link Page }<{@link BpmUserVO }>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("bpm:group:list")
-    public Result<Page<BpmGroupVO>> list(@RequestBody BpmGroupQuery groupQuery) {
-        return Result.ok(this.groupService.listPage(groupQuery));
+    public Result<Page<BpmGroupVO>> list(@RequestBody BpmGroupQuery query) {
+        return Result.ok(this.groupService.listPage(query));
     }
 
 }

@@ -63,14 +63,14 @@ public class SysMSubjectController {
     /**
      * 列表
      *
-     * @param mSubjectQuery 邮箱主题查询
+     * @param query 邮箱主题查询
      * @return {@link Result}<{@link Page}<{@link EmailConfigVO}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("sys:mSubject:list")
-    public Result<Page<MSubjectVO>> list(@RequestBody MSubjectQuery mSubjectQuery) {
-        return Result.ok(this.sysMSubjectService.listPage(mSubjectQuery));
+    public Result<Page<MSubjectVO>> list(@RequestBody MSubjectQuery query) {
+        return Result.ok(this.sysMSubjectService.listPage(query));
     }
 
     /**
@@ -89,21 +89,21 @@ public class SysMSubjectController {
     /**
      * 创建
      *
-     * @param mSubjectForm 邮箱主题表单
+     * @param form 邮箱主题表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "保存")
     @PostMapping
     @SaCheckPermission("sys:mSubject:create")
     @BreezeSysLog(description = "邮箱主题信息保存", type = LogType.SAVE)
-    public Result<Boolean> save(@Valid @RequestBody MSubjectForm mSubjectForm) {
-        return Result.ok(this.sysMSubjectService.saveEmailSubject(mSubjectForm));
+    public Result<Boolean> save(@Valid @RequestBody MSubjectForm form) {
+        return Result.ok(this.sysMSubjectService.saveEmailSubject(form));
     }
 
     /**
      * 修改
      *
-     * @param mSubjectForm 邮箱主题表单
+     * @param form 邮箱主题表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "修改")
@@ -111,22 +111,23 @@ public class SysMSubjectController {
     @SaCheckPermission("sys:mSubject:modify")
     @BreezeSysLog(description = "邮箱主题信息修改", type = LogType.EDIT)
     public Result<Boolean> modify(@Parameter(description = "邮箱主题ID") @NotNull(message = "邮箱主题ID不能为空") @PathVariable Long id,
-                                  @Valid @RequestBody MSubjectForm mSubjectForm) {
-        return Result.ok(this.sysMSubjectService.modifyEmailSubject(id, mSubjectForm));
+                                  @Valid @RequestBody MSubjectForm form) {
+        return Result.ok(this.sysMSubjectService.modifyEmailSubject(id, form));
     }
 
     /**
      * 设置邮箱接收人
      *
-     * @param mSubjectSetUserForm 邮箱主题表单
+     * @param form 邮箱主题表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "设置邮箱接收人")
     @PutMapping("/setEmailUser/{id}")
     @SaCheckPermission("sys:mSubject:modify")
     @BreezeSysLog(description = "设置邮箱接收人", type = LogType.EDIT)
-    public Result<Boolean> setEmailUser(@Parameter(description = "邮箱主题ID") @PathVariable Long id, @Valid @RequestBody MSubjectSetUserForm mSubjectSetUserForm) {
-        return Result.ok(this.sysMSubjectService.setEmailUser(id, mSubjectSetUserForm));
+    public Result<Boolean> setEmailUser(@Parameter(description = "邮箱主题ID") @PathVariable Long id,
+                                        @Valid @RequestBody MSubjectSetUserForm form) {
+        return Result.ok(this.sysMSubjectService.setEmailUser(id, form));
     }
 
     /**
@@ -184,15 +185,15 @@ public class SysMSubjectController {
     /**
      * 开启关闭锁定
      *
-     * @param mSubjectOpenForm 邮箱主题开关表单
+     * @param form 邮箱主题开关表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "邮箱主题开关")
     @PutMapping("/open")
     @SaCheckPermission("auth:mSubject:modify")
     @BreezeSysLog(description = "邮箱主题开关", type = LogType.EDIT)
-    public Result<Boolean> open(@Valid @RequestBody MSubjectOpenForm mSubjectOpenForm) {
-        return Result.ok(this.sysMSubjectService.open(mSubjectOpenForm));
+    public Result<Boolean> open(@Valid @RequestBody MSubjectOpenForm form) {
+        return Result.ok(this.sysMSubjectService.open(form));
     }
 
 }

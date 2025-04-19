@@ -38,10 +38,10 @@ public interface SysDictService extends IService<SysDict> {
     /**
      * 列表页面
      *
-     * @param dictQuery 字典查询
+     * @param query 字典查询
      * @return {@link Page}<{@link DictVO}>
      */
-    Page<DictVO> listPage(DictQuery dictQuery);
+    Page<DictVO> listPage(DictQuery query);
 
     /**
      * 按id获取信息
@@ -54,27 +54,27 @@ public interface SysDictService extends IService<SysDict> {
     /**
      * 保存dict
      *
-     * @param dictForm 字典表单
+     * @param form 字典表单
      * @return {@link Boolean }
      */
-    Boolean saveDict(DictForm dictForm);
+    Boolean saveDict(DictForm form);
 
     /**
      * 修改dict
      *
-     * @param id       id
-     * @param dictForm 字典表单
+     * @param id   id
+     * @param form 字典表单
      * @return {@link Boolean }
      */
-    Boolean modifyDict(Long id, DictForm dictForm);
+    Boolean modifyDict(Long id, DictForm form);
 
     /**
      * 开关
      *
-     * @param dictOpenForm 字典开关参数
+     * @param form 字典开关参数
      * @return {@link Boolean}
      */
-    Boolean open(DictOpenForm dictOpenForm);
+    Boolean open(DictOpenForm form);
 
     /**
      * 删除字典通过IDS

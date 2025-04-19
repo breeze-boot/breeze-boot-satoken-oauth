@@ -56,14 +56,14 @@ public class SysMsgUserController {
     /**
      * 列表
      *
-     * @param userMsgQuery 用户消息查询
+     * @param query 用户消息查询
      * @return {@link Result}<{@link IPage}<{@link MsgUserVO}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("sys:msgUser:list")
-    public Result<IPage<MsgUserVO>> list(@RequestBody UserMsgQuery userMsgQuery) {
-        return Result.ok(this.sysMsgUserService.listPage(userMsgQuery));
+    public Result<IPage<MsgUserVO>> list(@RequestBody UserMsgQuery query) {
+        return Result.ok(this.sysMsgUserService.listPage(query));
     }
 
     /**

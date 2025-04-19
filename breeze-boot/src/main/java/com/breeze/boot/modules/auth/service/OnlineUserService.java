@@ -30,7 +30,7 @@ import java.util.List;
  */
 public interface OnlineUserService {
 
-    Result<List<OnlineUserVO>> listAllOnlineUser(PageQuery pageQuery);
+    Result<List<OnlineUserVO>> listAllOnlineUser(PageQuery query);
 
     Result<Boolean> kickOut(Long userId);
 

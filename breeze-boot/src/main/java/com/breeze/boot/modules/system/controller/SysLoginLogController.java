@@ -57,14 +57,14 @@ public class SysLoginLogController {
     /**
      * 列表
      *
-     * @param logQuery 日志查询
+     * @param query 日志查询
      * @return {@link Result}<{@link Page}<{@link LogVO}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("sys:loginLog:list")
-    public Result<Page<LogVO>> list(@RequestBody LogQuery logQuery) {
-        return Result.ok(this.sysLogService.listPage(logQuery, LOGIN.getCode()));
+    public Result<Page<LogVO>> list(@RequestBody LogQuery query) {
+        return Result.ok(this.sysLogService.listPage(query, LOGIN.getCode()));
     }
 
     /**

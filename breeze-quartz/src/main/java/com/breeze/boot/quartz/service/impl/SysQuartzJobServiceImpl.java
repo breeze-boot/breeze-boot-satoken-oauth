@@ -22,11 +22,12 @@ import com.breeze.boot.core.enums.ResultCode;
 import com.breeze.boot.core.exception.BreezeBizException;
 import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.core.utils.Result;
-import com.breeze.boot.quartz.domain.SysQuartzJob;
+import com.breeze.boot.quartz.domain.entity.SysQuartzJob;
 import com.breeze.boot.quartz.domain.form.JobOpenForm;
 import com.breeze.boot.quartz.domain.form.SysQuartzJobForm;
-import com.breeze.boot.quartz.domain.mappers.SysQuartzJobMapStruct;
+import com.breeze.boot.quartz.domain.converter.SysQuartzJobConverter;
 import com.breeze.boot.quartz.domain.query.JobQuery;
+import com.breeze.boot.quartz.enums.QuartzEnum;
 import com.breeze.boot.quartz.manager.QuartzManager;
 import com.breeze.boot.quartz.mapper.SysQuartzJobMapper;
 import com.breeze.boot.quartz.service.SysQuartzJobService;
@@ -37,8 +38,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 
-import static com.breeze.boot.core.constants.QuartzConstants.JOB_NAME;
 import static com.breeze.boot.core.enums.ResultCode.JOB_NOT_FOUND;
+import static com.breeze.boot.quartz.enums.QuartzEnum.JOB_NAME;
 
 /**
  * Quartz任务调度Impl
@@ -54,7 +55,7 @@ public class SysQuartzJobServiceImpl extends ServiceImpl<SysQuartzJobMapper, Sys
      */
     private final QuartzManager quartzManager;
 
-    private final SysQuartzJobMapStruct sysQuartzJobMapStruct;
+    private final SysQuartzJobConverter sysQuartzJobConverter;
 
     /**
      * 负载任务
@@ -70,22 +71,23 @@ public class SysQuartzJobServiceImpl extends ServiceImpl<SysQuartzJobMapper, Sys
     /**
      * 列表页面
      *
-     * @param jobQuery 任务查询
+     * @param query 任务查询
      * @return {@link Page}<{@link SysQuartzJob}>
      */
     @Override
-    public Page<SysQuartzJob> listPage(JobQuery jobQuery) {
-        return this.baseMapper.listPage(new Page<>(jobQuery.getCurrent(), jobQuery.getSize()), jobQuery);
+    public Page<SysQuartzJob> listPage(JobQuery query) {
+        return this.baseMapper.listPage(new Page<>(query.getCurrent(), query.getSize()), query);
     }
 
     /**
      * 保存任务
      *
-     * @param sysQuartzJob quartz任务
+     * @param form quartz任务
      * @return {@link Result}<{@link Boolean}>
      */
     @Override
-    public Result<Boolean> saveJob(SysQuartzJob sysQuartzJob) {
+    public Result<Boolean> saveJob(SysQuartzJobForm form) {
+        SysQuartzJob sysQuartzJob = this.sysQuartzJobConverter.form2Entity(form);
         sysQuartzJob.insert();
         this.quartzManager.addOrUpdateJob(sysQuartzJob);
         return Result.ok(Boolean.TRUE, "保存成功");
@@ -95,12 +97,12 @@ public class SysQuartzJobServiceImpl extends ServiceImpl<SysQuartzJobMapper, Sys
      * 更新任务通过id
      *
      * @param id            ID
-     * @param quartzJobForm quartz任务
+     * @param form quartz任务
      * @return {@link Result}<{@link Boolean}>
      */
     @Override
-    public Result<Boolean> modifyJob(Long id, SysQuartzJobForm quartzJobForm) {
-        SysQuartzJob sysQuartzJob = sysQuartzJobMapStruct.form2Entity(quartzJobForm);
+    public Result<Boolean> modifyJob(Long id, SysQuartzJobForm form) {
+        SysQuartzJob sysQuartzJob = sysQuartzJobConverter.form2Entity(form);
         sysQuartzJob.setId(id);
         AssertUtil.isNotNull(this.getById(id), JOB_NOT_FOUND);
         sysQuartzJob.updateById();
@@ -183,7 +185,7 @@ public class SysQuartzJobServiceImpl extends ServiceImpl<SysQuartzJobMapper, Sys
     @Override
     public Result<Boolean> open(JobOpenForm jobOpenForm) {
         try {
-            return Objects.equals(1, jobOpenForm.getStatus()) ? this.resumeJob(jobOpenForm.getId()) : this.pauseJob(jobOpenForm.getId());
+            return Objects.equals(QuartzEnum.Status.START.getValue(), jobOpenForm.getStatus()) ? this.resumeJob(jobOpenForm.getId()) : this.pauseJob(jobOpenForm.getId());
         } catch (Exception e) {
             log.error("任务状态修改失败", e);
         }

@@ -37,10 +37,10 @@ public interface SysDictItemService extends IService<SysDictItem> {
     /**
      * 字典列表项
      *
-     * @param dictItemQuery 字典项查询
+     * @param query 字典项查询
      * @return {@link List}<{@link DictItemVO}>
      */
-    List<DictItemVO> listDictItem(DictItemQuery dictItemQuery);
+    List<DictItemVO> listDictItem(DictItemQuery query);
 
     /**
      * 按id获取信息
@@ -53,19 +53,19 @@ public interface SysDictItemService extends IService<SysDictItem> {
     /**
      * 保存dict项目
      *
-     * @param dictItemForm 字典项表单
+     * @param form 字典项表单
      * @return {@link Boolean }
      */
-    Boolean saveDictItem(DictItemForm dictItemForm);
+    Boolean saveDictItem(DictItemForm form);
 
     /**
      * 修改dict项
      *
      * @param id           ID
-     * @param dictItemForm 字典项表单
+     * @param form 字典项表单
      * @return {@link Boolean }
      */
-    Boolean modifyDictItem(Long id, DictItemForm dictItemForm);
+    Boolean modifyDictItem(Long id, DictItemForm form);
 
     /**
      * 查询字典通过类型代码

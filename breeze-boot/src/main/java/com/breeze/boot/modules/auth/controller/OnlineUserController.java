@@ -48,13 +48,13 @@ public class OnlineUserController {
     /**
      * 查询所有在线用户
      *
-     * @param pageQuery 页面查询
+     * @param query 页面查询
      * @return {@link Result }<{@link List }<{@link OnlineUserVO }>>
      */
     @Operation(summary = "查询所有在线用户")
     @GetMapping("/list")
-    public Result<List<OnlineUserVO>> listAllOnlineUser(PageQuery pageQuery) {
-        return this.onlineUserService.listAllOnlineUser(pageQuery);
+    public Result<List<OnlineUserVO>> listAllOnlineUser(PageQuery query) {
+        return this.onlineUserService.listAllOnlineUser(query);
     }
 
     /**

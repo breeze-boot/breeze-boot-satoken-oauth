@@ -55,33 +55,33 @@ public class SysCommonController {
     /**
      * 文件上传到minio
      *
-     * @param fileForm 文件参数
+     * @param form 文件参数
      * @param request   请求
      * @param response  响应
      * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
      */
     @Operation(summary = "文件上传到minio", description = "文件上传到minio")
     @GetMapping("/uploadMinioS3")
-    public Result<Map<String, Object>> uploadMinioS3(@Valid FileForm fileForm,
+    public Result<Map<String, Object>> uploadMinioS3(@Valid FileForm form,
                                                      HttpServletRequest request,
                                                      HttpServletResponse response) {
-        return this.sysCommonService.uploadMinioS3(fileForm, request, response);
+        return this.sysCommonService.uploadMinioS3(form, request, response);
     }
 
     /**
      * 文件上传到本地存储
      *
-     * @param fileForm 文件参数
+     * @param form 文件参数
      * @param request   请求
      * @param response  响应
      * @return {@link Result}<{@link ?}>
      */
     @Operation(summary = "文件上传到本地存储", description = "文件上传到本地存储")
     @GetMapping("/uploadLocalStorage")
-    public Result<?> uploadLocalStorage(@Valid FileForm fileForm,
+    public Result<?> uploadLocalStorage(@Valid FileForm form,
                                         HttpServletRequest request,
                                         HttpServletResponse response) {
-        return this.sysCommonService.uploadLocalStorage(fileForm, request, response);
+        return this.sysCommonService.uploadLocalStorage(form, request, response);
     }
 
     /**

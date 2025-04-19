@@ -18,7 +18,7 @@ package com.breeze.boot.quartz.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.breeze.boot.quartz.domain.SysQuartzJob;
+import com.breeze.boot.quartz.domain.entity.SysQuartzJob;
 import com.breeze.boot.quartz.domain.query.JobQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

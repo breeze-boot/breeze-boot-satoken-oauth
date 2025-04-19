@@ -40,10 +40,10 @@ public interface SysRowPermissionService extends IService<SysRowPermission> {
     /**
      * 列表页面
      *
-     * @param rowPermissionQuery 权限查询
+     * @param query 权限查询
      * @return {@link Page}<{@link RowPermissionVO}>
      */
-    Page<RowPermissionVO> listPage(RowPermissionQuery rowPermissionQuery);
+    Page<RowPermissionVO> listPage(RowPermissionQuery query);
 
     /**
      * 按id获取信息
@@ -56,10 +56,10 @@ public interface SysRowPermissionService extends IService<SysRowPermission> {
     /**
      * 保存数据权限
      *
-     * @param rowPermissionForm 行权限表单
+     * @param form 行权限表单
      * @return {@link Result}<{@link Boolean}>
      */
-    Result<Boolean> saveRowPermission(RowPermissionForm rowPermissionForm);
+    Result<Boolean> saveRowPermission(RowPermissionForm form);
 
     /**
      * 删除数据权限通过IDS
@@ -72,11 +72,11 @@ public interface SysRowPermissionService extends IService<SysRowPermission> {
     /**
      * 修改数据权限
      *
-     * @param id                ID
-     * @param rowPermissionForm 数据权限表单
+     * @param id   ID
+     * @param form 数据权限表单
      * @return {@link Result}<{@link Boolean}>
      */
-    Result<Boolean> modifyRowPermission(Long id, RowPermissionForm rowPermissionForm);
+    Result<Boolean> modifyRowPermission(Long id, RowPermissionForm form);
 
     /**
      * 数据权限类型下拉框

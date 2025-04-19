@@ -20,12 +20,12 @@ package com.breeze.boot.bpm.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.breeze.boot.bpm.model.converter.BpmCategoryConverter;
 import com.breeze.boot.bpm.model.form.BpmCategoryForm;
 import com.breeze.boot.bpm.model.vo.BpmCategoryVO;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.bpm.mapper.BpmCategoryMapper;
 import com.breeze.boot.bpm.model.entity.BpmCategory;
-import com.breeze.boot.bpm.model.mappers.BpmCategoryMapStruct;
 import com.breeze.boot.bpm.model.query.BpmCategoryQuery;
 import com.breeze.boot.bpm.service.IBpmCategoryService;
 import com.google.common.collect.Maps;
@@ -46,18 +46,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BpmCategoryServiceImpl extends ServiceImpl<BpmCategoryMapper, BpmCategory> implements IBpmCategoryService {
 
-    private final BpmCategoryMapStruct bpmCategoryMapStruct;
+    private final BpmCategoryConverter bpmCategoryConverter;
 
     /**
      * 列表页面
      *
-     * @param processCategory 流程类别
+     * @param query 流程类别
      * @return {@link IPage}<{@link BpmCategory}>
      */
     @Override
-    public Page<BpmCategoryVO> listPage(BpmCategoryQuery processCategory) {
-        Page<BpmCategory> flowCategoryPage = this.baseMapper.listPage(new Page<>(processCategory.getCurrent(), processCategory.getSize()), processCategory);
-        return bpmCategoryMapStruct.entityPage2VOPage(flowCategoryPage);
+    public Page<BpmCategoryVO> listPage(BpmCategoryQuery query) {
+        Page<BpmCategory> flowCategoryPage = this.baseMapper.listPage(new Page<>(query.getCurrent(), query.getSize()), query);
+        return bpmCategoryConverter.entityPage2VOPage(flowCategoryPage);
     }
 
     /**
@@ -68,18 +68,18 @@ public class BpmCategoryServiceImpl extends ServiceImpl<BpmCategoryMapper, BpmCa
      */
     @Override
     public BpmCategoryVO getInfoById(Long categoryId) {
-        return bpmCategoryMapStruct.entity2VO(this.getById(categoryId));
+        return bpmCategoryConverter.entity2VO(this.getById(categoryId));
     }
 
     /**
      * 保存流类别
      *
-     * @param bpmCategoryForm 流程分类表单
+     * @param form 流程分类表单
      * @return {@link Boolean }
      */
     @Override
-    public Boolean saveFlowCategory(BpmCategoryForm bpmCategoryForm) {
-        BpmCategory bpmCategory = this.bpmCategoryMapStruct.form2Entity(bpmCategoryForm);
+    public Boolean saveFlowCategory(BpmCategoryForm form) {
+        BpmCategory bpmCategory = this.bpmCategoryConverter.form2Entity(form);
         return this.save(bpmCategory);
     }
 
@@ -87,12 +87,12 @@ public class BpmCategoryServiceImpl extends ServiceImpl<BpmCategoryMapper, BpmCa
      * 修改流类别
      *
      * @param id              ID
-     * @param bpmCategoryForm 流程分类表单
+     * @param form 流程分类表单
      * @return {@link Boolean }
      */
     @Override
-    public Boolean modifyFlowCategory(Long id, BpmCategoryForm bpmCategoryForm) {
-        BpmCategory bpmCategory = this.bpmCategoryMapStruct.form2Entity(bpmCategoryForm);
+    public Boolean modifyFlowCategory(Long id, BpmCategoryForm form) {
+        BpmCategory bpmCategory = this.bpmCategoryConverter.form2Entity(form);
         bpmCategory.setId(id);
         return this.updateById(bpmCategory);
     }

@@ -40,10 +40,10 @@ public interface SysRoleService extends IService<SysRole> {
     /**
      * 列表页面
      *
-     * @param roleQuery 角色查询
+     * @param query 角色查询
      * @return {@link Page}<{@link RoleVO}>
      */
-    Page<RoleVO> listPage(RoleQuery roleQuery);
+    Page<RoleVO> listPage(RoleQuery query);
 
     /**
      * 按id获取信息
@@ -81,18 +81,18 @@ public interface SysRoleService extends IService<SysRole> {
      * 修改
      *
      * @param id       ID
-     * @param roleForm 角色表单
+     * @param form 角色表单
      * @return {@link Boolean}
      */
-    Result<Boolean> modifyRole(Long id, RoleForm roleForm);
+    Result<Boolean> modifyRole(Long id, RoleForm form);
 
     /**
      * 保存
      *
-     * @param roleForm 角色表单
+     * @param form 角色表单
      * @return {@link Boolean}
      */
-    Result<Boolean> saveRole(RoleForm roleForm);
+    Result<Boolean> saveRole(RoleForm form);
 
     /**
      * 角色下拉框
@@ -104,10 +104,10 @@ public interface SysRoleService extends IService<SysRole> {
     /**
      * 编辑权限
      *
-     * @param menuPermissionForm 菜单权限参数
+     * @param form 菜单权限参数
      * @return {@link Result}<{@link Boolean}>
      */
-    Result<Boolean> modifyMenuPermission(MenuPermissionForm menuPermissionForm);
+    Result<Boolean> modifyMenuPermission(MenuPermissionForm form);
 
 }
 

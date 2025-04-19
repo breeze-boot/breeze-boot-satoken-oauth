@@ -59,14 +59,14 @@ public class SysDbResourceController {
     /**
      * 列表
      *
-     * @param dbResourceQuery 数据源查询
+     * @param query 数据源查询
      * @return {@link Result}<{@link Page}<{@link DbResourceVO}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("sys:dbResource:list")
-    public Result<Page<DbResourceVO>> list(@RequestBody DbResourceQuery dbResourceQuery) {
-        return Result.ok(this.sysDbResourceService.listPage(dbResourceQuery));
+    public Result<Page<DbResourceVO>> list(@RequestBody DbResourceQuery query) {
+        return Result.ok(this.sysDbResourceService.listPage(query));
     }
 
     /**
@@ -85,22 +85,22 @@ public class SysDbResourceController {
     /**
      * 创建
      *
-     * @param dbResourceForm 数据源
+     * @param form 数据源
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "保存")
     @PostMapping
     @SaCheckPermission("sys:dbResource:create")
     @BreezeSysLog(description = "数据源信息保存", type = LogType.SAVE)
-    public Result<Boolean> save(@Valid @RequestBody DbResourceForm dbResourceForm) {
-        return Result.ok(this.sysDbResourceService.saveDbResource(dbResourceForm));
+    public Result<Boolean> save(@Valid @RequestBody DbResourceForm form) {
+        return Result.ok(this.sysDbResourceService.saveDbResource(form));
     }
 
     /**
      * 修改
      *
-     * @param id     ID
-     * @param dbResourceForm 数据源表单
+     * @param id   ID
+     * @param form 数据源表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "修改")
@@ -108,8 +108,8 @@ public class SysDbResourceController {
     @SaCheckPermission("sys:dbResource:modify")
     @BreezeSysLog(description = "数据源信息修改", type = LogType.EDIT)
     public Result<Boolean> modify(@Parameter(description = "数据源ID") @NotNull(message = "数据源ID不能为空") @PathVariable Long id,
-                                  @Valid @RequestBody DbResourceForm dbResourceForm) {
-        return Result.ok(this.sysDbResourceService.modifyDbResource(id, dbResourceForm));
+                                  @Valid @RequestBody DbResourceForm form) {
+        return Result.ok(this.sysDbResourceService.modifyDbResource(id, form));
     }
 
     /**

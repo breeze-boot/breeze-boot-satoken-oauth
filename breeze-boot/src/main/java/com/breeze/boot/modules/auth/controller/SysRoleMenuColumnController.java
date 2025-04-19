@@ -58,15 +58,15 @@ public class SysRoleMenuColumnController {
     /**
      * 保存角色列权限
      *
-     * @param roleMenuColumnForm 角色菜单栏表单
+     * @param form 角色菜单栏表单
      * @return {@link Result }<{@link Boolean }>
      */
     @Operation(summary = "保存角色列权限")
     @PostMapping
     @SaCheckPermission("auth:menu:create")
     @BreezeSysLog(description = "保存角色列权限", type = LogType.SAVE)
-    public Result<Boolean> save(@Valid @RequestBody RoleMenuColumnForm roleMenuColumnForm) {
-        return this.sysRoleMenuColumnService.saveRoleMenuColumn(roleMenuColumnForm);
+    public Result<Boolean> save(@Valid @RequestBody RoleMenuColumnForm form) {
+        return this.sysRoleMenuColumnService.saveRoleMenuColumn(form);
     }
 
     /**

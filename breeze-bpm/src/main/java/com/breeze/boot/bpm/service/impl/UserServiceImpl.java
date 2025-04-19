@@ -19,7 +19,7 @@ package com.breeze.boot.bpm.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.breeze.boot.bpm.model.mappers.BpmUserMapStruct;
+import com.breeze.boot.bpm.model.converter.BpmUserConverter;
 import com.breeze.boot.bpm.model.vo.BpmUserVO;
 import com.breeze.boot.bpm.service.IUserService;
 import com.breeze.boot.bpm.mapper.UserMapper;
@@ -32,11 +32,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
-    private final BpmUserMapStruct bpmUserMapStruct;
+    private final BpmUserConverter bpmUserConverter;
 
     @Override
-    public Page<BpmUserVO> listPage(BpmUserQuery userQuery) {
-        Page<User> page = this.baseMapper.listPage(new Page<>(userQuery.getCurrent(), userQuery.getSize()), userQuery);
-        return this.bpmUserMapStruct.entityPage2PageVO(page);
+    public Page<BpmUserVO> listPage(BpmUserQuery query) {
+        Page<User> page = this.baseMapper.listPage(new Page<>(query.getCurrent(), query.getSize()), query);
+        return this.bpmUserConverter.entityPage2PageVO(page);
     }
 }

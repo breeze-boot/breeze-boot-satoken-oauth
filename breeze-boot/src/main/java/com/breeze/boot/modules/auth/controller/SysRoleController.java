@@ -72,14 +72,14 @@ public class SysRoleController {
     /**
      * 列表
      *
-     * @param roleQuery 角色查询
+     * @param query 角色查询
      * @return {@link Result}<{@link Page}<{@link RoleVO}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("auth:role:list")
-    public Result<Page<RoleVO>> list(@RequestBody RoleQuery roleQuery) {
-        return Result.ok(this.sysRoleService.listPage(roleQuery));
+    public Result<Page<RoleVO>> list(@RequestBody RoleQuery query) {
+        return Result.ok(this.sysRoleService.listPage(query));
     }
 
     /**
@@ -105,8 +105,9 @@ public class SysRoleController {
     @Operation(summary = "校验角色编码是否重复")
     @GetMapping("/checkRoleCode")
     @SaCheckPermission("auth:role:list")
-    public Result<Boolean> checkRoleCode(@Parameter(description = "角色编码") @NotBlank(message = "角色编码不能为空") @RequestParam("roleCode") String roleCode,
-                                         @Parameter(description = "角色ID") @RequestParam(value = "roleId", required = false) Long roleId) {
+    public Result<Boolean> checkRoleCode(
+            @Parameter(description = "角色编码") @NotBlank(message = "角色编码不能为空") @RequestParam("roleCode") String roleCode,
+            @Parameter(description = "角色ID") @RequestParam(value = "roleId", required = false) Long roleId) {
         // @formatter:off
         return Result.ok(Objects.isNull(this.sysRoleService.getOne(Wrappers.<SysRole>lambdaQuery()
                 .ne(Objects.nonNull(roleId), SysRole::getId, roleId)
@@ -117,22 +118,22 @@ public class SysRoleController {
     /**
      * 创建
      *
-     * @param roleForm 角色参数
+     * @param form 角色参数
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "保存")
     @PostMapping
     @SaCheckPermission("auth:role:create")
     @BreezeSysLog(description = "角色信息保存", type = LogType.SAVE)
-    public Result<Boolean> save(@Valid @RequestBody RoleForm roleForm) {
-        return sysRoleService.saveRole(roleForm);
+    public Result<Boolean> save(@Valid @RequestBody RoleForm form) {
+        return sysRoleService.saveRole(form);
     }
 
     /**
      * 修改
      *
      * @param id       ID
-     * @param roleForm 角色表单
+     * @param form 角色表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "修改")
@@ -140,8 +141,8 @@ public class SysRoleController {
     @SaCheckPermission("auth:role:modify")
     @BreezeSysLog(description = "角色信息修改", type = LogType.EDIT)
     public Result<Boolean> modify(@Parameter(description = "角色ID") @NotNull(message = "角色ID不能为空") @PathVariable Long id,
-                                  @Valid @RequestBody RoleForm roleForm) {
-        return sysRoleService.modifyRole(id, roleForm);
+                                  @Valid @RequestBody RoleForm form) {
+        return sysRoleService.modifyRole(id, form);
     }
 
     /**
@@ -192,15 +193,15 @@ public class SysRoleController {
      * <p>
      * /listTreePermission /listRolesPermission 不使用权限标识，直接使用这个
      *
-     * @param menuPermissionForm 菜单权限参数
+     * @param form 菜单权限参数
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "编辑菜单权限")
     @PutMapping("/modifyPermission")
     @SaCheckPermission(value = "auth:menu:permission:modify", orRole = "ROLE_ADMIN")
     @BreezeSysLog(description = "编辑菜单权限", type = LogType.EDIT)
-    public Result<Boolean> modifyMenuPermission(@Valid @RequestBody MenuPermissionForm menuPermissionForm) {
-        return this.sysRoleService.modifyMenuPermission(menuPermissionForm);
+    public Result<Boolean> modifyMenuPermission(@Valid @RequestBody MenuPermissionForm form) {
+        return this.sysRoleService.modifyMenuPermission(form);
     }
 
     /**

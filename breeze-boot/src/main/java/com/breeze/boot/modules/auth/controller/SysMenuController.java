@@ -58,14 +58,14 @@ public class SysMenuController {
     /**
      * 列表
      *
-     * @param menuQuery 菜单查询
+     * @param query 菜单查询
      * @return {@link Result}
      */
     @Operation(summary = "列表")
     @GetMapping
     @SaCheckPermission("auth:menu:list")
-    public Result<?> list(MenuQuery menuQuery) {
-        return this.sysMenuService.listMenu(menuQuery);
+    public Result<?> list(MenuQuery query) {
+        return this.sysMenuService.listMenu(query);
     }
 
     /**
@@ -77,8 +77,9 @@ public class SysMenuController {
      */
     @Operation(summary = "树形菜单")
     @GetMapping("/listTreeMenu")
-    public Result<List<Tree<Long>>> listTreeMenu(@Parameter(description = "平台编码") @NotBlank(message = "平台编码不能为空") @RequestParam(required = false) String platformCode,
-                                                 @Parameter(description = "i18n") @NotBlank(message = "i18n不能为空") @RequestParam(required = false) String i18n) {
+    public Result<List<Tree<Long>>> listTreeMenu(
+            @Parameter(description = "平台编码") @NotBlank(message = "平台编码不能为空") @RequestParam(required = false) String platformCode,
+            @Parameter(description = "i18n") @NotBlank(message = "i18n不能为空") @RequestParam(required = false) String i18n) {
         return this.sysMenuService.listTreeMenu(platformCode, i18n);
     }
 
@@ -113,21 +114,21 @@ public class SysMenuController {
     /**
      * 创建
      *
-     * @param menuForm 菜单表单
+     * @param form 菜单表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "保存")
     @PostMapping
     @SaCheckPermission("auth:menu:create")
     @BreezeSysLog(description = "菜单信息保存", type = LogType.SAVE)
-    public Result<Boolean> save(@Valid @RequestBody MenuForm menuForm) {
-        return this.sysMenuService.saveMenu(menuForm);
+    public Result<Boolean> save(@Valid @RequestBody MenuForm form) {
+        return this.sysMenuService.saveMenu(form);
     }
 
     /**
      * 修改
      *
-     * @param menuForm 菜单表单
+     * @param form 菜单表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "修改")
@@ -135,8 +136,8 @@ public class SysMenuController {
     @SaCheckPermission("auth:menu:modify")
     @BreezeSysLog(description = "菜单信息修改", type = LogType.EDIT)
     public Result<Boolean> modify(@Parameter(description = "菜单ID") @NotNull(message = "菜单ID不能为空") @PathVariable Long id,
-                                  @Valid @RequestBody MenuForm menuForm) {
-        return sysMenuService.modifyMenu(id, menuForm);
+                                  @Valid @RequestBody MenuForm form) {
+        return sysMenuService.modifyMenu(id, form);
     }
 
     /**
@@ -161,7 +162,7 @@ public class SysMenuController {
      */
     @Operation(summary = "菜单树形下拉框", description = "下拉框接口")
     @GetMapping("/selectMenu")
-    public Result<List<Tree<Long>>> selectMenu(@RequestParam(defaultValue = "", required = false) Long id) {
+    public Result<List<Tree<Long>>> selectMenu(@RequestParam(required = false) Long id) {
         return this.sysMenuService.selectMenu(id);
     }
 }

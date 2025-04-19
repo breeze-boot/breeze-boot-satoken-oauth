@@ -35,33 +35,33 @@ public interface SysCommonService {
     /**
      * 文件上传到minio
      *
-     * @param fileForm 文件参数
-     * @param request   请求
-     * @param response  响应
+     * @param form     文件参数
+     * @param request  请求
+     * @param response 响应
      * @return {@link Result}<{@link List}<{@link Map}<{@link String}, {@link Object}>>>
      */
-    Result<Map<String, Object>> uploadMinioS3(FileForm fileForm,
+    Result<Map<String, Object>> uploadMinioS3(FileForm form,
                                               HttpServletRequest request,
                                               HttpServletResponse response);
 
     /**
      * 文件上传到本地存储
      *
-     * @param fileForm 文件参数
-     * @param request   请求
-     * @param response  响应
+     * @param form     文件参数
+     * @param request  请求
+     * @param response 响应
      * @return {@link Result}<{@link ?}>
      */
-    Result<Map<String, Object>> uploadLocalStorage(FileForm fileForm,
+    Result<Map<String, Object>> uploadLocalStorage(FileForm form,
                                                    HttpServletRequest request,
                                                    HttpServletResponse response);
 
     /**
      * 下载
      *
-     * @param fileId     文件标识
-     * @param response   响应
+     * @param fileId   文件标识
+     * @param response 响应
      */
-    void download(Long fileId,  HttpServletResponse response);
+    void download(Long fileId, HttpServletResponse response);
 
 }

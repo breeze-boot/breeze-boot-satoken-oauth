@@ -29,11 +29,11 @@ import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.core.utils.BreezeTenantHolder;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.auth.mapper.SysRowPermissionMapper;
+import com.breeze.boot.modules.auth.model.converter.SysRowPermissionConverter;
 import com.breeze.boot.modules.auth.model.entity.SysRoleRowPermission;
 import com.breeze.boot.modules.auth.model.entity.SysRowPermission;
 import com.breeze.boot.modules.auth.model.entity.SysTenant;
 import com.breeze.boot.modules.auth.model.form.RowPermissionForm;
-import com.breeze.boot.modules.auth.model.mappers.SysRowPermissionMapStruct;
 import com.breeze.boot.modules.auth.model.query.RowPermissionQuery;
 import com.breeze.boot.modules.auth.model.vo.RowPermissionVO;
 import com.breeze.boot.modules.auth.service.SysRoleRowPermissionService;
@@ -70,7 +70,7 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
      */
     private final SysRoleRowPermissionService sysRoleRowPermissionService;
 
-    private final SysRowPermissionMapStruct sysRowPermissionMapStruct;
+    private final SysRowPermissionConverter sysRowPermissionConverter;
 
     private final SysTenantService sysTenantService;
 
@@ -88,7 +88,7 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
                 // 使用批量处理优化
                 List<CustomizePermission> customizePermissionList = new ArrayList<>();
                 sysRowPermissionList.forEach(rowPermission -> {
-                    CustomizePermission customizePermission = sysRowPermissionMapStruct.entity2Cache(rowPermission);
+                    CustomizePermission customizePermission = sysRowPermissionConverter.entity2Cache(rowPermission);
                     String permissionsString = rowPermission.getPermissions().stream()
                             .map(Object::toString)
                             .collect(Collectors.joining(","));
@@ -113,14 +113,14 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
     /**
      * 列表页面
      *
-     * @param rowPermissionQuery 权限查询
+     * @param query 权限查询
      * @return {@link Page}<{@link RowPermissionVO}>
      */
     @Override
-    public Page<RowPermissionVO> listPage(RowPermissionQuery rowPermissionQuery) {
-        Page<SysRowPermission> page = new Page<>(rowPermissionQuery.getCurrent(), rowPermissionQuery.getSize());
-        Page<SysRowPermission> rowPermissionPage = this.baseMapper.listPage(page, rowPermissionQuery);
-        return this.sysRowPermissionMapStruct.page2VOPage(rowPermissionPage);
+    public Page<RowPermissionVO> listPage(RowPermissionQuery query) {
+        Page<SysRowPermission> page = new Page<>(query.getCurrent(), query.getSize());
+        Page<SysRowPermission> rowPermissionPage = this.baseMapper.listPage(page, query);
+        return this.sysRowPermissionConverter.page2VOPage(rowPermissionPage);
     }
 
     /**
@@ -132,7 +132,7 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
     @Override
     public RowPermissionVO getInfoById(Long permissionId) {
         SysRowPermission sysRowPermission = this.getById(permissionId);
-        CustomizePermission customizePermission = sysRowPermissionMapStruct.entity2Cache(sysRowPermission);
+        CustomizePermission customizePermission = sysRowPermissionConverter.entity2Cache(sysRowPermission);
         String permissionsString = sysRowPermission.getPermissions().stream()
                 .map(Object::toString)
                 .collect(Collectors.joining(","));
@@ -141,22 +141,22 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
         // 批量添加到缓存中
         String permissionCode = customizePermission.getPermissionCode();
         this.redisTemplate.opsForValue().set(ROW_PERMISSION + permissionCode, customizePermission);
-        return this.sysRowPermissionMapStruct.entity2VO(sysRowPermission);
+        return this.sysRowPermissionConverter.entity2VO(sysRowPermission);
     }
 
     /**
      * 保存数据权限
      *
-     * @param rowPermissionForm 行权限表单
+     * @param form 行权限表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Override
-    public Result<Boolean> saveRowPermission(RowPermissionForm rowPermissionForm) {
-        SysRowPermission sysRowPermission = sysRowPermissionMapStruct.form2Entity(rowPermissionForm);
-        AssertUtil.isFalse(DataPermissionType.checkInEnum(rowPermissionForm.getPermissionCode()), ResultCode.NO_ACTION_IS_ALLOWED);
+    public Result<Boolean> saveRowPermission(RowPermissionForm form) {
+        SysRowPermission sysRowPermission = sysRowPermissionConverter.form2Entity(form);
+        AssertUtil.isFalse(DataPermissionType.checkInEnum(form.getPermissionCode()), ResultCode.NO_ACTION_IS_ALLOWED);
         boolean save = this.save(sysRowPermission);
         AssertUtil.isTrue(save, ResultCode.FAIL);
-        CustomizePermission customizePermission = sysRowPermissionMapStruct.entity2Cache(sysRowPermission);
+        CustomizePermission customizePermission = sysRowPermissionConverter.entity2Cache(sysRowPermission);
         String permissionsString = sysRowPermission.getPermissions().stream()
                 .map(Object::toString)
                 .collect(Collectors.joining(","));
@@ -172,17 +172,17 @@ public class SysRowPermissionServiceImpl extends ServiceImpl<SysRowPermissionMap
      * 修改权限
      *
      * @param id                id
-     * @param rowPermissionForm 行权限表单
+     * @param form 行权限表单
      * @return {@link Result }<{@link Boolean }>
      */
     @Override
-    public Result<Boolean> modifyRowPermission(Long id, RowPermissionForm rowPermissionForm) {
-        SysRowPermission sysRowPermission = sysRowPermissionMapStruct.form2Entity(rowPermissionForm);
+    public Result<Boolean> modifyRowPermission(Long id, RowPermissionForm form) {
+        SysRowPermission sysRowPermission = sysRowPermissionConverter.form2Entity(form);
         sysRowPermission.setId(id);
-        AssertUtil.isFalse(DataPermissionType.checkInEnum(rowPermissionForm.getPermissionCode()), ResultCode.NO_ACTION_IS_ALLOWED);
+        AssertUtil.isFalse(DataPermissionType.checkInEnum(form.getPermissionCode()), ResultCode.NO_ACTION_IS_ALLOWED);
         boolean update = sysRowPermission.updateById();
         AssertUtil.isTrue(update, ResultCode.FAIL);
-        CustomizePermission customizePermission = sysRowPermissionMapStruct.entity2Cache(sysRowPermission);
+        CustomizePermission customizePermission = sysRowPermissionConverter.entity2Cache(sysRowPermission);
         String permissionsString = sysRowPermission.getPermissions().stream()
                 .map(Object::toString)
                 .collect(Collectors.joining(","));

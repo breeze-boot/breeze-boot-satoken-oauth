@@ -61,7 +61,7 @@ public class OnlineUserServiceImpl implements OnlineUserService {
     private final PublisherSaveSysLogEvent publisherSaveSysLogEvent;
 
     @Override
-    public Result<List<OnlineUserVO>> listAllOnlineUser(PageQuery pageQuery) {
+    public Result<List<OnlineUserVO>> listAllOnlineUser(PageQuery query) {
         // 返回数据对象
         List<OnlineUserVO> resultList = new ArrayList<>();
         // 获取所有登录的用户ids

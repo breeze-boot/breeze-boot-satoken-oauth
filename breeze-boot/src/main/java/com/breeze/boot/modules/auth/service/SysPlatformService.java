@@ -38,10 +38,10 @@ public interface SysPlatformService extends IService<SysPlatform> {
     /**
      * 列表
      *
-     * @param platformQuery 平台查询
+     * @param query 平台查询
      * @return {@link Page}<{@link PlatformVO}>
      */
-    Page<PlatformVO> listPage(PlatformQuery platformQuery);
+    Page<PlatformVO> listPage(PlatformQuery query);
 
     /**
      * 详情
@@ -54,19 +54,19 @@ public interface SysPlatformService extends IService<SysPlatform> {
     /**
      * 保存平台
      *
-     * @param platformForm 平台形式
+     * @param form 平台形式
      * @return {@link Boolean }
      */
-    Boolean savePlatform(PlatformForm platformForm);
+    Boolean savePlatform(PlatformForm form);
 
     /**
      * 修改平台
      *
      * @param id           ID
-     * @param platformForm 平台形式
+     * @param form 平台形式
      * @return {@link Boolean }
      */
-    Boolean modifyPlatform(Long id, PlatformForm platformForm);
+    Boolean modifyPlatform(Long id, PlatformForm form);
 
     /**
      * 平台下拉框

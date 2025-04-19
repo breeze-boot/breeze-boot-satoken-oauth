@@ -63,14 +63,14 @@ public class SysRegisteredClientController {
     /**
      * 列表
      *
-     * @param registeredClientQuery 客户端查询
+     * @param query 客户端查询
      * @return {@link Result}<{@link Page}<{@link RegisteredClientVO}>>
      */
     @Operation(summary = "列表", description = "分页")
     @PostMapping("/page")
     @SaCheckPermission("auth:client:list")
-    public Result<Page<RegisteredClientVO>> list(@RequestBody RegisteredClientQuery registeredClientQuery) {
-        return Result.ok(this.registeredClientService.listPage(registeredClientQuery));
+    public Result<Page<RegisteredClientVO>> list(@RequestBody RegisteredClientQuery query) {
+        return Result.ok(this.registeredClientService.listPage(query));
     }
 
     /**
@@ -89,21 +89,21 @@ public class SysRegisteredClientController {
     /**
      * 保存
      *
-     * @param registeredClientForm 注册客户端表单
+     * @param form 注册客户端表单
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "保存")
     @PostMapping
     @SaCheckPermission("auth:client:create")
     @BreezeSysLog(description = "客户端信息保存", type = LogType.SAVE)
-    public Result<Boolean> save(@Valid @RequestBody RegisteredClientForm registeredClientForm) {
-        return this.registeredClientService.saveRegisteredClient(registeredClientForm);
+    public Result<Boolean> save(@Valid @RequestBody RegisteredClientForm form) {
+        return this.registeredClientService.saveRegisteredClient(form);
     }
 
     /**
      * 修改
      *
-     * @param registeredClientForm 注册客户端参数
+     * @param form 注册客户端参数
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "修改")
@@ -111,8 +111,8 @@ public class SysRegisteredClientController {
     @SaCheckPermission("auth:client:modify")
     @BreezeSysLog(description = "客户端信息修改", type = LogType.EDIT)
     public Result<Boolean> modify(@Parameter(description = "客户端ID") @NotNull(message = "客户端ID不能为空") @PathVariable Long id,
-                                  @Valid @RequestBody RegisteredClientForm registeredClientForm) {
-        return Result.ok(this.registeredClientService.modifyRegisteredClient(id, registeredClientForm));
+                                  @Valid @RequestBody RegisteredClientForm form) {
+        return Result.ok(this.registeredClientService.modifyRegisteredClient(id, form));
     }
 
     /**
@@ -133,15 +133,15 @@ public class SysRegisteredClientController {
     /**
      * 重置密钥
      *
-     * @param resetClientSecretForm 重置客户端密钥
+     * @param form 重置客户端密钥
      * @return {@link Result}<{@link Boolean}>
      */
     @Operation(summary = "重置密钥")
     @PutMapping("/resetClientSecret")
     @SaCheckPermission("auth:client:resetClientSecret")
     @BreezeSysLog(description = "重置密钥", type = LogType.EDIT)
-    public Result<Boolean> resetClientSecret(@Valid @RequestBody ResetClientSecretForm resetClientSecretForm) {
-        return Result.ok(this.registeredClientService.resetClientSecret(resetClientSecretForm));
+    public Result<Boolean> resetClientSecret(@Valid @RequestBody ResetClientSecretForm form) {
+        return Result.ok(this.registeredClientService.resetClientSecret(form));
     }
 
     /**

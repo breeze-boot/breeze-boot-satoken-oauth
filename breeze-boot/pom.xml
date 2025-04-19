@@ -134,16 +134,23 @@
             <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
         </dependency>
 
-        <!--定时任务-->
+        <!-- 定时任务 -->
         <dependency>
             <groupId>com.breeze</groupId>
             <artifactId>breeze-quartz</artifactId>
         </dependency>
 
-        <!--ai-->
+        <!-- ai 模块 -->
         <dependency>
             <groupId>com.breeze</groupId>
             <artifactId>breeze-ai</artifactId>
+        </dependency>
+
+        <!-- 代码生成模块 -->
+        <dependency>
+            <groupId>com.breeze</groupId>
+            <artifactId>breeze-gen</artifactId>
+            <version>1.0</version>
         </dependency>
 
         <dependency>

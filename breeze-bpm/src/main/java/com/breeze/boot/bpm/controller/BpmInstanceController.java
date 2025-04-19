@@ -57,14 +57,14 @@ public class BpmInstanceController {
     /**
      * 列表
      *
-     * @param bpmInstanceQuery 流程实例查询
+     * @param query 流程实例查询
      * @return {@link Result}<{@link Page}<{@link BpmInstanceVO}>>
      */
     @Operation(summary = "列表")
     @PostMapping("/page")
     @SaCheckPermission("bpm:instance:list")
-    public Result<Page<BpmInstanceVO>> list(@RequestBody @ParameterObject BpmInstanceQuery bpmInstanceQuery) {
-        return Result.ok(this.bpmInstanceService.listPage(bpmInstanceQuery));
+    public Result<Page<BpmInstanceVO>> list(@RequestBody @ParameterObject BpmInstanceQuery query) {
+        return Result.ok(this.bpmInstanceService.listPage(query));
     }
 
     /**
@@ -97,27 +97,27 @@ public class BpmInstanceController {
     /**
      * 作废
      *
-     * @param bpmApprovalForm bpm审批表单
+     * @param form bpm审批表单
      * @return {@link Result }<{@link ? }>
      */
     @PostMapping(value = "/voidProcess")
     @ResponseBody
-    public Result<?> voidProcess(@Validated @RequestBody @ParameterObject BpmApprovalForm bpmApprovalForm) {
-        bpmInstanceService.voidProcess(bpmApprovalForm);
+    public Result<?> voidProcess(@Validated @RequestBody @ParameterObject BpmApprovalForm form) {
+        bpmInstanceService.voidProcess(form);
         return Result.ok();
     }
 
     /**
      * 删除
      *
-     * @param processInstanceIdList 流程实例id列表
+     * @param idList 流程实例id列表
      * @return {@link Result }<{@link ? }>
      */
     @DeleteMapping
     @ResponseBody
     public Result<?> delete(@NotEmpty(message = "流程实例ID不能为空") @Schema(description = "流程实例ID")
-                            @RequestBody List<String> processInstanceIdList) {
-        bpmInstanceService.remove(processInstanceIdList);
+                            @RequestBody List<String> idList) {
+        bpmInstanceService.remove(idList);
         return Result.ok();
     }
 

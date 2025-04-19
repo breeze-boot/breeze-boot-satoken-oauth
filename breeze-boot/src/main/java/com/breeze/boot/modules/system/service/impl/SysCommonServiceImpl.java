@@ -47,31 +47,31 @@ public class SysCommonServiceImpl implements SysCommonService {
     /**
      * 上传minio s3
      *
-     * @param fileForm 文件参数
+     * @param form 文件参数
      * @param request   请求
      * @param response  响应
      * @return {@link Result}<{@link Map}<{@link String}, {@link Object}>>
      */
     @Override
-    public Result<Map<String, Object>> uploadMinioS3(FileForm fileForm,
+    public Result<Map<String, Object>> uploadMinioS3(FileForm form,
                                                      HttpServletRequest request,
                                                      HttpServletResponse response) {
-        return this.sysFileService.uploadMinioS3(fileForm, request, response);
+        return this.sysFileService.uploadMinioS3(form, request, response);
     }
 
     /**
      * 文件上传到本地存储
      *
-     * @param fileForm 文件参数
+     * @param form 文件参数
      * @param request   请求
      * @param response  响应
      * @return {@link Result}<{@link Map}<{@link String}, {@link Object}>>
      */
     @Override
-    public Result<Map<String, Object>> uploadLocalStorage(FileForm fileForm,
+    public Result<Map<String, Object>> uploadLocalStorage(FileForm form,
                                                           HttpServletRequest request,
                                                           HttpServletResponse response) {
-        return this.sysFileService.uploadLocalStorage(fileForm, request, response);
+        return this.sysFileService.uploadLocalStorage(form, request, response);
     }
 
     /**

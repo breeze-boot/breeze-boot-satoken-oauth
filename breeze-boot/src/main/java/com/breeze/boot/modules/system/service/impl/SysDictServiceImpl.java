@@ -25,7 +25,7 @@ import com.breeze.boot.modules.system.model.entity.SysDict;
 import com.breeze.boot.modules.system.model.entity.SysDictItem;
 import com.breeze.boot.modules.system.model.form.DictForm;
 import com.breeze.boot.modules.system.model.form.DictOpenForm;
-import com.breeze.boot.modules.system.model.mappers.SysDictMapStruct;
+import com.breeze.boot.modules.system.model.converter.SysDictConverter;
 import com.breeze.boot.modules.system.model.query.DictQuery;
 import com.breeze.boot.modules.system.model.vo.DictVO;
 import com.breeze.boot.modules.system.service.SysDictItemService;
@@ -51,19 +51,19 @@ public class SysDictServiceImpl extends ServiceImpl<SysDictMapper, SysDict> impl
      */
     private final SysDictItemService sysDictItemService;
 
-    private final SysDictMapStruct sysDictMapStruct;
+    private final SysDictConverter sysDictConverter;
 
     /**
      * 字典分页
      *
-     * @param dictQuery 字典查询
+     * @param query 字典查询
      * @return {@link Page}<{@link DictVO}>
      */
     @Override
-    public Page<DictVO> listPage(DictQuery dictQuery) {
-        Page<SysDict> page = new Page<>(dictQuery.getCurrent(), dictQuery.getSize());
-        Page<SysDict> sysDictPage = this.baseMapper.listPage(page, dictQuery);
-        return this.sysDictMapStruct.entityPage2VOPage(sysDictPage);
+    public Page<DictVO> listPage(DictQuery query) {
+        Page<SysDict> page = new Page<>(query.getCurrent(), query.getSize());
+        Page<SysDict> sysDictPage = this.baseMapper.listPage(page, query);
+        return this.sysDictConverter.entityPage2VOPage(sysDictPage);
     }
 
     /**
@@ -74,18 +74,18 @@ public class SysDictServiceImpl extends ServiceImpl<SysDictMapper, SysDict> impl
      */
     @Override
     public DictVO getInfoById(Long dictId) {
-        return this.sysDictMapStruct.entity2VO(this.getById(dictId));
+        return this.sysDictConverter.entity2VO(this.getById(dictId));
     }
 
     /**
      * 保存dict
      *
-     * @param dictForm 字典表单
+     * @param form 字典表单
      * @return {@link Boolean }
      */
     @Override
-    public Boolean saveDict(DictForm dictForm) {
-        SysDict sysDict = this.sysDictMapStruct.form2Entity(dictForm);
+    public Boolean saveDict(DictForm form) {
+        SysDict sysDict = this.sysDictConverter.form2Entity(form);
         return this.save(sysDict);
     }
 
@@ -93,12 +93,12 @@ public class SysDictServiceImpl extends ServiceImpl<SysDictMapper, SysDict> impl
      * 修改dict
      *
      * @param id       ID
-     * @param dictForm 字典表单
+     * @param form 字典表单
      * @return {@link Boolean }
      */
     @Override
-    public Boolean modifyDict(Long id, DictForm dictForm) {
-        SysDict sysDict = this.sysDictMapStruct.form2Entity(dictForm);
+    public Boolean modifyDict(Long id, DictForm form) {
+        SysDict sysDict = this.sysDictConverter.form2Entity(form);
         sysDict.setId(id);
         return this.updateById(sysDict);
     }
@@ -106,14 +106,14 @@ public class SysDictServiceImpl extends ServiceImpl<SysDictMapper, SysDict> impl
     /**
      * 开关
      *
-     * @param dictOpenForm 字典开关参数
+     * @param form 字典开关参数
      * @return {@link Boolean}
      */
     @Override
-    public Boolean open(DictOpenForm dictOpenForm) {
+    public Boolean open(DictOpenForm form) {
         return this.update(Wrappers.<SysDict>lambdaUpdate()
-                .set(SysDict::getStatus, dictOpenForm.getStatus())
-                .eq(SysDict::getId, dictOpenForm.getId()));
+                .set(SysDict::getStatus, form.getStatus())
+                .eq(SysDict::getId, form.getId()));
     }
 
     /**
