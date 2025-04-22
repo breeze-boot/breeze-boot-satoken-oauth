@@ -24,7 +24,7 @@ import org.apache.ibatis.annotations.Mapper;
  * AI平台 映射器
  *
  * @author gaoweixuan
- * @since 2025-04-19
+ * @since 2025-04-22
  */
 @Mapper
 public interface AiPlatformMapper extends BreezeBaseMapper<AiPlatform> {

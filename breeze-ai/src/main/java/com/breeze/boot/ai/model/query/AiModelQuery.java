@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.ai.model.entity;
+package com.breeze.boot.ai.model.query;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.breeze.boot.core.base.IdBaseModel;
+import com.breeze.boot.core.base.PageQuery;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-import java.io.Serial;
-import java.io.Serializable;
-
 /**
- * AI平台 实体
+ * AI模型 查询参数
  *
  * @author gaoweixuan
  * @since 2025-04-22
@@ -35,21 +31,25 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@TableName(value = "ai_platform")
-@Schema(description = "AI平台 实体")
-public class AiPlatform extends IdBaseModel<AiPlatform> implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+@Schema(description = "AI模型查询参数")
+public class AiModelQuery extends PageQuery {
 
     /**
-     * ai平台编码
+     * 主键
      */
-    private String platformCode;
+    private Long id;
     /**
-     * ai平台名称
+     * 模型编码
      */
-    private String platformName;
+    private String modelCode;
+    /**
+     * 模型名称
+     */
+    private String modelName;
+    /**
+     * 平台ID
+     */
+    private Long platformId;
     /**
      * 描述
      */

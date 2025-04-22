@@ -64,11 +64,14 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
         </dependency>
+
+        <!-- swagger -->
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations-jakarta</artifactId>
+            <scope>compile</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>com.breeze</groupId>
             <artifactId>breeze-base-log</artifactId>

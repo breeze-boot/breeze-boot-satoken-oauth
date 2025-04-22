@@ -52,15 +52,6 @@ public class BaseModel<T> extends Model<BaseModel<T>> {
     private Integer isDelete;
 
     /**
-     * 删除人 工号
-     */
-    @JsonIgnore
-    @ExcelIgnore
-    @Schema(description = "删除人编码", hidden = true)
-    @TableField(fill = FieldFill.UPDATE)
-    private String deleteBy;
-
-    /**
      * 创建人
      */
     @ExcelIgnore

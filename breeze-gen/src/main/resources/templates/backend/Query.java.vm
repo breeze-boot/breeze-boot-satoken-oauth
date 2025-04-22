@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, gaoweixuan (breeze-cloud@foxmail.com).
+ * Copyright (c) ${year}, gaoweixuan (breeze-cloud@foxmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,13 +31,14 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@Schema(description = "${entityClassNameComment} 查询参数")
+@Schema(description = "${entityClassNameComment}查询参数")
 public class ${entityClassName}Query extends PageQuery {
 
     #foreach ($column in $columns)
-    /**
+/**
      * $column.comments
      */
     private $column.attrType $column.attrName;
     #end
+
 }

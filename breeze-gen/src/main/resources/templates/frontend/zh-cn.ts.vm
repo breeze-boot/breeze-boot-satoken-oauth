@@ -1,10 +1,12 @@
 export default {
-    ${entityClassLowerName}: {
-    fields: {
-    #foreach($column in $columns)
-    ${column.attrName}: '${column.attrName}',
-    #end
-    },
-    rules: {},
-    },
+  ${entityClassLowerName}: {
+  fields: {
+  #foreach($column in $columns)
+  #if(!$column.pk)
+  ${column.attrName}: '${column.attrName}',
+  #end
+  #end
+  },
+  rules: {},
+  },
 }

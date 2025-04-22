@@ -20,21 +20,24 @@ import com.breeze.boot.core.base.PageQuery;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-
 /**
  * AI平台 查询参数
  *
  * @author gaoweixuan
- * @since 2025-04-19
+ * @since 2025-04-22
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@Schema(description = "AI平台 查询参数")
+@Schema(description = "AI平台查询参数")
 public class AiPlatformQuery extends PageQuery {
 
+    /**
+     * 主键
+     */
+    private Long id;
     /**
      * ai平台编码
      */

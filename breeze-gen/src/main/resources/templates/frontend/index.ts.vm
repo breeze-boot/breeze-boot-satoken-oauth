@@ -11,7 +11,7 @@ import { ${entityClassName}ResponseData, ${entityClassName}Query, ${entityClassN
 import { ResponseData } from '@/types/types.ts'
 
 enum API {
-        ${entityClassNameUpper}_RESTFUL_URL = '/auth/v1/${entityClassLowerName}',
+  ${entityClassNameUpper}_RESTFUL_URL = '${module}/v1/${entityClassLowerName}',
 }
 
 /**
@@ -20,11 +20,11 @@ enum API {
  * @param data
  */
 export function page(data: ${entityClassName}Query): Promise<${entityClassName}ResponseData> {
-    return request<any, ${entityClassName}ResponseData>({
-        url: $jsTemplateStart${jsDollar}{API.${entityClassNameUpper}_RESTFUL_URL}/page$jsTemplateEnd,
-        method: 'post',
-        data,
-    })
+  return request<any, ${entityClassName}ResponseData>({
+    url: $jsTemplateStart${jsDollar}{API.${entityClassNameUpper}_RESTFUL_URL}/page$jsTemplateEnd,
+    method: 'post',
+    data,
+  })
 }
 
 /**
@@ -33,10 +33,10 @@ export function page(data: ${entityClassName}Query): Promise<${entityClassName}R
  * @param id
  */
 export function get${entityClassName}(id: number): Promise<${entityClassName}ResponseData> {
-    return request<any, ${entityClassName}ResponseData>({
-        url: $jsTemplateStart${jsDollar}{API.${entityClassNameUpper}_RESTFUL_URL}/info/${id}$jsTemplateEnd,
-        method: 'get',
-    })
+  return request<any, ${entityClassName}ResponseData>({
+    url: $jsTemplateStart${jsDollar}{API.${entityClassNameUpper}_RESTFUL_URL}/info/${id}$jsTemplateEnd,
+    method: 'get',
+  })
 }
 
 /**
@@ -45,11 +45,11 @@ export function get${entityClassName}(id: number): Promise<${entityClassName}Res
  * @param data
  */
 export function add${entityClassName}(data: ${entityClassName}Form): Promise<ResponseData> {
-    return request<any, ResponseData>({
-        url: API.${entityClassNameUpper}_RESTFUL_URL,
-        method: 'post',
-        data,
-    })
+  return request<any, ResponseData>({
+    url: API.${entityClassNameUpper}_RESTFUL_URL,
+    method: 'post',
+    data,
+  })
 }
 
 /**
@@ -59,11 +59,11 @@ export function add${entityClassName}(data: ${entityClassName}Form): Promise<Res
  * @param data
  */
 export function edit${entityClassName}(id: number, data: ${entityClassName}Form): Promise<ResponseData> {
-    return request<any, ResponseData>({
-        url: $jsTemplateStart${jsDollar}{API.${entityClassNameUpper}_RESTFUL_URL}/${id}$jsTemplateEnd,
-        method: 'put',
-        data,
-    })
+  return request<any, ResponseData>({
+    url: $jsTemplateStart${jsDollar}{API.${entityClassNameUpper}_RESTFUL_URL}/${id}$jsTemplateEnd,
+    method: 'put',
+    data,
+  })
 }
 
 /**
@@ -72,11 +72,11 @@ export function edit${entityClassName}(id: number, data: ${entityClassName}Form)
  * @param ids
  */
 export function delete${entityClassName}(ids: number[]): Promise<ResponseData> {
-    return request<any, ResponseData>({
-        url: API.${entityClassNameUpper}_RESTFUL_URL,
-        method: 'delete',
-        data: ids,
-    })
+  return request<any, ResponseData>({
+    url: API.${entityClassNameUpper}_RESTFUL_URL,
+    method: 'delete',
+    data: ids,
+  })
 }
 
 /**
@@ -85,11 +85,11 @@ export function delete${entityClassName}(ids: number[]): Promise<ResponseData> {
  * @param data
  */
 export function exportExcel(data: ${entityClassName}Record): Promise<any> {
-    return request<any, any>({
-        url: API.${entityClassNameUpper}_RESTFUL_URL,
-        method: 'post',
-        data,
-        // 指定响应类型为二进制流
-        responseType: 'blob',
-    })
+  return request<any, any>({
+    url: API.${entityClassNameUpper}_RESTFUL_URL,
+    method: 'post',
+    data,
+    // 指定响应类型为二进制流
+    responseType: 'blob',
+  })
 }

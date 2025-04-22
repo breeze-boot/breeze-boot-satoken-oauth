@@ -16,26 +16,48 @@
 
 package com.breeze.boot.ai.model.vo;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 聊天知识库VO
+ * 聊天文档 VO
  *
  * @author gaoweixuan
- * @since 2025/03/09
+ * @since 2024-07-14
  */
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@Schema(description = "聊天文档 VO")
 public class AiChatDocVO implements Serializable {
 
-    private String docId;
-    private String docName;
-    private String docUrl;
-    private String voctorDocId;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
+        /**
+     * 主键ID
+     */
+    private Long id;
+        /**
+     * 文档文件ID
+     */
+    private String docId;
+        /**
+     * 文档标题
+     */
+    private String docName;
+        /**
+     * 文档地址
+     */
+    private String docUrl;
+        /**
+     * 向量数据库ID
+     */
+    private String refDocId;
+    
 }

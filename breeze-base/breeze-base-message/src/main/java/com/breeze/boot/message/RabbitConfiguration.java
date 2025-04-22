@@ -42,7 +42,7 @@ public class RabbitConfiguration {
     @Bean
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory();
-        cachingConnectionFactory.setHost(rabbitProperties.getAddresses().get(0));
+        cachingConnectionFactory.setHost(rabbitProperties.getAddresses());
         cachingConnectionFactory.setPort(rabbitProperties.getPort());
         cachingConnectionFactory.setUsername(rabbitProperties.getUsername());
         cachingConnectionFactory.setPassword(rabbitProperties.getPassword());

@@ -16,30 +16,37 @@
 
 package com.breeze.boot.ai.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.ai.mapper.AiPlatformMapper;
-import com.breeze.boot.ai.model.converter.AiPlatformConverter;
 import com.breeze.boot.ai.model.entity.AiPlatform;
 import com.breeze.boot.ai.model.form.AiPlatformForm;
+import com.breeze.boot.ai.model.converter.AiPlatformConverter;
 import com.breeze.boot.ai.model.query.AiPlatformQuery;
 import com.breeze.boot.ai.model.vo.AiPlatformVO;
 import com.breeze.boot.ai.service.AiPlatformService;
-import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.mybatis.annotation.ConditionParam;
 import com.breeze.boot.mybatis.annotation.DymicSql;
+import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * AI平台 impl
  *
  * @author gaoweixuan
- * @since 2025-04-19
+ * @since 2025-04-22
  */
 @Service
 @RequiredArgsConstructor
@@ -50,7 +57,7 @@ public class AiPlatformServiceImpl extends ServiceImpl<AiPlatformMapper, AiPlatf
     /**
      * 列表页面
      *
-     * @param query AI平台 查询
+     * @param query AI平台查询
      * @return {@link Page}<{@link AiPlatformVO }>
      */
     @Override
@@ -58,8 +65,8 @@ public class AiPlatformServiceImpl extends ServiceImpl<AiPlatformMapper, AiPlatf
     public Page<AiPlatformVO> listPage(@ConditionParam AiPlatformQuery query) {
         Page<AiPlatform> page = new Page<>(query.getCurrent(), query.getSize());
         Page<AiPlatform> aiPlatformpage = new LambdaQueryChainWrapper<>(this.getBaseMapper())
-                .orderByDesc(AiPlatform::getCreateTime)
-                .page(page);
+                    .orderByDesc(AiPlatform::getCreateTime)
+                    .page(page);
         return this.aiPlatformConverter.page2VOPage(aiPlatformpage);
     }
 
@@ -75,10 +82,21 @@ public class AiPlatformServiceImpl extends ServiceImpl<AiPlatformMapper, AiPlatf
     }
 
     /**
+     * 保存AI平台
+     *
+     * @param form 平台形式
+     * @return {@link Boolean }
+     */
+    @Override
+    public Boolean saveAiPlatform(AiPlatformForm form) {
+        return this.save(aiPlatformConverter.form2Entity(form));
+    }
+
+    /**
      * 修改AI平台
      *
      * @param aiPlatformId AI平台ID
-     * @param form         AI平台表单
+     * @param form AI平台表单
      * @return {@link Boolean }
      */
     @Override
@@ -98,6 +116,18 @@ public class AiPlatformServiceImpl extends ServiceImpl<AiPlatformMapper, AiPlatf
     @Transactional(rollbackFor = Exception.class)
     public Result<Boolean> removeAiPlatformByIds(List<Long> ids) {
         return Result.ok(this.removeByIds(ids));
+    }
+
+    @Override
+    public Result<List<Map<String, Object>>> selectAIPlatform() {
+        List<AiPlatform> platformList = this.list();
+        List<Map<String, Object>> collect = platformList.stream().map(aiPlatform -> {
+            HashMap<String, Object> map = Maps.newHashMap();
+            map.put("value", aiPlatform.getId());
+            map.put("label", aiPlatform.getPlatformName());
+            return map;
+        }).collect(Collectors.toList());
+        return Result.ok(collect);
     }
 
 }

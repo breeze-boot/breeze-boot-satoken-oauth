@@ -16,11 +16,17 @@
 
 package com.breeze.boot.ai.mapper;
 
-import com.breeze.boot.ai.model.entity.AiChatDoc;
+import com.breeze.boot.ai.model.entity.AiModel;
 import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
+/**
+ * AI模型 映射器
+ *
+ * @author gaoweixuan
+ * @since 2025-04-22
+ */
 @Mapper
-public interface ChatDocMapper extends BreezeBaseMapper<AiChatDoc> {
+public interface AiModelMapper extends BreezeBaseMapper<AiModel> {
 
 }

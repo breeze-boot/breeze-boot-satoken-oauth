@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, gaoweixuan (breeze-cloud@foxmail.com).
+ * Copyright (c) ${year}, gaoweixuan (breeze-cloud@foxmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package ${packageName}.${module}.model.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.breeze.boot.core.base.IdBaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,8 +25,6 @@ import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
-
-import java.time.LocalDateTime;
 
 /**
  * ${entityClassNameComment} 实体
@@ -45,12 +45,12 @@ public class ${entityClassName} extends IdBaseModel<${entityClassName}> implemen
     private static final long serialVersionUID = 1L;
 
     #foreach ($column in $columns)
-        /**
-         * $column.comments
-         */
-        #if($column.pk)
-        @TableId(value = "${column.columnName}", type = IdType.AUTO)
-        #end
+/**
+     * $column.comments
+     */
+#if($column.pk)
+    @TableId(value = "${column.columnName}", type = IdType.ASSIGN_ID)
+#end
     private $column.attrType $column.attrName;
     #end
 

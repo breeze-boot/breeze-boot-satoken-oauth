@@ -25,7 +25,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * AI平台 实体
+ * AI模型 实体
  *
  * @author gaoweixuan
  * @since 2025-04-22
@@ -35,24 +35,28 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@TableName(value = "ai_platform")
-@Schema(description = "AI平台 实体")
-public class AiPlatform extends IdBaseModel<AiPlatform> implements Serializable {
+@TableName(value = "ai_model")
+@Schema(description = "AI模型 实体")
+public class AiModel extends IdBaseModel<AiModel> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * ai平台编码
+     * 模型编码
      */
-    private String platformCode;
+    private String modelCode;
     /**
-     * ai平台名称
+     * 模型名称
      */
-    private String platformName;
+    private String modelName;
+    /**
+     * 平台ID
+     */
+    private Long platformId;
     /**
      * 描述
      */
     private String description;
-    
+
 }

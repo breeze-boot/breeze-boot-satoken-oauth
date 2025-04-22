@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, gaoweixuan (breeze-cloud@foxmail.com).
+ * Copyright (c) ${year}, gaoweixuan (breeze-cloud@foxmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,14 @@ public interface ${entityClassName}Service extends IService<${entityClassName}> 
      * @return {@link ${entityClassName}VO }
      */
     ${entityClassName}VO getInfoById(Long ${entityClassLowerName}Id);
+
+    /**
+     * 保存${entityClassNameComment}
+     *
+     * @param form 平台形式
+     * @return {@link Boolean }
+     */
+    Boolean save${entityClassName}(${entityClassName}Form form);
 
     /**
      * 修改${entityClassNameComment}

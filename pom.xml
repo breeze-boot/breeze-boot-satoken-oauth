@@ -44,18 +44,17 @@
         <!-- JDK 版本 -->
         <java.version>17</java.version>
         <!-- Spring Boot 版本 -->
-        <spring-boot.version>3.4.2</spring-boot.version>
+        <spring-boot.version>3.3.6</spring-boot.version>
         <!-- Spring AI 版本 -->
         <spring-ai.version>1.0.0-M6</spring-ai.version>
         <!-- Spring AI Alibaba -->
         <spring-ai-alibaba.version>1.0.0-M6.1</spring-ai-alibaba.version>
         <!-- Spring Boot Monitor 版本 -->
-        <spring-boot-monitor.version>3.4.2</spring-boot-monitor.version>
+        <spring-boot-monitor.version>3.3.6</spring-boot-monitor.version>
 
         <!-- Swagger Resources 相关版本 -->
-        <springdoc.version>2.6.0</springdoc.version>
-        <swagger.version>2.2.22</swagger.version>
-        <knife4j.version>4.4.0</knife4j.version>
+        <knife4j.version>4.5.0</knife4j.version>
+        <swagger.version>2.2.19</swagger.version>
 
         <!-- 其他依赖版本 -->
         <apache-tika.version>2.9.1</apache-tika.version>
@@ -348,15 +347,11 @@
                 <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
                 <version>${knife4j.version}</version>
             </dependency>
-            <!-- springdoc -->
-            <dependency>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-                <version>${springdoc.version}</version>
-            </dependency>
+            <!-- swagger -->
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-annotations-jakarta</artifactId>
+                <scope>compile</scope>
                 <version>${swagger.version}</version>
             </dependency>
 

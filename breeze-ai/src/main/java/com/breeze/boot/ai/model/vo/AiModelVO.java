@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.ai.model.entity;
+package com.breeze.boot.ai.model.vo;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.breeze.boot.core.base.IdBaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -25,34 +23,41 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * AI平台 实体
+ * AI模型 VO
  *
  * @author gaoweixuan
- * @since 2025-04-22
+ * @since 2024-07-14
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@TableName(value = "ai_platform")
-@Schema(description = "AI平台 实体")
-public class AiPlatform extends IdBaseModel<AiPlatform> implements Serializable {
+@Schema(description = "AI模型 VO")
+public class AiModelVO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * ai平台编码
+     * 主键
      */
-    private String platformCode;
+    private Long id;
     /**
-     * ai平台名称
+     * 模型编码
      */
-    private String platformName;
+    private String modelCode;
+    /**
+     * 模型名称
+     */
+    private String modelName;
+    /**
+     * 平台ID
+     */
+    private Long platformId;
     /**
      * 描述
      */
     private String description;
-    
+
 }

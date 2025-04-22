@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.ai.model.entity;
+package com.breeze.boot.ai.model.form;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.breeze.boot.core.base.IdBaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -25,7 +23,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * AI平台 实体
+ * 聊天文档 表单
  *
  * @author gaoweixuan
  * @since 2025-04-22
@@ -35,24 +33,31 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@TableName(value = "ai_platform")
-@Schema(description = "AI平台 实体")
-public class AiPlatform extends IdBaseModel<AiPlatform> implements Serializable {
+@Schema(description = "聊天文档 表单")
+public class AiChatDocForm implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * ai平台编码
+     * 主键ID
      */
-    private String platformCode;
+    private Long id;
     /**
-     * ai平台名称
+     * 文档文件ID
      */
-    private String platformName;
+    private String docId;
     /**
-     * 描述
+     * 文档标题
      */
-    private String description;
+    private String docName;
+    /**
+     * 文档地址
+     */
+    private String docUrl;
+    /**
+     * 向量数据库ID
+     */
+    private String refDocId;
     
 }

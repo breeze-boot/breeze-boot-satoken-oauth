@@ -19,63 +19,60 @@ package com.breeze.boot.ai.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.breeze.boot.core.utils.Result;
-import com.breeze.boot.ai.model.entity.AiPlatform;
-import com.breeze.boot.ai.model.form.AiPlatformForm;
-import com.breeze.boot.ai.model.query.AiPlatformQuery;
-import com.breeze.boot.ai.model.vo.AiPlatformVO;
+import com.breeze.boot.ai.model.entity.AiModel;
+import com.breeze.boot.ai.model.form.AiModelForm;
+import com.breeze.boot.ai.model.query.AiModelQuery;
+import com.breeze.boot.ai.model.vo.AiModelVO;
 
 import java.util.List;
-import java.util.Map;
 
 /**
- * AI平台 服务
+ * AI模型 服务
  *
  * @author gaoweixuan
  * @since 2025-04-22
  */
-public interface AiPlatformService extends IService<AiPlatform> {
+public interface AiModelService extends IService<AiModel> {
 
     /**
      * 列表页面
      *
-     * @param query AI平台查询
-     * @return {@link Page}<{@link AiPlatformVO }>
+     * @param query AI模型查询
+     * @return {@link Page}<{@link AiModelVO }>
      */
-    Page<AiPlatformVO> listPage(AiPlatformQuery query);
+    Page<AiModelVO> listPage(AiModelQuery query);
 
     /**
      * 按id获取信息
      *
-     * @param aiPlatformId AI平台id
-     * @return {@link AiPlatformVO }
+     * @param modelId AI模型id
+     * @return {@link AiModelVO }
      */
-    AiPlatformVO getInfoById(Long aiPlatformId);
+    AiModelVO getInfoById(Long modelId);
 
     /**
-     * 保存AI平台
+     * 保存AI模型
      *
      * @param form 平台形式
      * @return {@link Boolean }
      */
-    Boolean saveAiPlatform(AiPlatformForm form);
+    Boolean saveAiModel(AiModelForm form);
 
     /**
-     * 修改AI平台
+     * 修改AI模型
      *
-     * @param aiPlatformId AI平台ID
-     * @param form AI平台表单
+     * @param aiModelId AI模型ID
+     * @param form AI模型表单
      * @return {@link Boolean }
      */
-    Boolean modifyAiPlatform(Long aiPlatformId, AiPlatformForm form);
+    Boolean modifyAiModel(Long aiModelId, AiModelForm form);
 
     /**
-     * 通过IDS删除AI平台
+     * 通过IDS删除AI模型
      *
      * @param ids ids
      * @return {@link Result}<{@link Boolean }>
      */
-    Result<Boolean> removeAiPlatformByIds(List<Long> ids);
-
-    Result<List<Map<String, Object>>> selectAIPlatform();
+    Result<Boolean> removeAiModelByIds(List<Long> ids);
 
 }

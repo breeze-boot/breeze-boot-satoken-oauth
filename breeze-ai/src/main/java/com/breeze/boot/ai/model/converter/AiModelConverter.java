@@ -14,33 +14,27 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.ai.service;
+package com.breeze.boot.ai.model.converter;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.breeze.boot.ai.model.entity.AiChatDoc;
-import com.breeze.boot.ai.model.form.ChatDocForm;
-import com.breeze.boot.ai.model.query.AiChatDocQuery;
-import com.breeze.boot.ai.model.vo.AiChatDocVO;
-
-import java.util.List;
+import com.breeze.boot.ai.model.entity.AiModel;
+import com.breeze.boot.ai.model.form.AiModelForm;
+import com.breeze.boot.ai.model.vo.AiModelVO;
+import org.mapstruct.Mapper;
 
 /**
- * AI聊天知识库管理服务
+ * AI模型 转换器
  *
  * @author gaoweixuan
- * @since 2025/03/09
+ * @since 2025-04-22
  */
-public interface IAiChatDocService extends IService<AiChatDoc> {
+@Mapper(componentModel = "spring" )
+public interface AiModelConverter {
 
-    Page<AiChatDocVO> listPage(AiChatDocQuery query);
+    Page<AiModelVO> page2VOPage(Page<AiModel> aiModelPage);
 
-    boolean saveChatDoc(ChatDocForm form);
+    AiModel form2Entity(AiModelForm form);
 
-    AiChatDocVO getInfoById(Long docId);
-
-    Boolean modifyChatDoc(Long id, ChatDocForm form);
-
-    Boolean deleteChatDoc(List<Long> ids);
+    AiModelVO entity2VO(AiModel aiModel);
 
 }

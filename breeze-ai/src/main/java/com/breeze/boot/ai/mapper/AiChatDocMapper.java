@@ -14,27 +14,19 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.ai.model.converter;
+package com.breeze.boot.ai.mapper;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.ai.model.entity.AiChatDoc;
-import com.breeze.boot.ai.model.form.ChatDocForm;
-import com.breeze.boot.ai.model.vo.AiChatDocVO;
-import org.mapstruct.Mapper;
+import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
- * ai聊天知识库文档转换器
+ * 聊天文档 映射器
  *
  * @author gaoweixuan
- * @since 2025-02-15
+ * @since 2025-04-22
  */
-@Mapper(componentModel = "spring")
-public interface CharDocConverter {
-
-    AiChatDocVO entity2VO(AiChatDoc chatDoc);
-
-    AiChatDoc form2Entity(ChatDocForm chatDocForm);
-
-    Page<AiChatDocVO> entity2VOPage(Page<AiChatDoc> aiChatDocPage);
+@Mapper
+public interface AiChatDocMapper extends BreezeBaseMapper<AiChatDoc> {
 
 }

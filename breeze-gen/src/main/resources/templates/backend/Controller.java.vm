@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, gaoweixuan (breeze-cloud@foxmail.com).
+ * Copyright (c) ${year}, gaoweixuan (breeze-cloud@foxmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer")
 @RequestMapping("/${module}/v1/${entityClassLowerName}")
-@Tag(name = "${module}管理模块", description = "${entityClassName}Controller")
+@Tag(name = "${entityClassNameComment}管理模块", description = "${entityClassName}Controller")
 public class ${entityClassName}Controller {
 
     /**
@@ -95,7 +95,7 @@ public class ${entityClassName}Controller {
     @SaCheckPermission("${module}:${entityClassLowerName}:create")
     @BreezeSysLog(description = "${entityClassNameComment}信息保存", type = LogType.SAVE)
     public Result<Boolean> save(@Valid @RequestBody ${entityClassName}Form form) {
-        return Result.ok(this.${entityClassLowerName}Service.save(form));
+        return Result.ok(this.${entityClassLowerName}Service.save${entityClassName}(form));
     }
 
     /**
@@ -125,7 +125,7 @@ public class ${entityClassName}Controller {
     @DeleteMapping
     @SaCheckPermission("${module}:${entityClassLowerName}:delete")
     @BreezeSysLog(description = "${entityClassNameComment}信息删除", type = LogType.DELETE)
-    public Result<Boolean> delete(@Parameter(description = "${entityClassName} ids")
+    public Result<Boolean> delete(@Parameter(description = "${entityClassNameComment} ids")
                                   @NotEmpty(message = "参数不能为空") @RequestBody List<Long> ids) {
         return this.${entityClassLowerName}Service.remove${entityClassName}ByIds(ids);
     }

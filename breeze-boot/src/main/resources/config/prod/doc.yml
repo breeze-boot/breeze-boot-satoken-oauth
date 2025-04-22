@@ -1,11 +1,11 @@
 springdoc:
-  version: "1.0.0"
-  type: "password"
-  title: "RBAC权限管理平台 API 文档"
-  description: "RBAC权限管理平台 API 文档"
-  server-url: "http://127.0.0.1:9000"
-  external-documentation-description: "https://github.com/breeze-boot/breeze-boot-satoken-oauth.git"
-  external-documentation-description-url: "https://github.com/breeze-boot/breeze-boot-satoken-oauth.git"
+  version: 1.0.0
+  type: password
+  title: RBAC权限管理平台 API 文档
+  description: RBAC权限管理平台 API 文档
+  server-url: http://127.0.0.1:9000
+  external-documentation-description: https://github.com/breeze-boot/breeze-boot-satoken-oauth.git
+  external-documentation-description-url: https://github.com/breeze-boot/breeze-boot-satoken-oauth.git
   swagger-ui:
     oauth:
       clientId: breeze
@@ -15,7 +15,7 @@ springdoc:
         - user_info
   # OAuth2端点（绝对路径）
   oAuthFlow:
-    authorizationUrl: ${OAUTH2_SERVER:http://127.0.0.1:9000}/oauth2/authorize?X-TENANT-ID=1
-    tokenUrl: ${OAUTH2_SERVER:http://127.0.0.1:9000}/oauth2/token?X-TENANT-ID=1
+    authorizationUrl: http://127.0.0.1:9000/oauth2/authorize?X-TENANT-ID=1
+    tokenUrl: http://127.0.0.1:9000/oauth2/token?X-TENANT-ID=1
     # OIDC发现端点（绝对路径）
-    oidcUrl: ${OAUTH2_SERVER:http://127.0.0.1:9000}/.well-known/openid-configuration?X-TENANT-ID=1
+    oidcUrl: http://127.0.0.1:9000/.well-known/openid-configuration?X-TENANT-ID=1

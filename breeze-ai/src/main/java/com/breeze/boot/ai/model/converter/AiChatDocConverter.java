@@ -14,13 +14,27 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.ai.mapper;
+package com.breeze.boot.ai.model.converter;
 
-import com.breeze.boot.ai.model.entity.AiChatLLM;
-import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
-import org.apache.ibatis.annotations.Mapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.breeze.boot.ai.model.entity.AiChatDoc;
+import com.breeze.boot.ai.model.form.AiChatDocForm;
+import com.breeze.boot.ai.model.vo.AiChatDocVO;
+import org.mapstruct.Mapper;
 
-@Mapper
-public interface ChatLLMMapper extends BreezeBaseMapper<AiChatLLM> {
+/**
+ * 聊天文档 转换器
+ *
+ * @author gaoweixuan
+ * @since 2025-04-22
+ */
+@Mapper(componentModel = "spring" )
+public interface AiChatDocConverter {
+
+    Page<AiChatDocVO> page2VOPage(Page<AiChatDoc> aiChatDocPage);
+
+    AiChatDoc form2Entity(AiChatDocForm form);
+
+    AiChatDocVO entity2VO(AiChatDoc aiChatDoc);
 
 }

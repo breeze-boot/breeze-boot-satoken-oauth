@@ -8,114 +8,133 @@
 
 <!-- ${entityClassNameComment}添加修改弹出框 -->
 <script lang="ts" setup>
-  import { ref } from 'vue'
-  import { add${entityClassName}, get${entityClassName}, edit${entityClassName} } from '@/api/${module}/${entityClassLowerName}'
-  import type { ${entityClassName}Form } from '@/api/${module}/${entityClassLowerName}/type.ts'
-  import { useI18n } from 'vue-i18n'
-  import JSONBigInt from 'json-bigint'
-  import { useMessage } from '@/hooks/message'
+import { ref } from 'vue'
+import { add${entityClassName}, get${entityClassName}, edit${entityClassName} } from '@/api/${module}/${entityClassLowerName}'
+import type { ${entityClassName}Form } from '@/api/${module}/${entityClassLowerName}/type.ts'
+import { useI18n } from 'vue-i18n'
+import JSONBigInt from 'json-bigint'
+import { useMessage } from '@/hooks/message'
 
-  defineOptions({
-    name: '${entityClassName}AddOrEdit',
-    inheritAttrs: false,
-  })
+defineOptions({
+  name: '${entityClassName}AddOrEdit',
+  inheritAttrs: false,
+})
 
-  const { t } = useI18n()
-  const $emit = defineEmits(['reloadDataList'])
-  const visible = ref<boolean>(false)
-  const loading = ref<boolean>(false)
-  const ${entityClassLowerName}DataFormRef = ref()
-  const ${entityClassLowerName}DataForm = ref<${entityClassName}Form>({})
-  const rules = ref({
-  #foreach($column in $columns)
-    ${column.attrName}: [
-      {
-        required: true,
-        message: t('common.placeholder.enter') + t('${entityClassLowerName}.columns.${column.attrName}'),
-        trigger: 'blur',
-      },
-    ],
+const { t } = useI18n()
+const $emit = defineEmits(['reloadDataList'])
+const visible = ref<boolean>(false)
+const loading = ref<boolean>(false)
+const ${entityClassLowerName}DataFormRef = ref()
+const ${entityClassLowerName}DataForm = ref<${entityClassName}Form>({
+#foreach($column in $columns)
+  #if($column.attrType == 'LocalDateTime' || $column.attrType == 'LocalDate' || $column.attrType == 'Date')
+      ${column.attrName}: string
+  #elseif($column.attrType == 'Long' || $column.attrType == 'Integrer')
+      ${column.attrName}: number
+  #elseif($column.attrType == 'String')
+      ${column.attrName}: string
+  #elseif($column.attrType == 'Boolean')
+      ${column.attrName}: boolean
+  #else
+      ${column.attrName}: any
   #end
-  })
+#end
+})
+const rules = ref({
+#foreach($column in $columns)
+  #if(!$column.pk)
+  ${column.attrName}: [
+    {
+      required: true,
+      message: t('common.placeholder.enter') + t('${entityClassLowerName}.fields.${column.attrName}'),
+      trigger: 'blur',
+    },
+  ],
+  #end
+#end
+})
 
-  /**
-   * 初始化
-   *
-   * @param id
-   */
-  const init = async (id: number) => {
-      ${entityClassLowerName}DataForm.value.id = undefined
-    visible.value = true
-    // 重置表单数据
-    if (${entityClassLowerName}DataFormRef.value) {
-        ${entityClassLowerName}DataFormRef.value.resetFields()
-    }
-    if (id) {
-      await getInfo(id)
-    }
+/**
+ * 初始化
+ *
+ * @param id
+ */
+const init = async (id: number) => {
+  ${entityClassLowerName}DataForm.value.id = undefined
+  visible.value = true
+  // 重置表单数据
+  if (${entityClassLowerName}DataFormRef.value) {
+      ${entityClassLowerName}DataFormRef.value.resetFields()
   }
+  if (id) {
+    await getInfo(id)
+  }
+}
 
-  /**
-   * 获取信息
-   *
-   * @param id
-   */
-  const getInfo = async (id: number) => {
-    try {
-      const response: any = await get${entityClassName}(JSONBigInt.parse(id))
-      Object.assign(${entityClassLowerName}DataForm.value, response.data)
-    } catch (err: any) {
-      console.error(err.message)
-    }
+/**
+ * 获取信息
+ *
+ * @param id
+ */
+const getInfo = async (id: number) => {
+  try {
+    const response: any = await get${entityClassName}(JSONBigInt.parse(id))
+    Object.assign(${entityClassLowerName}DataForm.value, response.data)
+  } catch (err: any) {
+    console.error(err.message)
   }
+}
 
-  /**
-   * 表单提交
-   */
-  const handleDataFormSubmit = async () => {
-    await ${entityClassLowerName}DataFormRef.value.validate()
-    loading.value = true
-    const id = ${entityClassLowerName}DataForm.value.id
-    try {
-      id ? await edit${entityClassName}(id, ${entityClassLowerName}DataForm.value) : await add${entityClassName}(${entityClassLowerName}DataForm.value)
-      useMessage().success($jsTemplateStart$jsDollar{(id ? t('common.modify') : t('common.save')) + t('common.success')}$jsTemplateEnd)
-      $emit('reloadDataList')
-    } catch (err: any) {
-      useMessage().error($jsTemplateStart + $jsDollar + '{t(\'common.fail\')}' + $jsTemplateEnd + err.message)
-    } finally {
-      visible.value = false
-      loading.value = false
-    }
+/**
+ * 表单提交
+ */
+const handleDataFormSubmit = async () => {
+  await ${entityClassLowerName}DataFormRef.value.validate()
+  loading.value = true
+  const id = ${entityClassLowerName}DataForm.value.id
+  try {
+    id ? await edit${entityClassName}(id, ${entityClassLowerName}DataForm.value) : await add${entityClassName}(${entityClassLowerName}DataForm.value)
+    useMessage().success($jsTemplateStart$jsDollar{(id ? t('common.modify') : t('common.save')) + t('common.success')}$jsTemplateEnd)
+    $emit('reloadDataList')
+  } catch (err: any) {
+    useMessage().error(${jsTemplateStart}${jsDollar}{t('common.fail')} ${jsDollar}{err.message}${jsTemplateEnd})
+  } finally {
+    visible.value = false
+    loading.value = false
   }
-  defineExpose({
-    init,
-  })
+}
+defineExpose({
+  init,
+})
 </script>
 
 <template>
   <el-dialog
-          v-model="visible"
-          :title="!${entityClassLowerName}DataForm.id ? t('common.add') : t('common.edit')"
-          :close-on-click-modal="false"
-          :close-on-press-escape="false"
+    v-model="visible"
+    :title="!${entityClassLowerName}DataForm.id ? t('common.add') : t('common.edit')"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
   >
     <el-form
-            :model="${entityClassLowerName}DataForm"
-            :rules="rules"
-            ref="${entityClassLowerName}DataFormRef"
-            @keyup.enter="handleDataFormSubmit()"
-            label-width="90px"
+      :model="${entityClassLowerName}DataForm"
+      :rules="rules"
+      ref="${entityClassLowerName}DataFormRef"
+      @keyup.enter="handleDataFormSubmit()"
+      label-width="90px"
     >
       #foreach($column in $columns)
+      #if(!$column.pk)
       #if($column.attrName != 'createTime' || $column.attrName != 'updateTime' || $column.attrName != 'createBy' || $column.attrName != 'updateBy')
-        <el-form-item :label="t('${entityClassLowerName}.columns.${column.attrName}')" prop="${column.attrName}">
-          <el-input
-          v-model="${entityClassLowerName}DataForm.${column.attrName}"
-          autocomplete="off"
-          clearable
-          :placeholder="t('common.placeholder.enter') + t('${entityClassLowerName}.columns.${column.attrName}')"
-          />
-        </el-form-item>
+
+      <el-form-item :label="t('${entityClassLowerName}.fields.${column.attrName}')" prop="${column.attrName}">
+        <el-input
+        v-model="${entityClassLowerName}DataForm.${column.attrName}"
+        autocomplete="off"
+        clearable
+        :placeholder="t('common.placeholder.enter') + t('${entityClassLowerName}.fields.${column.attrName}')"
+        />
+      </el-form-item>
+      #end
       #end
       #end
     </el-form>

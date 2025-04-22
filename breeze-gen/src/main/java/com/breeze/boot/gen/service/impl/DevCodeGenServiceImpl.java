@@ -23,12 +23,16 @@ import com.breeze.boot.gen.domain.entity.Table;
 import com.breeze.boot.gen.mapper.SysMysqlDbMapper;
 import com.breeze.boot.gen.service.DevCodeGenService;
 import com.breeze.boot.gen.utils.CodeGenerator;
+import com.breeze.boot.gen.utils.SnowflakeIdGenerator;
+import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -36,6 +40,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DevCodeGenServiceImpl implements DevCodeGenService {
@@ -44,8 +49,12 @@ public class DevCodeGenServiceImpl implements DevCodeGenService {
 
     private final SysMysqlDbMapper sysMysqlDbMapper;
 
+    List<String> ignoreList = Lists.newArrayList("create_time", "create_by", "create_name", "update_time", "update_by", "update_name", "is_delete");
+
     @Override
     public byte[] generateCodeZip(List<String> tableNames, String packageName, String moduleName) {
+        SnowflakeIdGenerator idGenerator = new SnowflakeIdGenerator(1, 1);
+
         if (tableNames == null || tableNames.isEmpty()) {
             throw new IllegalArgumentException("tableNames cannot be null or empty");
         }
@@ -63,12 +72,21 @@ public class DevCodeGenServiceImpl implements DevCodeGenService {
             tableInfo.setEntityClassNameComment(table.getTableComment());
             tableInfo.setEntityLowerName(this.underscoreToCamelCaseWithCapitalize(tableName, String::toLowerCase));
             tableInfo.setEntityClassNameUpper(table.getTableName().toUpperCase());
-
+            tableInfo.setRootId(idGenerator.nextId());
+            tableInfo.setAddId(idGenerator.nextId());
+            tableInfo.setInfoId(idGenerator.nextId());
+            tableInfo.setEditId(idGenerator.nextId());
+            tableInfo.setDelId(idGenerator.nextId());
+            tableInfo.setYear(LocalDate.now().getYear());
             List<ColumnBO> columnBOList = new ArrayList<>();
             try {
                 List<Column> columnList = sysMysqlDbMapper.listTableColumn(tableName);
                 if (columnList != null) {
                     for (Column column : columnList) {
+                        boolean contains = ignoreList.contains(column.getColumnName());
+                        if (contains) {
+                            continue;
+                        }
                         ColumnBO columnInfo = new ColumnBO();
                         if ("PRI".equals(column.getColumnKey())) {
                             columnInfo.setPk(Boolean.TRUE);
@@ -122,7 +140,7 @@ public class DevCodeGenServiceImpl implements DevCodeGenService {
             zipOutputStream.finish();
             return outputStream.toByteArray();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("代码生成失败 {}", e.getMessage());
             return new byte[0];
         }
     }

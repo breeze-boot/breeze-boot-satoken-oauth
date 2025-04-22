@@ -31,5 +31,13 @@ public class TableBO {
     private String entityClassNameComment;
     private String entityClassNameUpper;
 
+    private Integer year;
+
+    private Long rootId;
+    private Long addId;
+    private Long editId;
+    private Long delId;
+    private Long infoId;
+
     private List<ColumnBO> columns;
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.breeze.boot.ai.mapper.AiModelMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.breeze.boot.ai.model.entity.AiModel" id="aiModelMap">
+            <result property="id" column="id"/>
+            <result property="modelName" column="model_name"/>
+            <result property="platformCode" column="platform_code"/>
+            <result property="description" column="description"/>
+            <result property="deleteBy" column="delete_by"/>
+        </resultMap>
+
+</mapper>

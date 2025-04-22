@@ -21,26 +21,42 @@ import com.breeze.boot.core.base.IdBaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 聊天知识库
+ * 聊天文档 实体
  *
  * @author gaoweixuan
- * @since 2025/03/09
+ * @since 2025-04-22
  */
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@TableName("ai_chat_doc")
-@Schema(description = "聊天知识库文档")
+@TableName(value = "ai_chat_doc")
+@Schema(description = "聊天文档 实体")
 public class AiChatDoc extends IdBaseModel<AiChatDoc> implements Serializable {
 
-    private Long id;
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 文档文件ID
+     */
+    private String docId;
+    /**
+     * 文档标题
+     */
     private String docName;
+    /**
+     * 文档地址
+     */
     private String docUrl;
+    /**
+     * 向量数据库ID
+     */
     private String refDocId;
 
 }

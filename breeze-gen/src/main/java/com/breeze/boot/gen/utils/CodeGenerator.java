@@ -63,17 +63,18 @@ public class CodeGenerator {
                     {"ServiceImpl.java.vm", "service/impl"},
                     {"Mapper.java.vm", "mapper"},
                     {"Mapper.xml.vm", "resources/mapper"},
+                    {"Converter.java.vm", "model/converter"},
                     {"Entity.java.vm", "model/entity"},
                     {"Form.java.vm", "model/form"},
                     {"Query.java.vm", "model/query"},
                     {"VO.java.vm", "model/vo"},
                     {"en.ts.vm", "src/" + tableInfo.getEntityLowerName() + "/i18n"},
                     {"zh-cn.ts.vm", "src/" + tableInfo.getEntityLowerName() + "/i18n"},
-                    {"type.ts.vm", "src/" + tableInfo.getEntityLowerName() + "/api"},
-                    {"index.ts.vm", "src/" + tableInfo.getEntityLowerName() + "/api"},
+                    {"type.ts.vm", "src/api/" + tableInfo.getEntityLowerName()},
+                    {"index.ts.vm", "src/api/" + tableInfo.getEntityLowerName()},
                     {"AddOrEdit.vue.vm", "src/" + tableInfo.getEntityLowerName() + "/components"},
                     {"index.vue.vm", "src/" + tableInfo.getEntityLowerName()},
-                    {"menu.sql.vm", "sql/" + tableInfo.getEntityLowerName()},
+                    {"menu.sql.vm", "sql/"},
             });
 
             zipOut.finish();
@@ -138,6 +139,12 @@ public class CodeGenerator {
         context.put("entityClassLowerName", tableInfo.getEntityLowerName());
         context.put("entityClassNameComment", tableInfo.getEntityClassNameComment());
         context.put("entityClassNameUpper", tableInfo.getEntityClassNameUpper());
+        context.put("rootId", tableInfo.getRootId());
+        context.put("infoId", tableInfo.getInfoId());
+        context.put("editId", tableInfo.getEditId());
+        context.put("addId", tableInfo.getAddId());
+        context.put("delId", tableInfo.getDelId());
+        context.put("year", tableInfo.getYear());
         return context;
     }
 
@@ -172,6 +179,7 @@ public class CodeGenerator {
         nameMappings.put("Service", tableInfo.getEntityClassName() + "Service.java");
         nameMappings.put("ServiceImpl", tableInfo.getEntityClassName() + "ServiceImpl.java");
         nameMappings.put("VO", tableInfo.getEntityClassName() + "VO.java");
+        nameMappings.put("Converter", tableInfo.getEntityClassName() + "Converter.java");
         nameMappings.put("Form", tableInfo.getEntityClassName() + "Form.java");
         nameMappings.put("Query", tableInfo.getEntityClassName() + "Query.java");
         nameMappings.put("Entity", tableInfo.getEntityClassName() + ".java");
@@ -182,7 +190,7 @@ public class CodeGenerator {
         nameMappings.put("index.ts", "index.ts");
         nameMappings.put("AddOrEdit.vue", tableInfo.getEntityClassName() + "AddOrEdit.vue");
         nameMappings.put("index.vue", "index.vue");
-        nameMappings.put("menu.sql", "menu.sql");
+        nameMappings.put("menu.sql", tableInfo.getEntityClassName() + "Menu.sql");
         nameMappings.put("Mapper.xml", tableInfo.getEntityClassName() + "Mapper.xml");
 
         for (Map.Entry<String, String> entry : nameMappings.entrySet()) {

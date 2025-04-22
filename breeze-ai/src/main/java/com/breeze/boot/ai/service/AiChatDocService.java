@@ -19,63 +19,60 @@ package com.breeze.boot.ai.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.breeze.boot.core.utils.Result;
-import com.breeze.boot.ai.model.entity.AiPlatform;
-import com.breeze.boot.ai.model.form.AiPlatformForm;
-import com.breeze.boot.ai.model.query.AiPlatformQuery;
-import com.breeze.boot.ai.model.vo.AiPlatformVO;
+import com.breeze.boot.ai.model.entity.AiChatDoc;
+import com.breeze.boot.ai.model.form.AiChatDocForm;
+import com.breeze.boot.ai.model.query.AiChatDocQuery;
+import com.breeze.boot.ai.model.vo.AiChatDocVO;
 
 import java.util.List;
-import java.util.Map;
 
 /**
- * AI平台 服务
+ * 聊天文档 服务
  *
  * @author gaoweixuan
  * @since 2025-04-22
  */
-public interface AiPlatformService extends IService<AiPlatform> {
+public interface AiChatDocService extends IService<AiChatDoc> {
 
     /**
      * 列表页面
      *
-     * @param query AI平台查询
-     * @return {@link Page}<{@link AiPlatformVO }>
+     * @param query 聊天文档查询
+     * @return {@link Page}<{@link AiChatDocVO }>
      */
-    Page<AiPlatformVO> listPage(AiPlatformQuery query);
+    Page<AiChatDocVO> listPage(AiChatDocQuery query);
 
     /**
      * 按id获取信息
      *
-     * @param aiPlatformId AI平台id
-     * @return {@link AiPlatformVO }
+     * @param aiChatDocId 聊天文档id
+     * @return {@link AiChatDocVO }
      */
-    AiPlatformVO getInfoById(Long aiPlatformId);
+    AiChatDocVO getInfoById(Long aiChatDocId);
 
     /**
-     * 保存AI平台
+     * 保存聊天文档
      *
      * @param form 平台形式
      * @return {@link Boolean }
      */
-    Boolean saveAiPlatform(AiPlatformForm form);
+    Boolean saveAiChatDoc(AiChatDocForm form);
 
     /**
-     * 修改AI平台
+     * 修改聊天文档
      *
-     * @param aiPlatformId AI平台ID
-     * @param form AI平台表单
+     * @param aiChatDocId 聊天文档ID
+     * @param form 聊天文档表单
      * @return {@link Boolean }
      */
-    Boolean modifyAiPlatform(Long aiPlatformId, AiPlatformForm form);
+    Boolean modifyAiChatDoc(Long aiChatDocId, AiChatDocForm form);
 
     /**
-     * 通过IDS删除AI平台
+     * 通过IDS删除聊天文档
      *
      * @param ids ids
      * @return {@link Result}<{@link Boolean }>
      */
-    Result<Boolean> removeAiPlatformByIds(List<Long> ids);
-
-    Result<List<Map<String, Object>>> selectAIPlatform();
+    Result<Boolean> removeAiChatDocByIds(List<Long> ids);
 
 }

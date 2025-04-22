@@ -26,7 +26,7 @@ import java.io.Serializable;
  * AI平台 表单
  *
  * @author gaoweixuan
- * @since 2025-04-19
+ * @since 2025-04-22
  */
 @Data
 @Builder
@@ -40,6 +40,10 @@ public class AiPlatformForm implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 主键
+     */
+    private Long id;
+    /**
      * ai平台编码
      */
     private String platformCode;
@@ -51,4 +55,5 @@ public class AiPlatformForm implements Serializable {
      * 描述
      */
     private String description;
+    
 }
