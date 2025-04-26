@@ -25,29 +25,51 @@ spring:
     # 缓存类型 redis、none(不使用缓存)
     type: redis
 
-  # ai
+  # 人工智能相关配置
   ai:
     chat:
       client:
         enabled: false
+    # 阿里云魔搭平台（DashScope）相关配置
     dashscope:
       api-key: ${BREEZE_DASH_KEY}
       chat:
         options:
           model: qwen-max
+
+    # Ollama 相关配置
     ollama:
       base-url: http://localhost:11434
       chat:
+        # 指定使用的聊天模型为 deepseek-r1:8b
         model: deepseek-r1:8b
-    openai:
-      api-key: ${OPENAI_API_KEY}
-      base-url: https://api.openai-hk.com
 
+    # 向量存储相关配置
     vectorstore:
+      # 配置 Elasticsearch 作为向量存储
       elasticsearch:
+        # 启用 Elasticsearch 向量存储功能
+        enabled: true
+        # 指定 Elasticsearch 中用于存储向量数据的索引名称，所有向量数据都会存储在这个名为 breeze_chat_index 的索引中
         index-name: breeze_chat_index
+        # 定义向量相似度搜索时使用的相似度度量方法，这里使用余弦相似度，余弦值越接近 1 表示两个向量越相似
         similarity: cosine
+        # 明确向量的维度，存储和检索的向量维度必须与此配置一致
         dimensions: 1536
+
+      # 配置 Redis 作为向量存储
+      redis:
+        # 启用 Redis 向量存储功能
+        enabled: true
+        host: 127.0.0.1
+        port: 6379
+        password: breeze
+        # 控制是否在启动时初始化 Redis 的数据结构和索引，设置为 true 会确保 Redis 数据库的结构符合向量存储要求
+        initialize-schema: true
+        # 为存储在 Redis 中的键添加前缀 有助于区分不同类型的数据，所有向量存储相关的键都会以该前缀开头
+        prefix: "breeze_chat_embedding:"
+        # 指定 Redis 中用于存储向量数据的索引名称 与 Elasticsearch 中的索引名称保持一致，方便数据同步和管理
+        index: "breeze_chat_index"
 
   elasticsearch:
     uris: ${BREEZE_ES_HOST}
@@ -154,8 +176,8 @@ breeze:
   oss:
     s3:
       minio:
-        domain-url: ${BREEZE_REDIS_HOST:breeze-minio}:9092
-        endpoint: ${BREEZE_REDIS_HOST:breeze-minio}:9092
+        domain-url: ${BREEZE_OSS_HOST:http://breeze-minio}:9092/
+        endpoint: ${BREEZE_OSS_HOST:http://breeze-minio}:9092/
         access-key: admin
         access-key-secret: 12345678
       cos:
@@ -168,3 +190,11 @@ breeze:
         endpoint: http://localhost:9092
         access-key: admin
         access-key-secret: 12345678
+
+
+langchain4j:
+  community:
+    dashscope:
+      chat-model:
+        api-key: ${BREEZE_DASH_KEY}
+        model-name: qwen-max

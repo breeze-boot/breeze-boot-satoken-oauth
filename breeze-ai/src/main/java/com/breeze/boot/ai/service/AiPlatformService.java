@@ -54,7 +54,7 @@ public interface AiPlatformService extends IService<AiPlatform> {
     /**
      * 保存AI平台
      *
-     * @param form 平台形式
+     * @param form 平台表单
      * @return {@link Boolean }
      */
     Boolean saveAiPlatform(AiPlatformForm form);

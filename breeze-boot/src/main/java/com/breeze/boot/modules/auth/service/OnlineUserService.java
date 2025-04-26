@@ -16,7 +16,7 @@
 
 package com.breeze.boot.modules.auth.service;
 
-import com.breeze.boot.core.base.PageQuery;
+import com.breeze.boot.core.model.PageQuery;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.modules.auth.model.vo.OnlineUserVO;
 

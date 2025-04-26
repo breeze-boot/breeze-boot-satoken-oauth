@@ -57,7 +57,7 @@ public interface SysMenuColumnService extends IService<SysMenuColumn> {
     /**
      * 保存
      *
-     * @param form 菜单栏形式
+     * @param form 菜单栏表单
      * @return {@link Result }<{@link Boolean }>
      */
     Result<Boolean> saveMenuColumn(MenuColumnForm form);

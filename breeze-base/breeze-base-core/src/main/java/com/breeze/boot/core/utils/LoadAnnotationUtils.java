@@ -2,13 +2,12 @@ package com.breeze.boot.core.utils;
 
 import cn.hutool.core.util.ReUtil;
 import com.breeze.boot.core.annotation.BaseFilter;
-import com.breeze.boot.core.base.BaseProperties;
+import com.breeze.boot.core.model.BaseProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.Map;
 import java.util.Objects;

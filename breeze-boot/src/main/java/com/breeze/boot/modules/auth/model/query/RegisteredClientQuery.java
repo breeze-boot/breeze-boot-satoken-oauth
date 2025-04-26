@@ -16,7 +16,7 @@
 
 package com.breeze.boot.modules.auth.model.query;
 
-import com.breeze.boot.core.base.PageQuery;
+import com.breeze.boot.core.model.PageQuery;
 import lombok.*;
 
 /**

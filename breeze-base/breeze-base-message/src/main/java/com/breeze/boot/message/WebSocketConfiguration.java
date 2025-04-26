@@ -143,6 +143,11 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
      */
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
+        log.info("当前线程池活动线程数：{}", threadPoolTaskExecutor.getActiveCount());
+        log.info("当前线程池最大线程数：{}", threadPoolTaskExecutor.getMaxPoolSize());
+        log.info("当前线程池初始线程数：{}", threadPoolTaskExecutor.getCorePoolSize());
+        log.info("当前线程池前缀：{}", threadPoolTaskExecutor.getThreadNamePrefix());
+
         registration.interceptors(new BreezeChannelInterceptorAdapter());
         registration.taskExecutor(threadPoolTaskExecutor);
     }

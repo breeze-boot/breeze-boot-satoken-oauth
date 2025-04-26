@@ -1,0 +1,1 @@
+package com.breeze.boot.langchain4j.ai.mongdb;

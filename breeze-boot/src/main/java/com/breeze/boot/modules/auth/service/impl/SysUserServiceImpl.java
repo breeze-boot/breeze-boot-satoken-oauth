@@ -24,7 +24,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.breeze.boot.core.base.UserPrincipal;
+import com.breeze.boot.core.model.UserPrincipal;
 import com.breeze.boot.core.enums.DataPermissionType;
 import com.breeze.boot.manager.FlowableManager;
 import com.breeze.boot.satoken.propertise.AesSecretProperties;

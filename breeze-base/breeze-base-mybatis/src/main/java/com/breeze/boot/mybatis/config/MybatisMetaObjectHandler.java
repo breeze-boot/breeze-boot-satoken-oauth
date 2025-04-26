@@ -18,7 +18,7 @@ package com.breeze.boot.mybatis.config;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.breeze.boot.core.base.UserPrincipal;
+import com.breeze.boot.core.model.UserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 

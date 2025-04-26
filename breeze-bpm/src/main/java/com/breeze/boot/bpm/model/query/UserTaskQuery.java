@@ -1,6 +1,6 @@
 package com.breeze.boot.bpm.model.query;
 
-import com.breeze.boot.core.base.PageQuery;
+import com.breeze.boot.core.model.PageQuery;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -16,8 +16,8 @@
 
 package com.breeze.boot.satoken.oauth2;
 
-import com.breeze.boot.core.base.GrantedAuthority;
-import com.breeze.boot.core.base.UserPrincipal;
+import com.breeze.boot.core.model.GrantedAuthority;
+import com.breeze.boot.core.model.UserPrincipal;
 import com.breeze.boot.satoken.model.UserInfoDTO;
 
 import java.util.List;

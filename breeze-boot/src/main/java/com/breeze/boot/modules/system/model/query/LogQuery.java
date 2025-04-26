@@ -17,7 +17,7 @@
 package com.breeze.boot.modules.system.model.query;
 
 import com.alibaba.excel.annotation.format.DateTimeFormat;
-import com.breeze.boot.core.base.PageQuery;
+import com.breeze.boot.core.model.PageQuery;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 

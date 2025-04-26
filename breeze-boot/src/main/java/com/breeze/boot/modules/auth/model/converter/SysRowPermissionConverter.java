@@ -17,7 +17,7 @@
 package com.breeze.boot.modules.auth.model.converter;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.breeze.boot.core.base.CustomizePermission;
+import com.breeze.boot.core.model.CustomizePermission;
 import com.breeze.boot.modules.auth.model.entity.SysRowPermission;
 import com.breeze.boot.modules.auth.model.form.RowPermissionForm;
 import com.breeze.boot.modules.auth.model.vo.RowPermissionVO;

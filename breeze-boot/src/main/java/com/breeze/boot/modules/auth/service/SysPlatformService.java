@@ -54,7 +54,7 @@ public interface SysPlatformService extends IService<SysPlatform> {
     /**
      * 保存平台
      *
-     * @param form 平台形式
+     * @param form 平台表单
      * @return {@link Boolean }
      */
     Boolean savePlatform(PlatformForm form);
@@ -63,7 +63,7 @@ public interface SysPlatformService extends IService<SysPlatform> {
      * 修改平台
      *
      * @param id           ID
-     * @param form 平台形式
+     * @param form 平台表单
      * @return {@link Boolean }
      */
     Boolean modifyPlatform(Long id, PlatformForm form);

@@ -20,7 +20,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
-import com.breeze.boot.core.base.Condition;
+import com.breeze.boot.core.model.Condition;
 import com.breeze.boot.core.enums.ResultCode;
 import com.breeze.boot.core.exception.BreezeBizException;
 import com.breeze.boot.core.utils.QueryHolder;

@@ -24,19 +24,16 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.breeze.boot.core.enums.ContentType;
-import com.breeze.boot.core.enums.ResultCode;
-import com.breeze.boot.core.exception.BreezeBizException;
 import com.breeze.boot.core.utils.AssertUtil;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.local.operation.LocalStorageTemplate;
 import com.breeze.boot.modules.system.mapper.SysFileMapper;
+import com.breeze.boot.modules.system.model.FileInfo;
 import com.breeze.boot.modules.system.model.entity.SysFile;
 import com.breeze.boot.modules.system.model.form.FileBizForm;
-import com.breeze.boot.modules.system.model.form.FileForm;
 import com.breeze.boot.modules.system.model.query.FileQuery;
 import com.breeze.boot.modules.system.service.SysFileService;
 import com.breeze.boot.oss.operation.MinioOssTemplate;
-import com.google.common.collect.Maps;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -48,11 +45,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import static com.breeze.boot.core.constants.StorageConstants.SYSTEM_BUCKET_NAME;
 import static com.breeze.boot.core.enums.ResultCode.FILE_NOT_FOUND;
+import static com.breeze.boot.modules.system.enums.FileEnum.StoreTypeEnum.LOCAL;
+import static com.breeze.boot.modules.system.enums.FileEnum.StoreTypeEnum.MINIO;
 
 /**
  * 系统文件服务impl
@@ -105,16 +103,14 @@ public class SysFileServiceImpl extends ServiceImpl<SysFileMapper, SysFile> impl
     /**
      * 将文件上传至Minio S3存储服务，并保存文件信息到数据库。
      *
-     * @param form 包含待上传文件详细信息的对象，其中`file`字段为实际待上传的文件实体。
-     * @param request   HTTP请求对象，用于获取上传文件的MIME类型信息。
-     * @param response  HTTP响应对象，本次方法调用中未使用。
-     * @return {@link Result}<{@link Map}<{@link String}, {@link Object}>>
+     * @param bizType  业务类型
+     * @param request  HTTP请求对象，用于获取上传文件的MIME类型信息。
+     * @param response HTTP响应对象，本次方法调用中未使用。
+     * @return {@link Result }<{@link FileInfo }>
      */
     @SneakyThrows
     @Override
-    public Result<Map<String, Object>> uploadMinioS3(FileForm form, HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> resultMap = Maps.newHashMap();
-        MultipartFile file = form.getFile();
+    public Result<FileInfo> uploadMinioS3(String bizType, MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
         LocalDate now = LocalDate.now();
 
         // 获取并验证文件原始名称
@@ -122,94 +118,81 @@ public class SysFileServiceImpl extends ServiceImpl<SysFileMapper, SysFile> impl
         Assert.notNull(originalFilename, "文件名不能为空");
 
         // 构建基于日期和UUID的独特文件存储路径
-        String objectName = String.valueOf(now.getYear()) + now.getMonthOfYear() + now.getDayOfMonth() + IdUtil.simpleUUID() + "/" + originalFilename;
+        String objectName = "/" + now.getYear() + now.getMonthOfYear() + now.getDayOfMonth() + IdUtil.simpleUUID() + "/" + originalFilename;
 
-        try {
-            // 创建存储桶（如果尚未存在）
-            this.ossTemplate.createBucket(SYSTEM_BUCKET_NAME);
+        // 创建存储桶（如果尚未存在）
+        this.ossTemplate.createBucket(SYSTEM_BUCKET_NAME);
 
-            // 将文件上传至Minio S3
-            this.ossTemplate.putObject(
-                    SYSTEM_BUCKET_NAME,
-                    objectName,
-                    file.getInputStream(),
-                    ContentType.getContentType(originalFilename)
-            );
+        // 将文件上传至Minio S3
+        this.ossTemplate.putObject(
+                SYSTEM_BUCKET_NAME,
+                objectName,
+                file.getInputStream(),
+                ContentType.getContentType(originalFilename)
+        );
 
-            // 构建SysFile实体以记录文件信息至数据库
-            SysFile sysFile = SysFile.builder()
-                    .name(originalFilename)
-                    .objectName(objectName)
-                    .path(objectName)
-                    .bizId(form.getBizId())
-                    .bizType(form.getBizType())
-                    .format(extractFileFormat(Objects.requireNonNull(originalFilename)))
-                    .contentType(request.getContentType())
-                    .bucket(SYSTEM_BUCKET_NAME)
-                    .storeType(1)
-                    .build();
-            this.save(sysFile);
+        // 构建SysFile实体以记录文件信息至数据库
+        SysFile sysFile = SysFile.builder()
+                .bucket(SYSTEM_BUCKET_NAME)
+                .name(originalFilename)
+                .objectName(SYSTEM_BUCKET_NAME + objectName)
+                .uri(SYSTEM_BUCKET_NAME + objectName)
+                .bizType(bizType)
+                .format(extractFileFormat(Objects.requireNonNull(originalFilename)))
+                .contentType(request.getContentType())
+                .storeType(MINIO.getValue())
+                .build();
+        this.save(sysFile);
 
-            // 添加上传成功后的文件信息到返回结果Map
-            resultMap.put("url", this.ossTemplate.previewImg(sysFile.getPath(), sysFile.getBucket()));
-            resultMap.put("name", sysFile.getName());
-            resultMap.put("objectName", sysFile.getObjectName());
-            resultMap.put("path", sysFile.getPath());
-            resultMap.put("fileFormat", sysFile.getFormat());
-            resultMap.put("fileId", sysFile.getId());
-
-        } catch (Exception ex) {
-            log.error("[文件上传至Minio失败", ex);
-            throw new BreezeBizException(ResultCode.FAIL);
-        }
-        return Result.ok(resultMap);
+        FileInfo fileInfo = new FileInfo();
+        String url = this.ossTemplate.previewImg(sysFile.getUri(), sysFile.getBucket());
+        fileInfo.setUrl(sysFile.getObjectName());
+        fileInfo.setName(sysFile.getName());
+        log.info("上传文件路径：{}", url);
+        return Result.ok(fileInfo);
     }
 
     /**
      * 将本地存储的文件上传到服务器，并保存相关文件信息至数据库。
      *
-     * @param form 包含待上传文件详细信息的对象，其中`file`字段为实际待上传的文件。
-     * @param request   HTTP请求对象，用于获取上传文件的MIME类型信息。
-     * @param response  HTTP响应对象，本次方法调用中未使用。
-     * @return {@link Result}<{@link Map}<{@link String}, {@link Object}>>
+     * @param bizType  业务类型
+     * @param request  HTTP请求对象，用于获取上传文件的MIME类型信息。
+     * @param response HTTP响应对象，本次方法调用中未使用。
+     * @return {@link Result }<{@link FileInfo }>
      */
     @Override
-    public Result<Map<String, Object>> uploadLocalStorage(FileForm form, HttpServletRequest request, HttpServletResponse response) {
+    public Result<FileInfo> uploadLocalStorage(String bizType, MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
         // 获取上传文件的原始名称
-        String originalFilename = form.getFile().getOriginalFilename();
-        // 生成基于当前日期和UUID的独特文件存储路径
-        LocalDate now = LocalDate.now();
-        String objectName = String.valueOf(now.getYear()) + now.getMonthOfYear() + now.getDayOfMonth() + IdUtil.simpleUUID() + "/" + originalFilename;
+        String originalFilename = file.getOriginalFilename();
         // 确保文件名不为空
         Assert.notNull(originalFilename, "文件名不能为空");
+        // 生成基于当前日期和UUID的独特文件存储路径
+        LocalDate now = LocalDate.now();
+        String objectName = "/" + now.getYear() + now.getMonthOfYear() + now.getDayOfMonth() + IdUtil.simpleUUID() + "/" + originalFilename;
 
         // 执行文件上传至本地存储并获取服务器上的存储路径
-        String path = this.localStorageTemplate.uploadFile(form.getFile(), objectName, originalFilename);
-        log.debug("[上传文件路径]：{}", path);
+        String path = this.localStorageTemplate.uploadFile(file, objectName, originalFilename);
+        log.debug("上传文件路径：{}", path);
 
         // 创建SysFile实体以记录文件信息到数据库
         SysFile sysFile = SysFile.builder()
                 .name(originalFilename)
-                .objectName(objectName)
-                .bizId(form.getBizId())
-                .bizType(form.getBizType())
-                .format(extractFileFormat(originalFilename))
+                .objectName(SYSTEM_BUCKET_NAME + objectName)
+                .uri(SYSTEM_BUCKET_NAME + objectName)
+                .bizType(bizType)
+                .format(extractFileFormat(Objects.requireNonNull(originalFilename)))
                 .contentType(request.getContentType())
                 .bucket(SYSTEM_BUCKET_NAME)
-                .storeType(0)
+                .storeType(LOCAL.getValue())
                 .build();
         this.save(sysFile);
 
-        // 构建并返回包含上传成功后文件所有信息的Map
-        Map<String, Object> resultMap = Maps.newHashMap();
-        resultMap.put("url", this.localStorageTemplate.previewImg(sysFile.getPath(), originalFilename));
-        resultMap.put("name", sysFile.getName());
-        resultMap.put("objectName", sysFile.getObjectName());
-        resultMap.put("path", sysFile.getPath());
-        resultMap.put("fileFormat", sysFile.getFormat());
-        resultMap.put("fileId", sysFile.getId());
-
-        return Result.ok(resultMap);
+        FileInfo fileInfo = new FileInfo();
+        String url = this.ossTemplate.previewImg(sysFile.getUri(), sysFile.getBucket());
+        fileInfo.setUrl(sysFile.getObjectName());
+        fileInfo.setName(sysFile.getName());
+        log.info("上传文件路径：{}", url);
+        return Result.ok(fileInfo);
     }
 
     /**
@@ -237,7 +220,7 @@ public class SysFileServiceImpl extends ServiceImpl<SysFileMapper, SysFile> impl
             // TODO 缺省图
             return "";
         }
-        return this.ossTemplate.getObjectURL(SYSTEM_BUCKET_NAME, sysFile.getPath(), 2);
+        return this.ossTemplate.getObjectURL(SYSTEM_BUCKET_NAME, sysFile.getUri(), 2);
     }
 
     /**
@@ -250,7 +233,7 @@ public class SysFileServiceImpl extends ServiceImpl<SysFileMapper, SysFile> impl
     public void download(Long fileId, HttpServletResponse response) {
         SysFile sysFile = this.getById(fileId);
         AssertUtil.isNotNull(sysFile, FILE_NOT_FOUND);
-        this.ossTemplate.downloadObject(SYSTEM_BUCKET_NAME, sysFile.getPath(), sysFile.getName(), response);
+        this.ossTemplate.downloadObject(SYSTEM_BUCKET_NAME, sysFile.getUri(), sysFile.getName(), response);
     }
 
     /**
@@ -265,7 +248,7 @@ public class SysFileServiceImpl extends ServiceImpl<SysFileMapper, SysFile> impl
         List<SysFile> sysFileList = this.listByIds(fileIds);
         AssertUtil.isTrue(CollUtil.isNotEmpty(sysFileList), FILE_NOT_FOUND);
         for (SysFile sysFile : sysFileList) {
-            this.ossTemplate.removeObject(SYSTEM_BUCKET_NAME, sysFile.getPath());
+            this.ossTemplate.removeObject(SYSTEM_BUCKET_NAME, sysFile.getUri());
             this.removeById(sysFile.getId());
         }
         return Result.ok(Boolean.TRUE, "删除成功");

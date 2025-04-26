@@ -18,7 +18,7 @@ package com.breeze.boot.satoken.oauth2.oidc;
 
 import cn.dev33.satoken.oauth2.data.model.oidc.IdTokenModel;
 import cn.dev33.satoken.oauth2.scope.handler.OidcScopeHandler;
-import com.breeze.boot.core.base.UserPrincipal;
+import com.breeze.boot.core.model.UserPrincipal;
 import com.breeze.boot.satoken.oauth2.IUserDetailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

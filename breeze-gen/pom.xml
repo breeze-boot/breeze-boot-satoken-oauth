@@ -11,7 +11,7 @@
 
     <artifactId>breeze-gen</artifactId>
     <packaging>jar</packaging>
-    <description>代码生成模块-未完成</description>
+    <description>代码生成模块</description>
 
     <properties>
         <velocity.version>1.7</velocity.version>
@@ -21,17 +21,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
+
         <dependency>
             <groupId>com.breeze</groupId>
             <artifactId>breeze-base-sa-token</artifactId>
         </dependency>
+
         <!--undertow容器-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

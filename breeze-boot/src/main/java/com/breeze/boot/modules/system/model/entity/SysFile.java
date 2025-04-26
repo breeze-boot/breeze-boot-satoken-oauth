@@ -17,7 +17,7 @@
 package com.breeze.boot.modules.system.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.breeze.boot.core.base.IdBaseModel;
+import com.breeze.boot.core.model.IdBaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -73,16 +73,16 @@ public class SysFile extends IdBaseModel<SysFile> implements Serializable {
     private String objectName;
 
     /**
-     * 存储的路径
+     * uri
      */
-    @Schema(description = "存储的路径")
-    private String path;
+    @Schema(description = "uri")
+    private String uri;
 
     /**
      * 业务ID
      */
     @Schema(description = "业务ID")
-    private Long bizId;
+    private String bizId;
 
     /**
      * 业务类型

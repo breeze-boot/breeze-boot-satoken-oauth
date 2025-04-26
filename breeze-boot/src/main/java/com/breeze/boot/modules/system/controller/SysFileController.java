@@ -21,9 +21,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.log.annotation.BreezeSysLog;
 import com.breeze.boot.log.enums.LogType;
+import com.breeze.boot.modules.system.model.FileInfo;
 import com.breeze.boot.modules.system.model.entity.SysFile;
 import com.breeze.boot.modules.system.model.form.FileBizForm;
-import com.breeze.boot.modules.system.model.form.FileForm;
 import com.breeze.boot.modules.system.model.query.FileQuery;
 import com.breeze.boot.modules.system.service.SysFileService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,9 +37,9 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  * 系统文件控制器
@@ -117,35 +117,35 @@ public class SysFileController {
     /**
      * 上传
      *
-     * @param form 文件上传参数
      * @param request  请求
      * @param response 响应
-     * @return {@link Result}<{@link Map}<{@link String}, {@link Object}>>
+     * @return {@link Result }<{@link FileInfo }>
      */
     @Operation(summary = "文件上传")
-    @PostMapping("/uploadMinioS3")
+    @PostMapping("/{bizType}/uploadMinioS3")
     @SaCheckPermission("sys:file:upload")
-    public Result<Map<String, Object>> uploadMinioS3(@Valid FileForm form,
-                                                     HttpServletRequest request,
-                                                     HttpServletResponse response) {
-        return this.sysFileService.uploadMinioS3(form, request, response);
+    public Result<FileInfo> uploadMinioS3(@PathVariable String bizType,
+                                          MultipartFile file,
+                                          HttpServletRequest request,
+                                          HttpServletResponse response) {
+        return this.sysFileService.uploadMinioS3(bizType, file, request, response);
     }
 
     /**
      * 上传
      *
-     * @param form 文件上传参数
      * @param request  请求
      * @param response 响应
-     * @return {@link Result}<{@link Map}<{@link String}, {@link Object}>>
+     * @return {@link Result }<{@link FileInfo }>
      */
     @Operation(summary = "文件上传")
-    @PostMapping("/uploadLocalStorage")
+    @PostMapping("/{bizType}/uploadLocalStorage")
     @SaCheckPermission("sys:file:upload")
-    public Result<Map<String, Object>> uploadLocalStorage(@Valid FileForm form,
-                                                          HttpServletRequest request,
-                                                          HttpServletResponse response) {
-        return this.sysFileService.uploadLocalStorage(form, request, response);
+    public Result<FileInfo> uploadLocalStorage(@PathVariable String bizType,
+                                               MultipartFile file,
+                                               HttpServletRequest request,
+                                               HttpServletResponse response) {
+        return this.sysFileService.uploadLocalStorage(bizType, file,  request, response);
     }
 
     /**

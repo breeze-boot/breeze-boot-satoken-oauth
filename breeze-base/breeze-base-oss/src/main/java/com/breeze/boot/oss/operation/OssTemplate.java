@@ -36,6 +36,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * 操作系统模板
@@ -104,8 +105,7 @@ public class OssTemplate implements OssOperations {
     @Override
     @SneakyThrows
     public PutObjectResult putObject(String bucketName, String objectName, InputStream stream, String contentType) {
-        long size = stream.available();
-        return this.putObjectInternal(bucketName, objectName, stream, size, contentType);
+        return this.putObjectInternal(bucketName, objectName, stream, contentType);
     }
 
     /**
@@ -118,8 +118,7 @@ public class OssTemplate implements OssOperations {
     @Override
     public void putObject(String bucketName, String objectName, File file) {
         try (InputStream stream = new FileInputStream(file)) {
-            long size = file.length();
-            putObjectInternal(bucketName, objectName, stream, size, "application/octet-stream");
+            putObjectInternal(bucketName, objectName, stream, "application/octet-stream");
         } catch (IOException e) {
             log.error("上传文件时发生IO异常：{}", e.getMessage(), e);
         }
@@ -131,19 +130,30 @@ public class OssTemplate implements OssOperations {
      * @param bucketName  bucket名称
      * @param objectName  对象名称
      * @param stream      流
-     * @param size        文件大小
      * @param contentType 内容类型
      * @return {@link PutObjectResult}
      */
-    private PutObjectResult putObjectInternal(String bucketName, String objectName, InputStream stream, long size, String contentType) {
-        ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.setContentLength(size);
-        objectMetadata.setContentType(contentType);
 
-        try {
-            return this.amazonS3.putObject(bucketName, objectName, stream, objectMetadata);
-        } catch (Exception e) {
-            log.error("上传文件失败，桶名：{}，对象名：{}，错误信息：{}", bucketName, objectName, e.getMessage(), e);
+    private PutObjectResult putObjectInternal(String bucketName, String objectName, InputStream stream, String contentType) {
+        try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+            int nRead;
+            byte[] data = new byte[16384];
+            while ((nRead = stream.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, nRead);
+            }
+            buffer.flush();
+            byte[] byteArray = buffer.toByteArray();
+            try (InputStream cachedStream = new ByteArrayInputStream(byteArray)) {
+                long size = byteArray.length;
+
+                ObjectMetadata objectMetadata = new ObjectMetadata();
+                objectMetadata.setContentLength(size);
+                objectMetadata.setContentType(contentType);
+
+                return amazonS3.putObject(bucketName, objectName, cachedStream, objectMetadata);
+            }
+        } catch (IOException e) {
+            log.info("方法 putObjectInternal 上传文件失败，桶名：{}，对象名：{}，错误信息：{}", bucketName, objectName, e.getMessage());
             throw new RuntimeException("上传文件失败", e);
         }
     }

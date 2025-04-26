@@ -18,7 +18,7 @@ package com.breeze.boot.satoken.utils;
 
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpUtil;
-import com.breeze.boot.core.base.UserPrincipal;
+import com.breeze.boot.core.model.UserPrincipal;
 import com.breeze.boot.core.utils.AssertUtil;
 
 import static com.breeze.boot.core.constants.CoreConstants.USER_TYPE;

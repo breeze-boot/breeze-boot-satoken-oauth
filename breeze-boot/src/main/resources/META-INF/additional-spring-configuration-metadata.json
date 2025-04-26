@@ -9,5 +9,15 @@
       "name": "spring.rabbitmq.stomp-port",
       "type": "java.lang.String",
       "description": "spring.rabbitmq.stomp-port. stomp端口"
+    },
+    {
+      "name": "spring.ai.vectorstore.redis.enabled",
+      "type": "java.lang.String",
+      "description": "Description for spring.ai.vectorstore.redis.enabled."
+    },
+    {
+      "name": "spring.ai.vectorstore.elasticsearch.enabled",
+      "type": "java.lang.String",
+      "description": "Description for spring.ai.vectorstore.elasticsearch.enabled."
     }
   ] }

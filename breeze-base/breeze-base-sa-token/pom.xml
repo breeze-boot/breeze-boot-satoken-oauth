@@ -76,6 +76,7 @@
             <groupId>com.breeze</groupId>
             <artifactId>breeze-base-log</artifactId>
         </dependency>
+
     </dependencies>
 
     <build>

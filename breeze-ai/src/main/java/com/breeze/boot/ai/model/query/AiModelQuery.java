@@ -16,7 +16,7 @@
 
 package com.breeze.boot.ai.model.query;
 
-import com.breeze.boot.core.base.PageQuery;
+import com.breeze.boot.core.model.PageQuery;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -35,10 +35,6 @@ import lombok.*;
 public class AiModelQuery extends PageQuery {
 
     /**
-     * 主键
-     */
-    private Long id;
-    /**
      * 模型编码
      */
     private String modelCode;
@@ -47,12 +43,8 @@ public class AiModelQuery extends PageQuery {
      */
     private String modelName;
     /**
-     * 平台ID
+     * ai平台编码
      */
-    private Long platformId;
-    /**
-     * 描述
-     */
-    private String description;
+    private String platformCode;
     
 }

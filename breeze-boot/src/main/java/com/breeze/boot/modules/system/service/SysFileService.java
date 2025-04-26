@@ -19,15 +19,15 @@ package com.breeze.boot.modules.system.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.breeze.boot.core.utils.Result;
+import com.breeze.boot.modules.system.model.FileInfo;
 import com.breeze.boot.modules.system.model.entity.SysFile;
 import com.breeze.boot.modules.system.model.form.FileBizForm;
-import com.breeze.boot.modules.system.model.form.FileForm;
 import com.breeze.boot.modules.system.model.query.FileQuery;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 系统文件服务
@@ -50,22 +50,22 @@ public interface SysFileService extends IService<SysFile> {
     /**
      * 上传minio
      *
-     * @param form     文件上传参数
+     * @param bizType  业务类型
      * @param request  请求
      * @param response 响应
-     * @return {@link Result}<{@link Map}<{@link String}, {@link Object}>>
+     * @return {@link Result }<{@link FileInfo }>
      */
-    Result<Map<String, Object>> uploadMinioS3(FileForm form, HttpServletRequest request, HttpServletResponse response);
+    Result<FileInfo> uploadMinioS3(String bizType, MultipartFile file, HttpServletRequest request, HttpServletResponse response);
 
     /**
      * 上传本地存储
      *
-     * @param form     文件参数
+     * @param bizType  业务类型
      * @param request  请求
      * @param response 响应
-     * @return {@link Result}<{@link Map}<{@link String}, {@link Object}>>
+     * @return {@link Result }<{@link FileInfo }>
      */
-    Result<Map<String, Object>> uploadLocalStorage(FileForm form, HttpServletRequest request, HttpServletResponse response);
+    Result<FileInfo> uploadLocalStorage(String bizType, MultipartFile file, HttpServletRequest request, HttpServletResponse response);
 
     /**
      * 预览

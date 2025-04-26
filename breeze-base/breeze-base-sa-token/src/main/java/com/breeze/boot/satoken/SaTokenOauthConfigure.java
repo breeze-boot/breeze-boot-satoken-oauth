@@ -21,7 +21,7 @@ import cn.dev33.satoken.oauth2.config.SaOAuth2ServerConfig;
 import cn.dev33.satoken.oauth2.strategy.SaOAuth2Strategy;
 import cn.dev33.satoken.secure.BCrypt;
 import cn.dev33.satoken.stp.StpUtil;
-import com.breeze.boot.core.base.UserPrincipal;
+import com.breeze.boot.core.model.UserPrincipal;
 import com.breeze.boot.core.exception.BreezeBizException;
 import com.breeze.boot.core.utils.AesUtil;
 import com.breeze.boot.core.utils.Result;

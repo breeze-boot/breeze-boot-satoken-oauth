@@ -17,7 +17,7 @@
 package com.breeze.boot.ai.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.breeze.boot.core.base.IdBaseModel;
+import com.breeze.boot.core.model.IdBaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -51,9 +51,9 @@ public class AiModel extends IdBaseModel<AiModel> implements Serializable {
      */
     private String modelName;
     /**
-     * 平台ID
+     * 平台编码
      */
-    private Long platformId;
+    private String platformCode;
     /**
      * 描述
      */

@@ -20,7 +20,7 @@ import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.oauth2.SaOAuth2Manager;
 import cn.dev33.satoken.oauth2.processor.SaOAuth2ServerProcessor;
 import cn.dev33.satoken.oauth2.template.SaOAuth2Util;
-import com.breeze.boot.core.base.UserPrincipal;
+import com.breeze.boot.core.model.UserPrincipal;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.satoken.oauth2.IUserDetailService;
 import lombok.RequiredArgsConstructor;

@@ -52,9 +52,9 @@ public class AiModelForm implements Serializable {
      */
     private String modelName;
     /**
-     * 平台ID
+     * ai平台编码
      */
-    private Long platformId;
+    private String platformCode;
     /**
      * 描述
      */

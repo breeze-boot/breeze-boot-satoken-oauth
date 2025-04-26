@@ -16,9 +16,6 @@
 
 package com.breeze.boot.ai.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -80,7 +77,7 @@ public class AiModelServiceImpl extends ServiceImpl<AiModelMapper, AiModel> impl
     /**
      * 保存AI模型
      *
-     * @param form 平台形式
+     * @param form 平台表单
      * @return {@link Boolean }
      */
     @Override

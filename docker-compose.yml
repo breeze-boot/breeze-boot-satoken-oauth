@@ -64,18 +64,18 @@ services:
         hard: -1
     privileged: true  # 解决权限问题（开发环境适用）
 
-  # 向量数据库
-  breeze-qdrant:
-    image: qdrant/qdrant
-    container_name: breeze-qdrant
+  breeze-redis-with-redisearch:
+    image: redislabs/redisearch:latest
+    container_name: breeze-redis-with-redisearch
     ports:
-      - "6333:6333"
-      - "6334:6334"
-    volumes:
-      - ./qdrant-data:/qdrant/storage
+      - "6379:6379"
     restart: always
+    volumes:
+      - ./docker/redis/data/:/data
+      - ./docker/redis-search/conf/redis.conf:/etc/redis/redis.conf
     networks:
       - breeze-net
+
   # redis
   breeze-redis:
     image: redis:7.2.5
@@ -166,17 +166,15 @@ services:
   breeze-monitor:
     build:
       context: ./breeze-monitor
+    container_name: breeze-monitor
+    hostname: breeze-monitor
+    image: breeze-monitor
     restart: always
     ports:
       - "10000:10000"
     volumes:
       - ./docker/logs:/usr/local/boot/logs
       - /etc/localtime:/etc/localtime:ro
-    container_name: breeze-monitor
-    hostname: breeze-monitor
-    image: breeze-monitor
-    depends_on:
-      - breeze-boot
     networks:
       - breeze-net
 

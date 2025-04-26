@@ -11,7 +11,7 @@
 
     <artifactId>breeze-ai</artifactId>
     <packaging>jar</packaging>
-    <description>ai模块</description>
+    <description>breeze-ai 公共模块</description>
 
     <dependencies>
         <dependency>
@@ -31,6 +31,7 @@
             <artifactId>spring-boot-starter-undertow</artifactId>
         </dependency>
 
+        <!--基础包-->
         <dependency>
             <groupId>com.breeze</groupId>
             <artifactId>breeze-base-core</artifactId>
@@ -51,6 +52,13 @@
             <artifactId>breeze-base-log</artifactId>
         </dependency>
 
+        <!--数据源-->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
+        </dependency>
+
+        <!--mybatis-->
         <dependency>
             <groupId>com.breeze</groupId>
             <artifactId>breeze-base-mybatis</artifactId>
@@ -66,54 +74,9 @@
             <artifactId>breeze-base-doc</artifactId>
         </dependency>
 
-        <!--阿里AI-->
-        <dependency>
-            <groupId>com.alibaba.cloud.ai</groupId>
-            <artifactId>spring-ai-alibaba-starter</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
-        </dependency>
-
-        <!-- mongodb数据库 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
-
-        <!-- 向量存储 -->
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-elasticsearch-store-spring-boot-starter</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.14.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>co.elastic.clients</groupId>
-            <artifactId>elasticsearch-java</artifactId>
-            <version>8.13.3</version>
-        </dependency>
-
-        <!-- PDF 解析 -->
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-pdf-document-reader</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-tika-document-reader</artifactId>
         </dependency>
 
         <dependency>

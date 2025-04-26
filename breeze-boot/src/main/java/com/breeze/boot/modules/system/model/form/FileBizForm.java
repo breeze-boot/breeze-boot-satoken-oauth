@@ -37,6 +37,6 @@ public class FileBizForm {
      * 业务ID
      */
     @Schema(description = "业务ID")
-    private Long bizId;
+    private String bizId;
 
 }

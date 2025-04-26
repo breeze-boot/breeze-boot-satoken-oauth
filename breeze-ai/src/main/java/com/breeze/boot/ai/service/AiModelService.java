@@ -53,7 +53,7 @@ public interface AiModelService extends IService<AiModel> {
     /**
      * 保存AI模型
      *
-     * @param form 平台形式
+     * @param form 平台表单
      * @return {@link Boolean }
      */
     Boolean saveAiModel(AiModelForm form);

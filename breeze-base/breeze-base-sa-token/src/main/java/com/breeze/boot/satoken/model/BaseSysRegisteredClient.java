@@ -16,7 +16,7 @@
 
 package com.breeze.boot.satoken.model;
 
-import com.breeze.boot.core.base.IdBaseModel;
+import com.breeze.boot.core.model.IdBaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

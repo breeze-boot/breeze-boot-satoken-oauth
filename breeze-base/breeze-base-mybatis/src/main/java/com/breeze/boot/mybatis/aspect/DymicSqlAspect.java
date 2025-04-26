@@ -17,7 +17,7 @@
 package com.breeze.boot.mybatis.aspect;
 
 import cn.hutool.core.date.StopWatch;
-import com.breeze.boot.core.base.PageQuery;
+import com.breeze.boot.core.model.PageQuery;
 import com.breeze.boot.core.utils.QueryHolder;
 import com.breeze.boot.mybatis.annotation.ConditionParam;
 import com.breeze.boot.mybatis.annotation.DymicSql;

@@ -84,7 +84,7 @@ public class SysPlatformServiceImpl extends ServiceImpl<SysPlatformMapper, SysPl
     /**
      * 保存平台
      *
-     * @param form 平台形式
+     * @param form 平台表单
      * @return {@link Boolean }
      */
     @Override
@@ -95,8 +95,8 @@ public class SysPlatformServiceImpl extends ServiceImpl<SysPlatformMapper, SysPl
     /**
      * 修改平台
      *
-     * @param id           ID
-     * @param form 平台形式
+     * @param id   ID
+     * @param form 平台表单
      * @return {@link Boolean }
      */
     @Override

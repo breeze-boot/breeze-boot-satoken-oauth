@@ -16,9 +16,6 @@
 
 package com.breeze.boot.ai.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -84,7 +81,7 @@ public class AiPlatformServiceImpl extends ServiceImpl<AiPlatformMapper, AiPlatf
     /**
      * 保存AI平台
      *
-     * @param form 平台形式
+     * @param form 平台表单
      * @return {@link Boolean }
      */
     @Override
@@ -123,7 +120,7 @@ public class AiPlatformServiceImpl extends ServiceImpl<AiPlatformMapper, AiPlatf
         List<AiPlatform> platformList = this.list();
         List<Map<String, Object>> collect = platformList.stream().map(aiPlatform -> {
             HashMap<String, Object> map = Maps.newHashMap();
-            map.put("value", aiPlatform.getId());
+            map.put("value", aiPlatform.getPlatformCode());
             map.put("label", aiPlatform.getPlatformName());
             return map;
         }).collect(Collectors.toList());

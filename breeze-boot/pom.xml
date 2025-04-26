@@ -143,7 +143,15 @@
         <!-- ai 模块 -->
         <dependency>
             <groupId>com.breeze</groupId>
-            <artifactId>breeze-ai</artifactId>
+            <artifactId>breeze-spring-ai</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <!-- ai 模块 -->
+        <dependency>
+            <groupId>com.breeze</groupId>
+            <artifactId>breeze-langchain4j-ai</artifactId>
+            <version>1.0</version>
         </dependency>
 
         <!-- 代码生成模块 -->
