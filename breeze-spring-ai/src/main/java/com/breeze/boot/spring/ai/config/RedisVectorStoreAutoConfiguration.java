@@ -44,12 +44,18 @@ public class RedisVectorStoreAutoConfiguration {
     }
 
     @Bean
+    public TokenCountBatchingStrategy batchingStrategy() {
+        return new TokenCountBatchingStrategy();
+    }
+
+    @Bean
     @Qualifier("redisDashScopeVectorStore")
-    public RedisVectorStore redisDashScopeVectorStore(JedisPooled jedisPooled, DashScopeEmbeddingModel embeddingModel) {
+    public RedisVectorStore redisDashScopeVectorStore(JedisPooled jedisPooled, DashScopeEmbeddingModel embeddingModel, TokenCountBatchingStrategy batchingStrategy) {
         log.info("create redis DashScope vector store");
         return RedisVectorStore.builder(jedisPooled, embeddingModel)
                 .indexName(properties.getIndex())
                 .prefix(properties.getPrefix()) //
+                .batchingStrategy(batchingStrategy)
                 .metadataFields(
                         RedisVectorStore.MetadataField.tag("name"),
                         RedisVectorStore.MetadataField.numeric("year")
@@ -61,11 +67,12 @@ public class RedisVectorStoreAutoConfiguration {
 
     @Bean
     @Qualifier("redisOllamaVectorStore")
-    public RedisVectorStore redisOllamaVectorStore(JedisPooled jedisPooled, OllamaEmbeddingModel embeddingModel) {
+    public RedisVectorStore redisOllamaVectorStore(JedisPooled jedisPooled, OllamaEmbeddingModel embeddingModel, TokenCountBatchingStrategy batchingStrategy) {
         log.info("create redis Ollama vector store");
         return RedisVectorStore.builder(jedisPooled, embeddingModel)
                 .indexName(properties.getIndex())
                 .prefix(properties.getPrefix()) //
+                .batchingStrategy(batchingStrategy)
                 .metadataFields(
                         RedisVectorStore.MetadataField.tag("name"),
                         RedisVectorStore.MetadataField.numeric("year")

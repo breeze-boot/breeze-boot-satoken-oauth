@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, gaoweixuan (breeze-cloud@foxmail.com).
+ * Copyright (c) 2023, gaoweixuan (breeze-cloud@foxmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.spring.ai.mongdb.entity;
+package com.breeze.boot.langchain4j.ai.mongdb.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,19 +26,30 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
+/**
+ * MongoDB 聊天消息
+ *
+ * @author gaoweixuan
+ * @since 2025/04/29
+ */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "chat_conversation")
-public class MongoDBChatConversation {
+@Document("chat_messages")
+public class MongoDBChatMessages {
 
     @Id
     private ObjectId id;
-    private String conversationId;
+
+    private Object memoryId;
+    /**
+     * 当前聊天记录列表的json字符串
+     */
+    private String messages;
+
     private String title;
     private Long userId;
-    private String messages;
     private LocalDateTime createTime;
 
 }

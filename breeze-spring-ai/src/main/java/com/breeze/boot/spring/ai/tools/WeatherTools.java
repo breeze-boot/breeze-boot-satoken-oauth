@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.spring.ai.config;
+package com.breeze.boot.spring.ai.tools;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.stereotype.Component;
 
-/**
- * 聊天消息顾问
- *
- * @author gaoweixuan
- * @since 2025/04/13
- */
-@Slf4j
-public class ChatMessageAdvisor extends MessageChatMemoryAdvisor {
+@Component
+public class WeatherTools {
 
-    public ChatMessageAdvisor(ChatMemory chatMemory, String conversationId) {
-        super(chatMemory, conversationId, 1000);
-        log.info("ChatMessageAdvisor init");
+    @Tool(description = "获取城市天气")
+    public String getWeather(String city) {
+        return "天气晴朗";
     }
+
 }

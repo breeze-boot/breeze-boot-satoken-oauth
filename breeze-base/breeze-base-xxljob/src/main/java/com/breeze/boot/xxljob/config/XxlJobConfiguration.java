@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.xxjob.config;
+package com.breeze.boot.xxljob.config;
 
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * xxl工作配置
+ * 定时任务配置
  *
  * @author gaoweixuan
  * @since 2023/04/15
@@ -33,6 +34,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 @EnableConfigurationProperties(XxlJobProperties.class)
+@ConditionalOnProperty(prefix = "xxl.job", name = "enabled", havingValue = "true")
 public class XxlJobConfiguration {
 
     private final XxlJobProperties xxlJobProperties;

@@ -14,31 +14,18 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.spring.ai.mongdb.entity;
+package com.breeze.boot.langchain4j.ai.model.vo;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.time.LocalDateTime;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "chat_conversation")
-public class MongoDBChatConversation {
+public class ChatConversationMessageVO {
 
-    @Id
-    private ObjectId id;
-    private String conversationId;
-    private String title;
-    private Long userId;
-    private String messages;
-    private LocalDateTime createTime;
+    private String type;
+    private String content;
 
 }

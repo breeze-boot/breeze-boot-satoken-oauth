@@ -43,7 +43,7 @@ services:
       - breeze-net
 
   breeze-es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
     container_name: breeze-es01
     environment:
       - node.name=breeze-es01

@@ -194,6 +194,12 @@
                 <version>${spring-ai-alibaba.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>co.elastic.clients</groupId>
+                <artifactId>elasticsearch-java</artifactId>
+                <version>8.15.3</version>
+            </dependency>
+
             <!-- lombok 依赖 -->
             <dependency>
                 <groupId>org.projectlombok</groupId>

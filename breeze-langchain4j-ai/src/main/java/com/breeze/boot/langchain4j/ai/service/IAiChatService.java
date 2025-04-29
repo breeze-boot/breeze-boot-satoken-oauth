@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.spring.ai.service;
+package com.breeze.boot.langchain4j.ai.service;
 
 import com.breeze.boot.core.utils.Result;
-import com.breeze.boot.spring.ai.model.query.HistoryChatPage;
-import com.breeze.boot.spring.ai.model.vo.ChatConversationMessageVO;
-import com.breeze.boot.spring.ai.mongdb.entity.MongoDBChatConversation;
+import com.breeze.boot.langchain4j.ai.model.query.HistoryChatPage;
+import com.breeze.boot.langchain4j.ai.model.vo.ChatConversationMessageVO;
+import com.breeze.boot.langchain4j.ai.mongdb.entity.MongoDBChatMessages;
 import org.springframework.data.domain.Page;
 import reactor.core.publisher.Flux;
 
@@ -33,11 +33,11 @@ import java.util.List;
  */
 public interface IAiChatService {
 
-    Flux<String> chat(String model, String platform, String message, String conversationId);
+    Flux<String> chat(String model, String platform, String message, Long conversationId);
 
-    Result<String> create(Long userId);
+    Result<Object> create(Long userId);
 
-    Result<Page<MongoDBChatConversation>> history(HistoryChatPage historyChatPage);
+    Result<Page<MongoDBChatMessages>> history(HistoryChatPage historyChatPage);
 
     Result<List<ChatConversationMessageVO>> historyDetail(String id);
 

@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.spring.ai.controller;
+package com.breeze.boot.langchain4j.ai.controller;
 
 import com.breeze.boot.core.utils.Result;
-import com.breeze.boot.spring.ai.model.query.HistoryChatPage;
-import com.breeze.boot.spring.ai.model.vo.ChatConversationMessageVO;
-import com.breeze.boot.spring.ai.mongdb.entity.MongoDBChatConversation;
-import com.breeze.boot.spring.ai.service.IRagService;
-import com.breeze.boot.spring.ai.service.IAiChatService;
+import com.breeze.boot.langchain4j.ai.model.query.HistoryChatPage;
+import com.breeze.boot.langchain4j.ai.model.vo.ChatConversationMessageVO;
+import com.breeze.boot.langchain4j.ai.mongdb.entity.MongoDBChatMessages;
+import com.breeze.boot.langchain4j.ai.service.IAiChatService;
+import com.breeze.boot.langchain4j.ai.service.IRagService;
 import com.breeze.boot.xss.annotation.JumpXss;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.document.Document;
-import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -50,13 +47,10 @@ import java.util.List;
 public class AiChatController {
 
     private final IAiChatService chatService;
-
-    private final VectorStore redisDashScopeVectorStore;
-
-    private final IRagService redisLocalRagService;
+    private final IRagService esLocalRagService;
 
     @GetMapping("/create")
-    public Result<String> create(@RequestParam Long userId) {
+    public Result<Object> create(@RequestParam Long userId) {
         return this.chatService.create(userId);
     }
 
@@ -67,11 +61,11 @@ public class AiChatController {
                                 @RequestParam(value = "conversationId") String conversationId,
                                 @RequestParam(value = "message", defaultValue = "请介绍自己") String message
     ) {
-        return chatService.chat(model, platform, message, conversationId);
+        return chatService.chat(model, platform, message, Long.valueOf(conversationId));
     }
 
     @GetMapping("/history")
-    public Result<Page<MongoDBChatConversation>> history(HistoryChatPage historyChatPage) {
+    public Result<Page<MongoDBChatMessages>> history(HistoryChatPage historyChatPage) {
         return this.chatService.history(historyChatPage);
     }
 
@@ -82,18 +76,7 @@ public class AiChatController {
 
     @PostMapping("/importDoc")
     public void importDoc(List<MultipartFile> files) {
-        this.redisLocalRagService.importDoc(files);
+        this.esLocalRagService.importDoc(files);
     }
 
-    /**
-     * 向量数据查询测试
-     */
-    @GetMapping("/select")
-    public List<Document> search(@RequestParam String message) {
-        return redisDashScopeVectorStore.similaritySearch(
-                SearchRequest.builder()
-                        .query(message)
-                        .topK(message.length())
-                        .build());
-    }
 }

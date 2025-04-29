@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, gaoweixuan (breeze-cloud@foxmail.com).
+ * Copyright (c) 2023, gaoweixuan (breeze-cloud@foxmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.spring.ai.config;
+package com.breeze.boot.langchain4j.ai.service;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
- * 聊天消息顾问
+ * rag服务接口
  *
  * @author gaoweixuan
- * @since 2025/04/13
+ * @since 2025/04/29
  */
-@Slf4j
-public class ChatMessageAdvisor extends MessageChatMemoryAdvisor {
+public interface IRagService {
 
-    public ChatMessageAdvisor(ChatMemory chatMemory, String conversationId) {
-        super(chatMemory, conversationId, 1000);
-        log.info("ChatMessageAdvisor init");
-    }
+    void importDoc(List<MultipartFile> files);
+
 }

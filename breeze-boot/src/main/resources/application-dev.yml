@@ -30,19 +30,17 @@ spring:
     chat:
       client:
         enabled: false
+
     # 阿里云魔搭平台（DashScope）相关配置
     dashscope:
       api-key: ${BREEZE_DASH_KEY}
-      chat:
-        options:
-          model: qwen-max
-
+      embedding:
+        enabled: true
     # Ollama 相关配置
     ollama:
       base-url: http://localhost:11434
-      chat:
-        # 指定使用的聊天模型为 deepseek-r1:8b
-        model: deepseek-r1:8b
+      embedding:
+        enabled: true
 
     # 向量存储相关配置
     vectorstore:
@@ -191,10 +189,17 @@ breeze:
         access-key: admin
         access-key-secret: 12345678
 
-
+# langchain4j配置
 langchain4j:
   community:
     dashscope:
-      chat-model:
+      #集成阿里通义千问-流式输出
+      streaming-chat-model:
         api-key: ${BREEZE_DASH_KEY}
         model-name: qwen-max
+      #集成阿里通义千问-通用文本向量-v3
+      embedding-model:
+        api-key: ${BREEZE_DASH_KEY}
+        model-name: text-embedding-v3
+      tokenizer:
+        api-key: ${BREEZE_DASH_KEY}

@@ -43,21 +43,44 @@ public class AiLoggingAdvisor implements CallAroundAdvisor, StreamAroundAdvisor 
         return 0;
     }
 
+    /**
+     * 实现环绕通知逻辑，在调用目标方法前和后执行自定义操作。
+     *
+     * @param advisedRequest 被拦截的请求对象，包含原始调用参数和上下文信息
+     * @param chain          顾问链对象，用于继续执行后续的顾问或目标方法
+     * @return 处理后的响应对象，可能包含被修改的返回值或增强后的结果
+     */
     @Override
     public AdvisedResponse aroundCall(AdvisedRequest advisedRequest, CallAroundAdvisorChain chain) {
+        // 记录请求进入时的上下文信息
         log.info("BEFORE: {}", advisedRequest);
         AdvisedResponse advisedResponse = chain.nextAroundCall(advisedRequest);
+        // 记录方法执行后的最终结果
         log.info("AFTER: {}", advisedResponse);
         return advisedResponse;
     }
 
+
+    /**
+     * 处理流式请求的环绕通知方法。在请求处理前后分别记录日志，并通过聚合器处理响应流。
+     *
+     * @param advisedRequest 包含原始请求信息的AdvisedRequest对象
+     * @param chain          处理链对象，用于调用后续的环绕通知处理器
+     * @return 经过所有环绕通知处理后的AdvisedResponse响应流
+     */
     @Override
     public Flux<AdvisedResponse> aroundStream(AdvisedRequest advisedRequest, StreamAroundAdvisorChain chain) {
-        log.info("BEFORE: {}", advisedRequest);
+        // 记录请求处理前的日志信息
+        log.info("请求之前BEFORE: {}", advisedRequest);
         Flux<AdvisedResponse> advisedResponses = chain.nextAroundStream(advisedRequest);
+        // 聚合响应流并执行后置处理（记录每个响应）
         return new MessageAggregator().aggregateAdvisedResponse(advisedResponses,
-                advisedResponse -> log.info("AFTER: {}", advisedResponse));
+                advisedResponse -> {
+                    log.info("请求之后AFTER: {}", advisedResponse.adviseContext());
+                    log.info("请求之后AFTER: {}", advisedResponse.response());
+                });
     }
+
 
 }
 

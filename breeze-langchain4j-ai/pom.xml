@@ -44,6 +44,42 @@
             <artifactId>langchain4j-spring-boot-starter</artifactId>
         </dependency>
 
+        <!--解析pdf文档-->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-document-parser-apache-pdfbox</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-document-parser-apache-tika</artifactId>
+        </dependency>
+
+        <!--向量存储es-->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-elasticsearch</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>co.elastic.clients</groupId>
+                    <artifactId>elasticsearch-java</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>co.elastic.clients</groupId>
+            <artifactId>elasticsearch-java</artifactId>
+            <version>8.15.3</version>
+        </dependency>
+        <!--流式输出-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-reactor</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.breeze</groupId>
             <artifactId>breeze-ai</artifactId>

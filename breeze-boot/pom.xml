@@ -141,11 +141,11 @@
         </dependency>
 
         <!-- ai 模块 -->
-        <dependency>
-            <groupId>com.breeze</groupId>
-            <artifactId>breeze-spring-ai</artifactId>
-            <version>1.0</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.breeze</groupId>-->
+<!--            <artifactId>breeze-spring-ai</artifactId>-->
+<!--            <version>1.0</version>-->
+<!--        </dependency>-->
 
         <!-- ai 模块 -->
         <dependency>
