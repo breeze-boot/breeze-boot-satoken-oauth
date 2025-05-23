@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.breeze.boot.system.mapper.SysDictMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.breeze.boot.system.model.entity.SysDict" id="sysDictMap">
+        <id property="id" column="id"/>
+        <result property="dictName" column="dict_name"/>
+        <result property="dictCode" column="dict_code"/>
+        <result property="status" column="status"/>
+        <collection property="sysDictDetailList" javaType="java.util.List"
+                    ofType="com.breeze.boot.system.model.entity.SysDictItem"
+                    column="{pdictId=id}"
+                    select="com.breeze.boot.system.mapper.SysDictItemMapper.listDictDetailByDictId">
+        </collection>
+    </resultMap>
+
+    <select id="listPage" resultMap="sysDictMap">
+        SELECT
+        a.id,
+        a.dict_name,
+        a.dict_code,
+        a.status
+        FROM sys_dict AS a
+        <where>
+            a.is_delete = 0
+            <if test="dictQuery.dictName != null and dictQuery.dictName != ''">
+                AND a.dict_name LIKE CONCAT( '%', #{dictQuery.dictName}, '%')
+            </if>
+            <if test="dictQuery.dictCode != null and dictQuery.dictCode != ''">
+                AND a.dict_code LIKE CONCAT( '%', #{dictQuery.dictCode}, '%')
+            </if>
+        </where>
+        ORDER BY a.create_time DESC
+    </select>
+
+</mapper>

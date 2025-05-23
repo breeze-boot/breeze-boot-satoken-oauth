@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.breeze.boot.auth.mapper.SysRegisteredClientMapper">
+
+    <select id="listPage"
+            resultType="com.breeze.boot.auth.model.vo.RegisteredClientVO">
+        SELECT
+        id,
+        client_id,
+        client_id_issued_at,
+        client_secret,
+        client_secret_expires_at,
+        client_name,
+        client_authentication_methods AS str_client_authentication_methods,
+        authorization_grant_types AS str_authorization_grant_types,
+        redirect_uris AS str_redirect_uris,
+        scopes AS str_scopes
+        FROM
+        sys_registered_client
+        <where>
+            AND is_delete = 0
+            <if test="registeredClientQuery.clientName != null and registeredClientQuery.clientName != ''">
+                AND client_name LIKE CONCAT( '%', #{registeredClientQuery.clientName} ,'%')
+            </if>
+            <if test="registeredClientQuery.clientId != null and registeredClientQuery.clientId != ''">
+                AND client_id LIKE CONCAT( '%', #{registeredClientQuery.clientId} ,'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getRegisteredClientBy"
+            resultType="com.breeze.boot.auth.model.entity.SysRegisteredClient">
+        SELECT
+        id,
+        client_id,
+        client_id_issued_at,
+        client_secret,
+        client_secret_expires_at,
+        client_name,
+        client_authentication_methods,
+        authorization_grant_types,
+        redirect_uris,
+        scopes
+        FROM
+        sys_registered_client
+        <where>
+            AND is_delete = 0
+            <if test="registeredClient.id != null and registeredClient.id != ''">
+                AND id = #{registeredClient.id}
+            </if>
+            <if test="registeredClient.clientId != null and registeredClient.clientId != ''">
+                AND client_id = #{registeredClient.clientId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

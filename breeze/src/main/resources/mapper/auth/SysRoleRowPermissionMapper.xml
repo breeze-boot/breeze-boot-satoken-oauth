@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.breeze.boot.auth.mapper.SysRoleRowPermissionMapper">
+
+    <resultMap id="BaseResultMap" type="com.breeze.boot.auth.model.entity.SysRoleRowPermission">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="permissionId" column="data_permission_id" jdbcType="BIGINT"/>
+        <result property="roleId" column="role_id" jdbcType="BIGINT"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createName" column="create_name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="listRowPermission" resultType="java.lang.String">
+        SELECT
+        a.permission_code
+        FROM
+        sys_row_permission AS a
+        LEFT JOIN sys_role_row_permission AS b ON a.id = b.permission_id
+        <where>
+            a.is_delete = 0
+            <if test="roleIdSet != null and roleIdSet.size > 0">
+                AND b.role_id IN
+                <foreach collection="roleIdSet" item="roleId" open="(" separator="," close=")">
+                    #{roleId}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY a.create_time DESC
+    </select>
+
+</mapper>

@@ -18,17 +18,23 @@ package com.breeze.boot.satoken.endpoint;
 
 import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.dao.SaTokenDao;
-import cn.dev33.satoken.util.SaFoxUtil;
 import com.breeze.boot.core.utils.Result;
+import com.breeze.boot.satoken.enums.AliyunSmsEnum;
 import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.sms4j.api.SmsBlend;
+import org.dromara.sms4j.api.entity.SmsResponse;
+import org.dromara.sms4j.comm.constant.SupplierConstant;
+import org.dromara.sms4j.comm.utils.SmsUtils;
+import org.dromara.sms4j.core.factory.SmsFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedHashMap;
 import java.util.Objects;
 
-import static com.breeze.boot.core.constants.CacheConstants.VALIDATE_SMS_CODE;
+import static com.breeze.boot.core.constants.CacheConstants.SMS_LOGIN;
 
 /**
  * 自定义手机登录接口
@@ -47,19 +53,33 @@ public class PhoneLoginEndPoint {
      * @return {@link Result }<{@link Long }>
      */
     @GetMapping("/oauth2/sendPhoneCode")
-    public Result<Long> sendPhoneCode(@NotBlank(message = "手机号不能为空") @RequestParam String phone) {
+    public Result<Long> sendPhoneCode(@NotBlank(message = "业务KEY") @RequestParam String key,
+                                      @NotBlank(message = "手机号不能为空") @RequestParam String phone) {
+        AliyunSmsEnum smsEnum = AliyunSmsEnum.getTemplateByKey(key);
         SaTokenDao saTokenDao = SaManager.getSaTokenDao();
-        String cacheCode = saTokenDao.get(VALIDATE_SMS_CODE + phone);
+        String redisKey = smsEnum.getRedisKey();
+        String cacheCode = saTokenDao.get(redisKey);
         if (Objects.nonNull(cacheCode)) {
             // 验证码存在，计算剩余时间
-            long expire = saTokenDao.getTimeout(VALIDATE_SMS_CODE + phone);
+            long expire = saTokenDao.getTimeout(redisKey);
             return Result.ok(expire, "请等待 " + expire + " 秒后再试");
         }
+        // 发送验证码
+        long codeExpireSeconds =  saTokenDao.getTimeout(redisKey + phone);
+        if (codeExpireSeconds > 0){
+            return Result.fail("请勿频繁发送验证码");
+        }
+        String code = SmsUtils.getRandomInt(6);
+        saTokenDao.set( SMS_LOGIN + phone, code, 5);
+        LinkedHashMap<String, String> verifyParams = new LinkedHashMap<>();
+        verifyParams.put("code", code);
+        SmsBlend supplier = SmsFactory.getBySupplier(SupplierConstant.ALIBABA);
+        SmsResponse smsResponse = supplier.sendMessage(phone, smsEnum.getValue(), verifyParams);
+        if (!smsResponse.isSuccess()) {
+            return Result.fail("发送失败");
+        }
 
-        String code = SaFoxUtil.getRandomNumber(100000, 999999) + "";
-        // TODO 发送验证码
-        saTokenDao.set(VALIDATE_SMS_CODE + phone, code, 60);
-
+        saTokenDao.set(SMS_LOGIN + phone, code, 60);
         log.info("手机号：" + phone + "，验证码：" + code + "，已发送成功");
         return Result.ok(60L, "验证码发送成功");
     }

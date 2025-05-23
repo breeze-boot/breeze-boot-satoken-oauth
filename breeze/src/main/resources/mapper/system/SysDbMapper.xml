@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.breeze.boot.system.mapper.SysDbMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.breeze.boot.system.model.entity.SysDbResource" id="sysDbMap">
+        <id property="id" column="id" javaType="java.lang.Long"/>
+        <result property="dbCode" column="db_code"/>
+        <result property="dbName" column="db_name"/>
+        <result property="driver" column="driver"/>
+        <result property="url" column="url"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createName" column="create_name"/>
+    </resultMap>
+
+    <select id="listPage" resultType="com.breeze.boot.system.model.entity.SysDbResource">
+        SELECT
+            id,
+            db_code,
+            db_name,
+            driver,
+            url,
+            username,
+            password,
+            tenant_id,
+            create_by,
+            create_time,
+            create_name
+        FROM sys_db
+        <where>
+            <if test="dbCode != null and dbCode != ''">
+                AND db_code = #{dbCode}
+            </if>
+            <if test="dbName != null and dbName != ''">
+                AND db_name = #{dbName}
+            </if>
+            <if test="username != null and username != ''">
+                AND username = #{username}
+            </if>
+            <if test="tenantId != null and tenantId != ''">
+                AND tenant_id = #{tenantId}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

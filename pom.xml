@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.breeze</groupId>
-    <artifactId>breeze</artifactId>
+    <artifactId>breeze-boot</artifactId>
     <version>1.0</version>
 
     <name>${project.artifactId}</name>
@@ -21,9 +21,26 @@
             <name>Apache License, Version 2.0</name>
             <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
             <distribution>repo</distribution>
-            <comments>A business-friendly OSS license</comments>
         </license>
     </licenses>
+
+    <developers>
+        <developer>
+            <name>John Doe</name>
+            <email>john.doe@example.com</email>
+            <organization>Acme Corp</organization>
+            <roles>
+                <role>lead developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/user/repo.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/user/repo.git</developerConnection>
+        <tag>refs/heads/main</tag>
+        <url>https://github.com/user/repo</url>
+    </scm>
 
     <organization>
         <name></name>
@@ -31,15 +48,10 @@
     </organization>
 
     <modules>
-        <module>breeze-boot</module>
+        <module>breeze</module>
         <module>breeze-base</module>
-        <module>breeze-quartz</module>
+        <module>breeze-modules</module>
         <module>breeze-monitor</module>
-        <module>breeze-bpm</module>
-        <module>breeze-gen</module>
-        <module>breeze-ai</module>
-        <module>breeze-spring-ai</module>
-        <module>breeze-langchain4j-ai</module>
     </modules>
 
     <properties>
@@ -71,6 +83,7 @@
         <minio.version>8.3.9</minio.version>
         <oss-s3.version>1.12.445</oss-s3.version>
         <redisson.version>3.40.2</redisson.version>
+        <sm4j.version>3.3.4</sm4j.version>
         <mybatis-plus.version>3.5.7</mybatis-plus.version>
         <mysql.version>8.0.31</mysql.version>
         <druid.version>1.2.21</druid.version>
@@ -276,6 +289,12 @@
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-boot-starter</artifactId>
                 <version>${redisson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara.sms4j</groupId>
+                <artifactId>sms4j-spring-boot-starter</artifactId>
+                <version>${sm4j.version}</version>
             </dependency>
 
             <!-- Sa-Token 相关依赖 -->

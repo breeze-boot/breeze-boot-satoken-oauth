@@ -24,11 +24,14 @@ package com.breeze.boot.core.constants;
  */
 public class CacheConstants {
 
+    public static String MINI_FIRST_LOGIN = "breeze:login:first:";
+
+    public static String MINI_RESET_PWD = "breeze:login:reset:";
 
     /**
      * 验证电话号码
      */
-    public static final String VALIDATE_SMS_CODE = "breeze:login:validate_sms_code:";
+    public static final String SMS_LOGIN = "breeze:login:validate_sms_code:";
 
     /**
      * 验证电子邮件代码

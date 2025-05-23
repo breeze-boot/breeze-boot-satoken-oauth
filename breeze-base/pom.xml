@@ -5,7 +5,7 @@
 
     <parent>
         <groupId>com.breeze</groupId>
-        <artifactId>breeze</artifactId>
+        <artifactId>breeze-boot</artifactId>
         <version>1.0</version>
     </parent>
 

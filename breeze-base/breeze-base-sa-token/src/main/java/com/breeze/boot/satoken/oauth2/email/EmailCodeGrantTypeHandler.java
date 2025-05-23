@@ -23,6 +23,7 @@ import cn.dev33.satoken.oauth2.data.model.AccessTokenModel;
 import cn.dev33.satoken.oauth2.data.model.request.RequestAuthModel;
 import cn.dev33.satoken.oauth2.exception.SaOAuth2Exception;
 import cn.dev33.satoken.oauth2.granttype.handler.SaOAuth2GrantTypeHandlerInterface;
+import cn.dev33.satoken.stp.StpUtil;
 import com.breeze.boot.core.model.UserPrincipal;
 import com.breeze.boot.satoken.oauth2.IUserDetailService;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +65,8 @@ public class EmailCodeGrantTypeHandler implements SaOAuth2GrantTypeHandlerInterf
         SaManager.getSaTokenDao().delete(this.getHandlerGrantType() +":" + email);
         // 去登录获取用户信息
         UserPrincipal userPrincipal = userDetailServiceSupplier.get().loadUserByEmail(email);
+
+        StpUtil.login(userPrincipal.getId());
 
         RequestAuthModel ra = new RequestAuthModel();
         ra.clientId = clientId;

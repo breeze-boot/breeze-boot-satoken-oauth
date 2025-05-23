@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.breeze.boot.quartz.mapper.SysQuartzJobMapper">
+
+    <resultMap id="baseResultMap" type="com.breeze.boot.quartz.domain.entity.SysQuartzJob">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="jobName" column="job_name" jdbcType="VARCHAR"/>
+        <result property="jobGroupName" column="job_group_name" jdbcType="VARCHAR"/>
+        <result property="cronExpression" column="cron_expression" jdbcType="VARCHAR"/>
+        <result property="clazzName" column="clazz_name" jdbcType="VARCHAR"/>
+        <result property="misfirePolicy" column="misfire_policy" jdbcType="TINYINT"/>
+        <result property="concurrent" column="concurrent" jdbcType="TINYINT"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createName" column="create_name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+        <result property="updateName" column="update_name" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <select id="listPage" resultType="com.breeze.boot.quartz.domain.entity.SysQuartzJob">
+        SELECT a.id,
+        a.job_name,
+        a.job_group_name,
+        a.cron_expression,
+        a.clazz_name,
+        a.misfire_policy,
+        a.`concurrent`,
+        a.`status`,
+        a.create_by,
+        a.create_name,
+        a.create_time
+        FROM sys_quartz_job AS a
+        <where>
+            AND a.is_delete = 0
+            <if test="jobQuery.jobGroupName != null and jobQuery.jobGroupName != ''">
+                AND a.job_group_name = #{jobQuery.jobGroupName}
+            </if>
+            <if test="jobQuery.jobName != null and jobQuery.jobName != ''">
+                AND a.job_name LIKE CONCAT( '%', #{jobQuery.jobName}, '%')
+            </if>
+            <if test="jobQuery.status != null and jobQuery.status != ''">
+                AND a.status = #{jobQuery.status}
+            </if>
+        </where>
+    </select>
+
+</mapper>

@@ -23,6 +23,7 @@ import cn.dev33.satoken.oauth2.data.model.AccessTokenModel;
 import cn.dev33.satoken.oauth2.data.model.request.RequestAuthModel;
 import cn.dev33.satoken.oauth2.exception.SaOAuth2Exception;
 import cn.dev33.satoken.oauth2.granttype.handler.SaOAuth2GrantTypeHandlerInterface;
+import cn.dev33.satoken.stp.StpUtil;
 import com.breeze.boot.core.model.UserPrincipal;
 import com.breeze.boot.satoken.oauth2.IUserDetailService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static com.breeze.boot.core.constants.CacheConstants.VALIDATE_SMS_CODE;
+import static com.breeze.boot.core.constants.CacheConstants.SMS_LOGIN;
 
 /**
  * 自定义 sms_code 授权模式处理器
@@ -52,20 +53,22 @@ public class PhoneCodeGrantTypeHandler implements SaOAuth2GrantTypeHandlerInterf
 
     @Override
     public AccessTokenModel getAccessToken(SaRequest req, String clientId, List<String> scopes) {
-        RequestAuthModel ra = new RequestAuthModel();
         String phone = req.getParamNotNull("phone");
         String code = req.getParamNotNull("code");
-        String realCode = SaManager.getSaTokenDao().get(VALIDATE_SMS_CODE + phone);
+        String realCode = SaManager.getSaTokenDao().get(SMS_LOGIN + phone);
 
         // 校验验证码是否正确
         if (!code.equals(realCode)) {
             throw new SaOAuth2Exception("登录失败");
         }
         // 校验通过，删除验证码
-        SaManager.getSaTokenDao().delete(VALIDATE_SMS_CODE + phone);
+        SaManager.getSaTokenDao().delete(SMS_LOGIN + phone);
         // 去登录获取用户信息
         UserPrincipal userPrincipal = userDetailServiceSupplier.get().loadUserByPhone(phone);
 
+        StpUtil.login(userPrincipal.getId());
+
+        RequestAuthModel ra = new RequestAuthModel();
         ra.clientId = clientId;
         ra.loginId = userPrincipal.getId();
         ra.scopes = scopes;

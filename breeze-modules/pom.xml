@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.breeze</groupId>
+        <artifactId>breeze-boot</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <artifactId>breeze-modules</artifactId>
+    <packaging>pom</packaging>
+    <description>业务模块</description>
+
+    <modules>
+        <module>breeze-gen</module>
+        <module>breeze-ai</module>
+        <module>breeze-spring-ai</module>
+        <module>breeze-langchain4j-ai</module>
+        <module>breeze-system</module>
+        <module>breeze-bpm</module>
+        <module>breeze-auth</module>
+        <module>breeze-quartz</module>
+    </modules>
+
+</project>

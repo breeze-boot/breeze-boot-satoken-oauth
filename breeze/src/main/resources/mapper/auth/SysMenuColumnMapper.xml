@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.breeze.boot.auth.mapper.SysMenuColumnMapper">
+
+    <resultMap id="BaseResultMap" type="com.breeze.boot.auth.model.entity.SysMenuColumn">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="menu" column="menu" jdbcType="VARCHAR"/>
+        <result property="column" column="column" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createName" column="create_name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="listPage" resultMap="BaseResultMap">
+        SELECT
+        a.id,
+        a.`menu`,
+        a.column
+        FROM
+        sys_menu_column AS a
+        <where>
+            <if test="permissionQuery.menu != null and permissionQuery.menu != ''">
+                AND a.menu LIKE CONCAT('%' , #{permissionQuery.menu}, '%')
+            </if>
+            <if test="permissionQuery.column != null and permissionQuery.column != ''">
+                AND a.column LIKE CONCAT('%' , #{permissionQuery.column}, '%')
+            </if>
+        </where>
+        ORDER BY a.create_time DESC
+    </select>
+
+    <select id="getRolesMenuColumns" resultMap="BaseResultMap">
+        SELECT
+            a.id,
+            a.`menu`,
+            a.`column`
+        FROM
+        sys_menu_column AS a
+        LEFT JOIN sys_role_menu_column as b ON a.menu = b.menu
+        <where>
+            b.role_id IN
+            <foreach collection="userRoleIds" open="(" separator="," close=")" item="roleId" index="index">
+                #{roleId}
+            </foreach>
+        </where>
+        ORDER BY a.create_time DESC
+    </select>
+
+</mapper>

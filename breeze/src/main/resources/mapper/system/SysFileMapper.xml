@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.breeze.boot.system.mapper.SysFileMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.breeze.boot.system.model.entity.SysFile" id="sysFileMap">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="contentType" column="content_type"/>
+        <result property="format" column="format"/>
+        <result property="bucket" column="bucket"/>
+        <result property="objectName" column="object_name"/>
+        <result property="path" column="path"/>
+        <result property="bizId" column="biz_id"/>
+        <result property="bizType" column="biz_id"/>
+        <result property="storeType" column="file_name"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createName" column="create_name"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelete" column="is_delete"/>
+    </resultMap>
+
+</mapper>

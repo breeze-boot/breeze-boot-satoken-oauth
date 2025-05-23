@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.breeze.boot.system.mapper.SysMsgUserMapper">
+
+    <resultMap id="BaseResultMap" type="com.breeze.boot.system.model.entity.SysMsgUser">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="msgId" column="msg_id" jdbcType="BIGINT"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="deptId" column="dept_id" jdbcType="BIGINT"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createName" column="create_name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="listPage" resultType="com.breeze.boot.system.model.vo.MsgUserVO">
+        SELECT
+        a.id,
+        a.is_read,
+        a.msg_id,
+        a.user_id,
+        a.is_close,
+        a.dept_id,
+        a.create_time,
+        b.title,
+        b.type,
+        b.`code`,
+        b.`level`,
+        b.content,
+        c.username
+        FROM
+        sys_msg_user AS a
+        LEFT JOIN sys_msg AS b ON a.msg_id = b.id
+        LEFT JOIN sys_user AS c ON a.user_id= c.id
+        <where>
+            b.is_delete = 0
+            AND c.is_delete = 0
+            <if test="userMsgQuery.title != null and userMsgQuery.title != ''">
+                AND b.title LIKE CONCAT('%' , #{userMsgQuery.title}, '%')
+            </if>
+            <if test="userMsgQuery.code != null and userMsgQuery.code != ''">
+                AND b.`code` LIKE CONCAT('%' , #{userMsgQuery.code}, '%')
+            </if>
+            <if test="userMsgQuery.username != null and userMsgQuery.username != ''">
+                AND c.username LIKE CONCAT('%' , #{userMsgQuery.username}, '%')
+            </if>
+        </where>
+        ORDER BY a.create_time DESC
+    </select>
+
+    <select id="listUsersMsg" resultType="com.breeze.boot.system.model.vo.MsgUserVO">
+        SELECT a.id,
+               a.title,
+               a.`code`,
+               a.type,
+               a.`level`,
+               a.content,
+               b.id as msg_id,
+               b.is_close,
+               b.is_read,
+               b.dept_id,
+               b.user_id,
+               b.create_time,
+               c.username
+        FROM sys_msg AS a
+                 LEFT JOIN sys_msg_user AS b ON a.id = b.msg_id
+                 LEFT JOIN sys_user AS c ON b.user_id = c.id
+        WHERE a.is_delete = 0
+          AND c.is_delete = 0
+          AND b.is_close = 0
+          AND c.username = #{username}
+        ORDER BY a.create_time DESC
+    </select>
+
+</mapper>
