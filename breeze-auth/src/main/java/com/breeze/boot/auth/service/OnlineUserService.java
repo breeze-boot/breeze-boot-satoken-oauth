@@ -14,15 +14,30 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.core.exception;
+package com.breeze.boot.auth.service;
 
-import com.breeze.boot.core.utils.MessageUtil;
+import com.breeze.boot.auth.model.vo.OnlineUserVO;
+import com.breeze.boot.core.model.PageQuery;
+import com.breeze.boot.core.utils.Result;
 
-import static com.breeze.boot.core.enums.ResultCode.LOCK_EXCEPTION;
+import java.util.List;
 
-public class BreezeLockException extends RuntimeException {
+/**
+ * 系统用户服务
+ *
+ * @author gaoweixuan
+ * @since 2021-12-06 22:03:39
+ */
+public interface OnlineUserService {
 
-    public BreezeLockException() {
-        super(MessageUtil.getMessage(LOCK_EXCEPTION.getKey()));
-    }
+    Result<List<OnlineUserVO>> listAllOnlineUser(PageQuery query);
+
+    Result<Boolean> kickOut(Long userId);
+
+    Result<Boolean> kickOutByTokenValue(String token);
+
+    Result<Boolean> logoutByTokenValue(String token);
+
+    Result<Boolean> logout(Long userId);
+
 }

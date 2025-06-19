@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.core.exception;
+package com.breeze.boot.system.mapper;
 
-import com.breeze.boot.core.utils.MessageUtil;
+import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
+import com.breeze.boot.system.model.entity.SysEmailSubject;
+import org.apache.ibatis.annotations.Mapper;
 
-import static com.breeze.boot.core.enums.ResultCode.LOCK_EXCEPTION;
+/**
+ * 系统邮箱映射器
+ *
+ * @author gaoweixuan
+ * @since 2024-07-13
+ */
+@Mapper
+public interface SysEmailSubjectMapper extends BreezeBaseMapper<SysEmailSubject> {
 
-public class BreezeLockException extends RuntimeException {
-
-    public BreezeLockException() {
-        super(MessageUtil.getMessage(LOCK_EXCEPTION.getKey()));
-    }
 }

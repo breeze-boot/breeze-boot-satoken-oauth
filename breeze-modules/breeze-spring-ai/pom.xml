@@ -68,7 +68,6 @@
         <dependency>
             <groupId>com.breeze</groupId>
             <artifactId>breeze-ai</artifactId>
-            <version>1.0</version>
         </dependency>
     </dependencies>
 </project>

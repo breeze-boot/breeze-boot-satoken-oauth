@@ -18,9 +18,7 @@
         <module>breeze-ai</module>
         <module>breeze-spring-ai</module>
         <module>breeze-langchain4j-ai</module>
-        <module>breeze-system</module>
         <module>breeze-bpm</module>
-        <module>breeze-auth</module>
         <module>breeze-quartz</module>
     </modules>
 

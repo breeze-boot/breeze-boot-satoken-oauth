@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.core.exception;
+package com.breeze.boot.system.mapper;
 
-import com.breeze.boot.core.utils.MessageUtil;
+import com.breeze.boot.mybatis.mapper.BreezeBaseMapper;
+import com.breeze.boot.system.model.entity.SysFile;
+import org.apache.ibatis.annotations.Mapper;
 
-import static com.breeze.boot.core.enums.ResultCode.LOCK_EXCEPTION;
+/**
+ * 系统文件映射器
+ *
+ * @author gaoweixuan
+ * @since 2022-09-02
+ */
+@Mapper
+public interface SysFileMapper extends BreezeBaseMapper<SysFile> {
 
-public class BreezeLockException extends RuntimeException {
-
-    public BreezeLockException() {
-        super(MessageUtil.getMessage(LOCK_EXCEPTION.getKey()));
-    }
 }

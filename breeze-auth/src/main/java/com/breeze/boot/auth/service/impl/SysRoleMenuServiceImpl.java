@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-package com.breeze.boot.core.exception;
+package com.breeze.boot.auth.service.impl;
 
-import com.breeze.boot.core.utils.MessageUtil;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.breeze.boot.auth.mapper.SysRoleMenuMapper;
+import com.breeze.boot.auth.model.entity.SysRoleMenu;
+import com.breeze.boot.auth.service.SysRoleMenuService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-import static com.breeze.boot.core.enums.ResultCode.LOCK_EXCEPTION;
+/**
+ * 系统菜单角色服务impl
+ *
+ * @author gaoweixuan
+ * @since 2021-12-06 22:03:39
+ */
+@Service
+@RequiredArgsConstructor
+public class SysRoleMenuServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRoleMenu> implements SysRoleMenuService {
 
-public class BreezeLockException extends RuntimeException {
 
-    public BreezeLockException() {
-        super(MessageUtil.getMessage(LOCK_EXCEPTION.getKey()));
-    }
 }

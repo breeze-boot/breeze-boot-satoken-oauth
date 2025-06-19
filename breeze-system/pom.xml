@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.breeze</groupId>
+        <artifactId>breeze-boot</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <name>breeze-system</name>
+    <artifactId>breeze-system</artifactId>
+    <packaging>jar</packaging>
+    <description>业务模块</description>
+
+    <dependencies>
+        <!-- 校验 -->
+        <dependency>
+            <groupId>com.breeze</groupId>
+            <artifactId>breeze-base-validator</artifactId>
+        </dependency>
+
+        <!--接口文档-->
+        <dependency>
+            <groupId>com.breeze</groupId>
+            <artifactId>breeze-base-doc</artifactId>
+        </dependency>
+
+        <!--安全-->
+        <dependency>
+            <groupId>com.breeze</groupId>
+            <artifactId>breeze-base-sa-token</artifactId>
+        </dependency>
+
+        <!--日志-->
+        <dependency>
+            <groupId>com.breeze</groupId>
+            <artifactId>breeze-base-log</artifactId>
+        </dependency>
+
+        <!--基础依赖包-->
+        <dependency>
+            <groupId>com.breeze</groupId>
+            <artifactId>breeze-base-core</artifactId>
+        </dependency>
+
+        <!--xss过滤-->
+        <dependency>
+            <groupId>com.breeze</groupId>
+            <artifactId>breeze-base-xss</artifactId>
+        </dependency>
+
+        <!--邮件-->
+        <dependency>
+            <groupId>com.breeze</groupId>
+            <artifactId>breeze-base-mail</artifactId>
+        </dependency>
+
+        <!--oss s3 封装-->
+        <dependency>
+            <groupId>com.breeze</groupId>
+            <artifactId>breeze-base-oss</artifactId>
+        </dependency>
+
+        <!--redis 和 spring-cache-->
+        <dependency>
+            <groupId>com.breeze</groupId>
+            <artifactId>breeze-base-redis-cache</artifactId>
+        </dependency>
+
+        <!--websocket-->
+        <dependency>
+            <groupId>com.breeze</groupId>
+            <artifactId>breeze-base-message</artifactId>
+        </dependency>
+
+        <!--mybatis-->
+        <dependency>
+            <groupId>com.breeze</groupId>
+            <artifactId>breeze-base-mybatis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.breeze</groupId>
+            <artifactId>breeze-auth</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

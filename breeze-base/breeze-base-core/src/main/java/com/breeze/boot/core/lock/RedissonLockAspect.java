@@ -16,8 +16,8 @@
 
 package com.breeze.boot.core.lock;
 
-import com.breeze.boot.core.lock.annotation.RedissonLock;
 import com.breeze.boot.core.exception.BreezeLockException;
+import com.breeze.boot.core.lock.annotation.RedissonLock;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -28,7 +28,6 @@ import org.redisson.api.RedissonClient;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
@@ -40,7 +39,6 @@ import java.util.concurrent.TimeUnit;
  * @since 2025/02/19
  */
 @Aspect
-@Component
 @RequiredArgsConstructor
 public class RedissonLockAspect {
 
