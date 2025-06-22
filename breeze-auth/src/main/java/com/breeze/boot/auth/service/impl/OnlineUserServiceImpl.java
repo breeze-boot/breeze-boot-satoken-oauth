@@ -17,7 +17,6 @@
 package com.breeze.boot.auth.service.impl;
 
 import cn.dev33.satoken.session.SaSession;
-import cn.dev33.satoken.session.TokenSign;
 import cn.dev33.satoken.stp.StpUtil;
 import com.breeze.boot.auth.model.vo.OnlineUserVO;
 import com.breeze.boot.auth.service.OnlineUserService;
@@ -40,6 +39,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.breeze.boot.core.constants.CoreConstants.USER_TYPE;
@@ -70,7 +70,7 @@ public class OnlineUserServiceImpl implements OnlineUserService {
         for (String logId : logIds) {
             SaSession session = StpUtil.getSessionBySessionId(logId);
             UserPrincipal userPrincipal = session.getModel(USER_TYPE, UserPrincipal.class);
-            List<TokenSign> tokenSignList = session.getTokenSignList();
+            List<String> tokenSignList = Collections.singletonList(session.getToken());
             resultList.add(
                     OnlineUserVO.builder()
                             .userId(userPrincipal.getId())

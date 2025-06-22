@@ -94,7 +94,7 @@
         <lombok.version>1.18.34</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
-        <sa-token.version>1.40.0</sa-token.version>
+        <sa-token.version>1.44.0</sa-token.version>
         <commons-pool2.version>2.12.0</commons-pool2.version>
         <transmittable.version>2.13.0</transmittable.version>
 

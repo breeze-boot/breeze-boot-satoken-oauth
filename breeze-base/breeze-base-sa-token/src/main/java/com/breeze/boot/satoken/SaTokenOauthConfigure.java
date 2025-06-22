@@ -81,10 +81,10 @@ public class SaTokenOauthConfigure {
     @Autowired
     public void configOAuth2Server(SaOAuth2ServerConfig oauth2Server) {
         // 未登录的视图
-        oauth2Server.notLoginView = () -> new ModelAndView("login.html");
+        SaOAuth2Strategy.instance.notLoginView = () -> new ModelAndView("login.html");
 
         // 登录处理函数
-        oauth2Server.doLoginHandle = (name, pwd) -> {
+        SaOAuth2Strategy.instance.doLoginHandle = (name, pwd) -> {
             ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             Assert.notNull(requestAttributes, "requestAttributes is null");
 
@@ -107,7 +107,7 @@ public class SaTokenOauthConfigure {
         };
 
         // 授权确认视图
-        oauth2Server.confirmView = (clientId, scopes) -> {
+        SaOAuth2Strategy.instance.confirmView = (clientId, scopes) -> {
             Map<String, Object> map = new HashMap<>();
             map.put("clientId", clientId);
             map.put("scope", scopes);

@@ -16,7 +16,6 @@
 
 package com.breeze.boot.auth.model.vo;
 
-import cn.dev33.satoken.session.TokenSign;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -87,6 +86,6 @@ public class OnlineUserVO implements Serializable {
      * 登录设备
      */
     @Schema(description = "登录设备")
-    private List<TokenSign> loginDevice;
+    private List<String> loginDevice;
 
 }
