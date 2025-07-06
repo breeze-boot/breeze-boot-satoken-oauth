@@ -67,7 +67,7 @@ public class Column {
     /**
      * 字符类型列的最大长度
      */
-    private Integer characterMaximumLength;
+    private Long characterMaximumLength;
 
     /**
      * 数值类型列的精度，即总位数

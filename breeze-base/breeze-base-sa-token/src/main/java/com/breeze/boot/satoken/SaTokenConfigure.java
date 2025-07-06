@@ -20,8 +20,10 @@ import cn.dev33.satoken.interceptor.SaInterceptor;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -36,8 +38,8 @@ import java.util.List;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-@Import(SaTokenJumpAuthProperties.class)
-public class SaTokenConfigure implements WebMvcConfigurer {
+@Order(Ordered.HIGHEST_PRECEDENCE + 1)
+public class SaTokenConfigure implements WebMvcConfigurer, InitializingBean {
 
     private final SaTokenJumpAuthProperties jumpAuthProperties;
 
@@ -47,7 +49,9 @@ public class SaTokenConfigure implements WebMvcConfigurer {
 
     private final List<String> websocketJumpUrl = Lists.newArrayList("/ws/**");
 
-    private final List<String> staticJumpUrl = Lists.newArrayList("/**/*.js", "/**/*.css", "/**/*.png", "/*.html", "/**/*.html", "/*.ico", "/favicon.ico", "/**/*.ico");
+    private final List<String> staticJumpUrl = Lists.newArrayList(
+            "/**/*.js", "/**/*.css", "/**/*.png", "/*.html", "/**/*.html", "/*.ico", "/favicon.ico", "/**/*.ico"
+    );
 
     private final List<String> swaggerJumpUrl = Lists.newArrayList("/doc.html", "/v3/api-docs/**", "/swagger-ui/**");
 
@@ -60,8 +64,8 @@ public class SaTokenConfigure implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         List<String> ignoreUrls = jumpAuthProperties.getIgnoreUrls();
         ignoreUrls.addAll(formLoginJumpUrl);
-        ignoreUrls.addAll(captchaJumpUrl);
         ignoreUrls.addAll(websocketJumpUrl);
+        ignoreUrls.addAll(captchaJumpUrl);
         ignoreUrls.addAll(staticJumpUrl);
         ignoreUrls.addAll(swaggerJumpUrl);
         ignoreUrls.addAll(druidJumpUrl);
@@ -69,4 +73,8 @@ public class SaTokenConfigure implements WebMvcConfigurer {
         registry.addInterceptor(new SaInterceptor()).excludePathPatterns(ignoreUrls).addPathPatterns("/**");
     }
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+
+    }
 }

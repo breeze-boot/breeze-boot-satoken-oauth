@@ -95,7 +95,10 @@ public class BreezeAuditInnerInterceptor implements InnerInterceptor {
      */
     private Object extractEntity(Object parameter) {
         if (parameter instanceof Map) {
-            return ((Map<?, ?>) parameter).get(Constants.ENTITY);
+            boolean updated = ((Map<?, ?>) parameter).containsKey(Constants.ENTITY);
+            if (updated) {
+                return ((Map<?, ?>) parameter).get(Constants.ENTITY);
+            }
         }
         return parameter;
     }

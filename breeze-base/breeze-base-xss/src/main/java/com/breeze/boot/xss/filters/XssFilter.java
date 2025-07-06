@@ -17,20 +17,15 @@
 package com.breeze.boot.xss.filters;
 
 import cn.hutool.core.text.AntPathMatcher;
-import com.breeze.boot.core.utils.LoadAnnotationUtils;
-import com.breeze.boot.xss.config.XssHttpServletRequestWrapper;
 import com.breeze.boot.xss.config.XssProperties;
+import com.breeze.boot.xss.config.XssHttpServletRequestWrapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.GenericFilterBean;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,24 +37,12 @@ import java.util.List;
  * @since 2022-10-21
  */
 @Slf4j
-@Order(Ordered.HIGHEST_PRECEDENCE)
 public class XssFilter extends GenericFilterBean {
 
     /**
      * xss属性
      */
     private final XssProperties xssProperties;
-
-    /**
-     * 请求映射处理程序映射
-     * 使用Bean名称注入
-     */
-    private final RequestMappingHandlerMapping requestMappingHandlerMapping;
-
-    /**
-     * 应用程序上下文
-     */
-    private final ApplicationContext applicationContext;
 
     /**
      * 匹配器
@@ -71,10 +54,8 @@ public class XssFilter extends GenericFilterBean {
      *
      * @param xssProperties xss属性
      */
-    public XssFilter(XssProperties xssProperties, RequestMappingHandlerMapping requestMappingHandlerMapping, ApplicationContext applicationContext) {
+    public XssFilter(XssProperties xssProperties) {
         this.xssProperties = xssProperties;
-        this.requestMappingHandlerMapping = requestMappingHandlerMapping;
-        this.applicationContext = applicationContext;
     }
 
     /**
@@ -106,10 +87,4 @@ public class XssFilter extends GenericFilterBean {
         return Boolean.FALSE;
     }
 
-    @Override
-    public void afterPropertiesSet() throws ServletException {
-        log.info("----- 初始化xss需要被过滤的路径开始 -----");
-        LoadAnnotationUtils.loadControllerMapping(xssProperties, applicationContext, requestMappingHandlerMapping.getHandlerMethods());
-        log.info("----- 初始化xss需要被过滤的路径结束 -----");
-    }
 }

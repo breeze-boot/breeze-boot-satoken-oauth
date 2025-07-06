@@ -22,13 +22,13 @@ import java.util.Set;
  */
 @Slf4j
 public class LoadAnnotationUtils {
+
     /**
      * 正则
      */
     private static final String PATTERN = "\\{(.*?)\\}";
 
     /**
-     * 负载控制器映射
      * 加载控制器映射
      *
      * @param properties                   属性
@@ -43,6 +43,7 @@ public class LoadAnnotationUtils {
             Class<?> clazz = applicationContext.getBean(method.getBean().toString()).getClass();
             // 根据类进行判断这个方法所在的类是否需要过滤
             if (Objects.nonNull(AnnotationUtils.findAnnotation(clazz, BaseFilter.class))) {
+                assert requestMappingInfo.getPathPatternsCondition() != null;
                 Optional.of(requestMappingInfo.getPathPatternsCondition())
                         .ifPresent((condition) -> condition.getPatternValues().forEach(patternUrl -> setURl(properties, patternUrl)));
             } else {

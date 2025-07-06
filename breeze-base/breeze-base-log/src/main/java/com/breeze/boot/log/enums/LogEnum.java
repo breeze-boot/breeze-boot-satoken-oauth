@@ -33,6 +33,7 @@ public interface LogEnum {
 
         SYSTEM(0, "系统日志"),
         LOGIN(1, "登录日志"),
+        CODE(1, "授权码登录日志"),
         ;
 
         private final Integer code;

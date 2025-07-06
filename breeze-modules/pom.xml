@@ -20,6 +20,7 @@
         <module>breeze-langchain4j-ai</module>
         <module>breeze-bpm</module>
         <module>breeze-quartz</module>
+        <module>breeze-code</module>
     </modules>
 
 </project>

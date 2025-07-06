@@ -165,9 +165,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      */
     @Override
     public Boolean modifyUser(Long id, UserForm userForm) {
+        SysUser user = this.getById(id);
+        AssertUtil.isNotNull(user, USER_NOT_FOUND);
         SysUser sysUser = this.sysUserConverter.form2Entity(userForm);
         sysUser.setId(id);
-        sysUser.setPassword(null);
+        sysUser.setPassword(user.getPassword());
         boolean update = this.updateById(sysUser);
         if (update) {
             this.sysUserRoleService.remove(Wrappers.<SysUserRole>lambdaQuery()

@@ -300,7 +300,7 @@ public class BpmDefinitionServiceImpl implements IBpmDefinitionService {
         ProcessDefinition definition;
         ProcessDefinitionQuery processDefinitionQuery = this.repositoryService.createProcessDefinitionQuery()
                 .processDefinitionKey(procDefKey);
-        if (Objects.isNull(version)) {
+        if (Objects.isNull(version) || version == 0) {
             definition = processDefinitionQuery
                     .latestVersion()
                     .singleResult();

@@ -66,6 +66,7 @@ public class UserinfoScopeHandler implements SaOAuth2ScopeHandlerInterface {
 
     @Override
     public void workClientToken(ClientTokenModel ct) {
+        log.info("--------- 加工 ClientTokenModel --------- {}", ct);
     }
 
 }

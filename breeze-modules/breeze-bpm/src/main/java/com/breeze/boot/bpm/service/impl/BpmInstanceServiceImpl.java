@@ -95,7 +95,7 @@ public class BpmInstanceServiceImpl implements IBpmInstanceService {
 
             if (Objects.isNull(processDefinition)) {
                 log.error("未找到流程定义: {}", startForm.getProcDefKey());
-                throw new BreezeBizException(ResultCode.PROCESS_NOT_FOUND);
+                throw new BreezeBizException(ResultCode.DEFINITION_NOT_FOUND);
             }
             log.info("状态: {}", processDefinition.isSuspended());
             if (processDefinition.isSuspended()) {

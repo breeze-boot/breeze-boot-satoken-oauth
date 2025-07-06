@@ -20,6 +20,7 @@ import cn.hutool.core.util.StrUtil;
 import com.anji.captcha.model.common.ResponseModel;
 import com.anji.captcha.model.vo.CaptchaVO;
 import com.anji.captcha.service.CaptchaService;
+import com.breeze.boot.satoken.oauth2.password.BreezePasswordGrantTypeHandler;
 import com.breeze.boot.satoken.oauth2.phone.PhonePasswordGrantTypeHandler;
 import com.breeze.boot.satoken.propertise.AesSecretProperties;
 import com.breeze.boot.log.events.PublisherSaveSysLogEvent;
@@ -76,7 +77,12 @@ public class ResourceServerConfiguration {
 
     @Bean
     public SaTokenOauthConfigure saTokenOauthConfigure() {
-        return new SaTokenOauthConfigure(userService, aesSecretProperties, publisherSaveSysLogEvent, this::checkCapture);
+        return new SaTokenOauthConfigure(userService, aesSecretProperties, publisherSaveSysLogEvent);
+    }
+
+    @Bean
+    public BreezePasswordGrantTypeHandler breezePasswordGrantTypeHandler() {
+        return new BreezePasswordGrantTypeHandler(userService, aesSecretProperties, publisherSaveSysLogEvent, this::checkCapture);
     }
 
     /**
