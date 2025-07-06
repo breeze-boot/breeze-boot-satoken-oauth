@@ -55,9 +55,10 @@ public class SaOAuth2DataLoaderImpl implements SaOAuth2DataLoader {
             throw new SaTokenException("未发现客户端配置");
         }
 
+        LocalDateTime clientSecretExpiresAt = registeredClient.getClientSecretExpiresAt();
         LocalDateTime clientIdIssuedAt = registeredClient.getClientIdIssuedAt();
-        if (clientIdIssuedAt.isBefore(LocalDateTime.now())){
-            throw new SaTokenException("客户端过期");
+        if (clientSecretExpiresAt.isBefore(LocalDateTime.now()) && clientIdIssuedAt.isAfter(LocalDateTime.now())){
+            throw new SaTokenException("客户端授权未在有效期");
         }
         return new SaClientModel().setClientId(registeredClient.getClientId())
                 .setClientSecret(SaSecureUtil.aesDecrypt(aesSecretProperties.getAesSecret(), registeredClient.getClientSecret())) // client 秘钥
