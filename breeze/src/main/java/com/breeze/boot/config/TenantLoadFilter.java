@@ -44,7 +44,7 @@ import static com.breeze.boot.core.constants.CoreConstants.X_TENANT_ID;
  */
 @Slf4j
 @Configuration
-@Order(Ordered.HIGHEST_PRECEDENCE + 1)
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class TenantLoadFilter extends GenericFilterBean {
 
     @Override
