@@ -11,7 +11,7 @@ import { ${entityClassName}ResponseData, ${entityClassName}Query, ${entityClassN
 import { ResponseData } from '@/types/types.ts'
 
 enum API {
-  ${entityClassNameUpper}_RESTFUL_URL = '${module}/v1/${entityClassLowerName}',
+  ${entityClassNameUpper}_RESTFUL_URL = '/${module}/v1/${entityClassLowerName}',
 }
 
 /**

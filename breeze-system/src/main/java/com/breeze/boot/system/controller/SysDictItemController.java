@@ -76,7 +76,7 @@ public class SysDictItemController {
      */
     @Operation(summary = "详情")
     @GetMapping("/info/{dictItemId}")
-    @SaCheckPermission("auth:dict:info")
+    @SaCheckPermission("sys:dict:info")
     public Result<DictItemVO> info(@Parameter(description = "字典项ID") @NotNull(message = "字典项ID") @PathVariable("dictItemId") Long dictItemId) {
         return Result.ok(this.sysDictItemService.getInfoById(dictItemId));
     }

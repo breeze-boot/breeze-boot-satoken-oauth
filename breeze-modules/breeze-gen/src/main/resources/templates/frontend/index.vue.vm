@@ -32,15 +32,15 @@ const ${entityClassLowerName}AddOrEditRef = ref()
 const queryParams = reactive<${entityClassName}Query>({
   #foreach($column in $columns)
   #if($column.attrType == 'LocalDateTime' || $column.attrType == 'LocalDate' || $column.attrType == 'Date')
-   ${column.attrName}: string
+   ${column.attrName}: '',
   #elseif($column.attrType == 'Long' || $column.attrType == 'Integrer')
-   ${column.attrName}: number
+   ${column.attrName}: 0,
   #elseif($column.attrType == 'String')
-   ${column.attrName}: string
+   ${column.attrName}: '',
   #elseif($column.attrType == 'Boolean')
-   ${column.attrName}: boolean
+   ${column.attrName}: false,
   #else
-   ${column.attrName}: any
+   ${column.attrName}: '',
   #end
   #end
   current: 1,
@@ -52,15 +52,15 @@ let checkedRows = reactive<string[]>([])
 let currentRow = reactive<${entityClassName}Record>({
   #foreach($column in $columns)
     #if($column.attrType == 'LocalDateTime' || $column.attrType == 'LocalDate' || $column.attrType == 'Date')
-        ${column.attrName}: string
+        ${column.attrName}: '',
     #elseif($column.attrType == 'Long' || $column.attrType == 'Integrer')
-        ${column.attrName}: number
+        ${column.attrName}: 0,
     #elseif($column.attrType == 'String')
-        ${column.attrName}: string
+        ${column.attrName}: '',
     #elseif($column.attrType == 'Boolean')
-        ${column.attrName}: boolean
+        ${column.attrName}: false,
     #else
-        ${column.attrName}: any
+        ${column.attrName}: '',
     #end
   #end
 })
@@ -228,7 +228,7 @@ const handleSelectionChange = (row: ${entityClassName}Record) => {
       #foreach($column in $columns)
 
       <el-form-item :label="t('${entityClassLowerName}.fields.${column.attrName}')" prop="${column.attrName}">
-        #if(!$column.pk)
+        #if(!$column.pk || $column.attrName != 'id')
         #if($column.attrName != 'createTime' || $column.attrName != 'updateTime' || $column.attrName != 'createBy' || $column.attrName != 'updateBy')
         <el-input
           @keyup.enter="handleQuery"

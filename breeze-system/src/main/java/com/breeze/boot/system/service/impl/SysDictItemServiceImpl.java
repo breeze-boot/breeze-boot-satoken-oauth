@@ -103,7 +103,8 @@ public class SysDictItemServiceImpl extends ServiceImpl<SysDictItemMapper, SysDi
     @Override
     public Result<Map<String, List<Map<String, Object>>>> listDictByCodes(List<String> dictCodes) {
         List<Map<String, Object>> dictItemListMap = this.baseMapper.listDictByCodes(dictCodes);
-        Map<String, List<Map<String, Object>>> resultMap = dictItemListMap.stream().collect(Collectors.groupingBy(dict -> (String) dict.get("dictCode")));
+        Map<String, List<Map<String, Object>>> resultMap = dictItemListMap.stream()
+                .collect(Collectors.groupingBy(dict -> (String) dict.get("dictCode")));
         return Result.ok(resultMap);
     }
 

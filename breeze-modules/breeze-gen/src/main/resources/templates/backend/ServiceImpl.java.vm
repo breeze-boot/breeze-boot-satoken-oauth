@@ -57,10 +57,10 @@ public class ${entityClassName}ServiceImpl extends ServiceImpl<${entityClassName
     @DymicSql
     public Page<${entityClassName}VO> listPage(@ConditionParam ${entityClassName}Query query) {
         Page<${entityClassName}> page = new Page<>(query.getCurrent(), query.getSize());
-        Page<${entityClassName}> ${entityClassLowerName}page = new LambdaQueryChainWrapper<>(this.getBaseMapper())
+        Page<${entityClassName}> ${entityClassLowerName}Page = new LambdaQueryChainWrapper<>(this.getBaseMapper())
                     .orderByDesc(${entityClassName}::getCreateTime)
                     .page(page);
-        return this.${entityClassLowerName}Converter.page2VOPage(${entityClassLowerName}page);
+        return this.${entityClassLowerName}Converter.page2VOPage(${entityClassLowerName}Page);
     }
 
     /**

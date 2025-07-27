@@ -56,6 +56,7 @@ public enum LogType {
     LOGOUT(6, "登出"),
     FOCUS_KICK(7, "踢出"),
     FOCUS_LOGOUT(8, "强制登出"),
+    SYNC(9, "同步数据"),
 
     ;
 

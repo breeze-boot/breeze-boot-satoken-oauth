@@ -49,6 +49,13 @@ public class SysDict extends IdBaseModel<SysDict> implements Serializable {
     /**
      * 字典名称
      */
+    @NotBlank(message = "字典分组ID不能为空")
+    @Schema(description = "字典分组ID")
+    private String groupId;
+
+    /**
+     * 字典名称
+     */
     @NotBlank(message = "字典名称不能为空")
     @Schema(description = "字典名称")
     private String dictName;

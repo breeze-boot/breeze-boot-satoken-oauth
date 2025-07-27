@@ -25,6 +25,9 @@
         FROM sys_dict AS a
         <where>
             a.is_delete = 0
+            <if test="dictQuery.groupId != null and dictQuery.groupId != ''">
+                AND a.group_id = #{dictQuery.groupId}
+            </if>
             <if test="dictQuery.dictName != null and dictQuery.dictName != ''">
                 AND a.dict_name LIKE CONCAT( '%', #{dictQuery.dictName}, '%')
             </if>

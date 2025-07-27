@@ -182,6 +182,8 @@ public class DevCodeGenServiceImpl implements DevCodeGenService {
             return "String";
         } else if (dbType.startsWith("datetime") || dbType.startsWith("timestamp")) {
             return "LocalDateTime";
+        } else if (dbType.startsWith("date")) {
+            return "LocalDate";
         } else if (dbType.startsWith("decimal")) {
             return "BigDecimal";
         } else if (dbType.startsWith("tinyint")) {

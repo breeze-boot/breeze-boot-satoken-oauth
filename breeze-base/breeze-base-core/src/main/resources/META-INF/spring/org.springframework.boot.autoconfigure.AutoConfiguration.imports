@@ -2,3 +2,4 @@ com.breeze.boot.core.i18n.I18NLocaleResolver
 com.breeze.boot.core.lock.RedissonLockAspect
 com.breeze.boot.core.config.JacksonConfig
 com.breeze.boot.core.config.ThreadPoolConfiguration
+com.breeze.boot.core.utils.ConfigLoader

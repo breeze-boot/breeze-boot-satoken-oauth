@@ -23,6 +23,7 @@ import com.breeze.boot.core.model.IdBaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.io.Serializable;
 import java.io.Serial;
 
 /**

@@ -66,11 +66,6 @@ public class TenantLoadFilter extends GenericFilterBean {
             }
             log.info("当前进入的请求： {}  系统租户： {}", request.getRequestURI(), tenantId);
             filterChain.doFilter(request, response);
-        } catch (BreezeBizException e) {
-            log.error("租户处理异常", e);
-            // 可以根据具体需求添加异常响应逻辑
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write(e.getMessage());
         } finally {
             BreezeTenantHolder.clean();
         }

@@ -28,15 +28,15 @@ const ${entityClassLowerName}DataFormRef = ref()
 const ${entityClassLowerName}DataForm = ref<${entityClassName}Form>({
 #foreach($column in $columns)
   #if($column.attrType == 'LocalDateTime' || $column.attrType == 'LocalDate' || $column.attrType == 'Date')
-      ${column.attrName}: string
+      ${column.attrName}: '',
   #elseif($column.attrType == 'Long' || $column.attrType == 'Integrer')
-      ${column.attrName}: number
+      ${column.attrName}: 0,
   #elseif($column.attrType == 'String')
-      ${column.attrName}: string
+      ${column.attrName}: '',
   #elseif($column.attrType == 'Boolean')
-      ${column.attrName}: boolean
+      ${column.attrName}: false,
   #else
-      ${column.attrName}: any
+      ${column.attrName}: '',
   #end
 #end
 })

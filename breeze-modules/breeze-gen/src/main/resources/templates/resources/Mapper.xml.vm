@@ -6,7 +6,11 @@
 	<!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="${packageName}.${module}.model.entity.${entityClassName}" id="${entityClassLowerName}Map">
     #foreach($column in $columns)
+    #if($column.pk)
+        <id property="${column.attrName}" column="${column.columnName}"/>
+    #else
         <result property="${column.attrName}" column="${column.columnName}"/>
+    #end
     #end
     </resultMap>
 

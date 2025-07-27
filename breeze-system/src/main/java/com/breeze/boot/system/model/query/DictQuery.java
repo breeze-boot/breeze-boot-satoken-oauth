@@ -39,6 +39,12 @@ public class DictQuery extends PageQuery {
      */
     @Schema(description = "字典ID")
     private Long id;
+    
+    /**
+     * 字典分组 ID
+     */
+    @Schema(description = "字典分组ID")
+    private String groupId;
 
     /**
      * 字典 名称

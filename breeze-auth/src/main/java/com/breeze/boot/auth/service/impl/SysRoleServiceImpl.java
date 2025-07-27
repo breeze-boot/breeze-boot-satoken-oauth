@@ -220,7 +220,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
             sysRoleMenu.setRoleId(form.getRoleId());
             return sysRoleMenu;
         }).collect(Collectors.toList());
-        boolean batch = this.sysRoleMenuService.saveBatch(sysRoleMenuList);
+        boolean batch = this.sysRoleMenuService.saveBatch(sysRoleMenuList, 50);
         if (batch) {
             SysRole sysRole = this.getById(form.getRoleId());
             @SuppressWarnings("unchecked")

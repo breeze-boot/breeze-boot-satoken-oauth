@@ -17,9 +17,9 @@
 package ${packageName}.${module}.model.converter;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.breeze.boot.ai.model.entity.${entityClassName};
-import com.breeze.boot.ai.model.form.${entityClassName}Form;
-import com.breeze.boot.ai.model.vo.${entityClassName}VO;
+import com.breeze.boot.dev.model.entity.${entityClassName};
+import com.breeze.boot.dev.model.form.${entityClassName}Form;
+import com.breeze.boot.dev.model.vo.${entityClassName}VO;
 import org.mapstruct.Mapper;
 
 /**

@@ -7,6 +7,7 @@ breeze:
       - "sys_user"
       - "sys_dept"
       - "sys_role"
+      - "sys_dict_group"
       - "sys_dict"
       - "sys_dict_item"
       - "sys_post"

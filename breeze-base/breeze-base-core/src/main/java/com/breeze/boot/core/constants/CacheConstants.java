@@ -24,6 +24,8 @@ package com.breeze.boot.core.constants;
  */
 public class CacheConstants {
 
+    public static final String CONFIG_KEY_PREFIX = "config:";
+
     public static String MINI_FIRST_LOGIN = "breeze:login:first:";
 
     public static String MINI_RESET_PWD = "breeze:login:reset:";

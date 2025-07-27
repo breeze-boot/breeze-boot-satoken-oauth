@@ -21,7 +21,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.breeze.boot.core.utils.Result;
 import com.breeze.boot.log.annotation.BreezeSysLog;
 import com.breeze.boot.log.enums.LogType;
-import com.breeze.boot.${module}.model.entity.${entityClassName};
 import com.breeze.boot.${module}.model.form.${entityClassName}Form;
 import com.breeze.boot.${module}.model.query.${entityClassName}Query;
 import com.breeze.boot.${module}.model.vo.${entityClassName}VO;

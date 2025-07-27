@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.breeze.boot.system.mapper.SysConfigMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.breeze.boot.system.model.entity.SysConfig" id="sysConfigMap">
+        <id property="id" column="id"/>
+        <result property="categId" column="categ_id"/>
+        <result property="paramName" column="param_name"/>
+        <result property="paramValue" column="param_value"/>
+        <result property="envCode" column="env_code"/>
+        <result property="dataType" column="data_type"/>
+        <result property="isRequired" column="is_required"/>
+        <result property="description" column="description"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+</mapper>

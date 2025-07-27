@@ -88,7 +88,7 @@ public class SysDictController {
      */
     @Operation(summary = "详情")
     @GetMapping("/info/{dictId}")
-    @SaCheckPermission("auth:dict:info")
+    @SaCheckPermission("sys:dict:info")
     public Result<DictVO> info(@PathVariable("dictId") Long dictId) {
         return Result.ok(this.sysDictService.getInfoById(dictId));
     }

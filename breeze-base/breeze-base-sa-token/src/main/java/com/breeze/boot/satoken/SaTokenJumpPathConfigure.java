@@ -36,7 +36,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-@Order(Ordered.HIGHEST_PRECEDENCE + 1)
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @EnableConfigurationProperties({SaTokenJumpAuthProperties.class})
 public class SaTokenJumpPathConfigure implements InitializingBean {
 
